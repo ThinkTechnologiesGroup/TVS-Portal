@@ -97,7 +97,7 @@ namespace ThinkVoip
 
         }
 
-        public async Task<string> ExtensionPinNumber(string extension)
+        public async Task<string> GetExtensionPinNumber(string extension)
         {
             var extensionId = await GetExtensionId(extension).ConfigureAwait(false);
 
@@ -772,8 +772,7 @@ namespace ThinkVoip
             }
             else
             {
-                //var extensionId = await GetExtensionsList().ConfigureAwait(false);
-                //var extId = extensionId.First(ext => ext.Number == extensionNumber);
+
                 var extId = await GetExtensionId(extensionNumber);
                 _apiEndPoint = "ExtensionList/set";
                 _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
@@ -802,6 +801,65 @@ namespace ThinkVoip
             }
 
             var id = properties["Id"].ToString();
+
+            //ext number
+            await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
+
+            //Firstname
+            await UpdateExtensionFirstName(response, id, firstName).ConfigureAwait(false);
+
+            //Lastname
+            await UpdateExtensionLastName(response, id, lastName).ConfigureAwait(false);
+
+            //Mobile Number
+            await UpdateExtensionMobileNumber(response, id, mobileNumber).ConfigureAwait(false);
+
+            //Caller Id Number
+            await UpdateExtensionOutboundCallerId(response, id, callerId).ConfigureAwait(false);
+
+            if (email != string.Empty)
+            {
+                //Email address
+                await UpdateExtensionEmail(response, id, email).ConfigureAwait(false);
+                //voiceMail options
+                await UpdateExtensionVoiceMailOptions(response, id, voiceMailOptions).ConfigureAwait(false);
+            }
+
+            //VoiceMail PIN
+            await UpdateExtensionVoiceMailPin(response, id, pin).ConfigureAwait(false);
+
+            //PBX delivers audio
+            await UpdateExtensionPbxDeliversAudioOption(response, id).ConfigureAwait(false);
+
+            //Allow use off of LAN
+            await UpdateExtensionAllowedUSeOffLan(response, id, disAllowUseOffLan).ConfigureAwait(false);
+
+            //Disable ReInvites
+            await UpdateExtensionDisableReInvites(response, id).ConfigureAwait(false);
+
+            //Accept Multiple Calls
+            await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
+
+            //voicemail Only Extension FOrwarding and restriction settings
+            if (VmOnly)
+            {
+                await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
+                await UpdateRestrictionsForVmOnly(response, id).ConfigureAwait(false);
+
+            }
+            if (fwdOnly)
+            {
+                await UpdateForwardingRulesForFwdOnly(response, id).ConfigureAwait(false);
+                await UpdateRestrictionsForFwdOnly(response, id).ConfigureAwait(false);
+
+            }
+            else
+            {
+                await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
+                await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
+            }
+
+
             var blfConfig = new JObject();
             if (id != null)
             {
@@ -816,73 +874,11 @@ namespace ThinkVoip
             }
 
             var blfOne = blfConfig["_value"];
-            if (blfOne != null)
+
+            if (blfOne != null && !exists)
             {
                 var blfId = JsonConvert.DeserializeObject<JArray>(blfOne.ToString());
                 var blfIdList = blfId.Values("Id").ToList();
-
-                //Console.ForegroundColor = ConsoleColor.DarkGreen;
-                //Console.WriteLine($@"{extensionNumber}: {firstName} {lastName}");
-                //Console.ResetColor();
-                //ext number
-                await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
-
-                //Firstname
-                await UpdateExtensionFirstName(response, id, firstName).ConfigureAwait(false);
-
-                //Lastname
-                await UpdateExtensionLastName(response, id, lastName).ConfigureAwait(false);
-
-                //Mobile Number
-                await UpdateExtensionMobileNumber(response, id, mobileNumber).ConfigureAwait(false);
-
-                //Caller Id Number
-                await UpdateExtensionOutboundCallerId(response, id, callerId).ConfigureAwait(false);
-
-                if (email != string.Empty)
-                {
-                    //Email address
-                    await UpdateExtensionEmail(response, id, email).ConfigureAwait(false);
-                    //voiceMail options
-                    await UpdateExtensionVoiceMailOptions(response, id, voiceMailOptions).ConfigureAwait(false);
-                }
-
-
-
-                //VoiceMail PIN
-                await UpdateExtensionVoiceMailPin(response, id, pin).ConfigureAwait(false);
-
-                //PBX delivers audio
-                await UpdateExtensionPbxDeliversAudioOption(response, id).ConfigureAwait(false);
-
-                //Allow use off of LAN
-                await UpdateExtensionAllowedUSeOffLan(response, id, disAllowUseOffLan).ConfigureAwait(false);
-
-                //Disable ReInvites
-                await UpdateExtensionDisableReInvites(response, id).ConfigureAwait(false);
-
-                //Accept Multiple Calls
-                await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
-
-                //voicemail Only Extension FOrwarding and restriction settings
-                if (VmOnly)
-                {
-                    await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
-                    await UpdateRestrictionsForVmOnly(response, id).ConfigureAwait(false);
-
-                }
-                if (fwdOnly)
-                {
-                    await UpdateForwardingRulesForFwdOnly(response, id).ConfigureAwait(false);
-                    await UpdateRestrictionsForFwdOnly(response, id).ConfigureAwait(false);
-
-                }
-                else
-                {
-                    await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
-                    await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
-                }
-
 
                 //line Keys
                 const int lineKeys = 2;
@@ -896,8 +892,6 @@ namespace ThinkVoip
             //Save extension to server
             await SaveExtensionUpdatesToServer(response, id).ConfigureAwait(false);
         }
-
-
 
         private async Task SaveExtensionUpdatesToServer(IRestResponse response, string id)
         {

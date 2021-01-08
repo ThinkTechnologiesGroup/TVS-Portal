@@ -37,6 +37,8 @@ namespace ThinkVoip
         public static Extension CurrentExtensionClass;
         public static IList ToBeUpdated;
         private bool debug = false;
+        public Views lastView;
+
 
         public MainWindow()
         {
@@ -70,7 +72,6 @@ namespace ThinkVoip
         }
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            await UpdateSelectedCompanyInfo();
             await UpdateSelectedCompanyInfo();
         }
 
@@ -144,12 +145,7 @@ namespace ThinkVoip
                     ExtensionsTotalDisplay.Content = "MainStreets phone system has \nbeen shutdown.";
                     this.PleaseWaitTextBlock.Visibility = Visibility.Hidden;
                     return;
-                    //case 19329:
-                    //    ExtensionsTotalDisplay.Content = "Leopard has not been updated,\nand is broken in this app as a result.";
-                    //    return;
-                    //case 19438:
-                    //    ExtensionsTotalDisplay.Content = "Something weird with Peter Blinns 3cx space.";
-                    //    return;
+
             }
 
             if (SaveExtensions.Visibility == Visibility.Visible)
@@ -236,6 +232,7 @@ namespace ThinkVoip
 
         private async void ExtensionsTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
+            lastView = Views.total;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
@@ -263,6 +260,7 @@ namespace ThinkVoip
 
         private async void ExtensionsTotalInvalid_Click(object sender, RoutedEventArgs e)
         {
+            lastView = Views.invalid;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
@@ -308,10 +306,12 @@ namespace ThinkVoip
 
         private async void ExtensionsTotalValid_Click(object sender, RoutedEventArgs e)
         {
+            lastView = Views.valid;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayValidExtensions(companyId);
+
         }
 
         public async Task DisplayValidExtensions(int companyId)
@@ -349,6 +349,7 @@ namespace ThinkVoip
 
         private async void PhonesTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
+            lastView = Views.phones;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
@@ -545,10 +546,11 @@ namespace ThinkVoip
                                 await ThreeCxClient.DeleteExtension(extension.Number);
                             }
 
-                            await UpdateView();
+                           // await UpdateView();
                             UpdateExtensionDataGrid();
                             await UpdateView();
-                            await DisplayValidExtensions(CompanyId);
+                            await UpdateDisplay();
+                            //await DisplayValidExtensions(CompanyId);
                         }
 
 
@@ -601,7 +603,27 @@ namespace ThinkVoip
             await UpdateView();
             UpdateExtensionDataGrid();
             await UpdateView();
-            await DisplayValidExtensions(CompanyId);
+            switch (lastView)
+            {
+                case Views.none:
+                    break;
+                case Views.valid:
+                    await DisplayValidExtensions(CompanyId);
+
+                    break;
+                case Views.invalid:
+                    await DisplayInvalidExtensionInfo(CompanyId);
+
+                    break;
+                case Views.total:
+                    await DisplayExtensionInfo(CompanyId);
+                    break;
+                case Views.phones:
+                    await DisplayPhones();
+                    break;
+                default:
+                    break;
+            }
         }
 
         private void FileMenu_Click(object sender, RoutedEventArgs e)

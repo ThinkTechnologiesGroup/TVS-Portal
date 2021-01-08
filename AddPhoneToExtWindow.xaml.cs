@@ -59,7 +59,7 @@ namespace ThinkVoip
         {
             var result = await MainWindow.ThreeCxClient.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
 
-            var pin = await MainWindow.ThreeCxClient.ExtensionPinNumber(extensionNUmber);
+            var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
 
             if (result == "OK")
             {
