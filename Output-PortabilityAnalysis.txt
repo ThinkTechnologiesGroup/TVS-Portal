@@ -1,0 +1,8 @@
+﻿Microsoft (R) .NET Portability Analyzer 2.7.0.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+About Tool https://aka.ms/dotnet-portabilityanalyzer
+View Privacy Statement https://privacy.microsoft.com/en-us/privacystatement
+
+Detecting assembly references                      [Done]
+* No files were found to analyze.
+

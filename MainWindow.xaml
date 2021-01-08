@@ -1,0 +1,97 @@
+﻿<Window x:Class="ThinkVoip.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThinkVoip"
+        mc:Ignorable="d" FontSize ="13" FontFamily="{StaticResource JetBrainsMono-Regular}"
+        Title="Th!nk" Height="750" Width="1375" Loaded="Window_Loaded" Icon="/Thinky (1).png" SizeToContent="Width" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" Background="#FFDCDBDB" >
+
+    <Grid ContextMenuClosing="Grid_ContextMenuClosing">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto" SharedSizeGroup="CustomerList"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+
+
+        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="2" Grid.RowSpan="6" Grid.ColumnSpan="4" Source="/Think-VoIP-Thinky.png" Stretch="Uniform"/>
+
+        <Menu x:Name="MainMenu" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" Visibility="Hidden">
+            <MenuItem x:Name="FileMenu" Header="_File">
+                <MenuItem Header="_Test" Click="MenuItem_Click"/>
+            </MenuItem> 
+        </Menu>
+        
+        <TextBlock Grid.Column="1" Grid.Row="1" FontSize="28" Grid.ColumnSpan="3" Margin="0,0,0,10" Text="Th!nk VoIP Services" HorizontalAlignment="Left" VerticalAlignment="Center" FontWeight="SemiBold"/>
+        <TextBlock x:Name="PleaseWaitTextBlock" Grid.Column="2" Grid.Row="3" Visibility="Hidden" FontWeight="Bold" Foreground="Red" Text="Please wait..."/>
+
+        <ListBox x:Name="CustomersList"  Grid.Row="3"  Grid.Column="1"  DisplayMemberPath="company.name" SelectionChanged="CustomersList_SelectionChanged" Grid.RowSpan="6" Background="{x:Null}" BorderBrush="{x:Null}" FontWeight="Normal"  ScrollViewer.CanContentScroll="True">
+            <ListBox.ContextMenu>
+                <ContextMenu BorderBrush="Black" BorderThickness="1">
+                    <Separator/>
+                    <MenuItem Header="Reset Password" Click="Menu_Item_ResetPassword"/>
+                    <Separator/>
+                </ContextMenu>
+            </ListBox.ContextMenu>
+        </ListBox>
+
+        <TextBlock x:Name="ExtensionsHeader" Text="Extensions: " Margin="0,0,0,5" Grid.Row="3" TextDecorations="Underline"  Grid.Column="2" FontWeight="Bold" Visibility="Hidden"/>
+        <Button x:Name="ExtensionsTotalValid"   Grid.Row="4" Grid.Column="2"   Content =""  BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Click="ExtensionsTotalValid_Click" Visibility="Hidden"/>
+        <Button x:Name="ExtensionsTotalInvalid"  Grid.Row="5" Grid.Column="2"  Content =""  BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Click="ExtensionsTotalInvalid_Click" Visibility="Hidden"/>
+        <Button x:Name="ExtensionsTotalDisplay" Grid.Row="6" Grid.Column="2"   Content=""  BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Click="ExtensionsTotalDisplay_Click" Visibility="Hidden"/>
+        <Button x:Name="PhonesTotalDisplay" Grid.Row="7" Grid.Column="2"   Content=""  BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Hidden" />
+
+
+        <Button x:Name="AddExt" Grid.Row="8" Grid.Column="2"  Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748"  VerticalAlignment="Top" HorizontalAlignment="Stretch" Content="Add Extension" BorderBrush="Black" BorderThickness="1" Visibility="Hidden" Click="AddExtension_Click"/>
+        <Button x:Name="AddPhoneButton" Grid.Row="8" Grid.Column="3" Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748"  VerticalAlignment="Top" HorizontalAlignment="Stretch" Content="  Add Phone  " BorderBrush="Black" BorderThickness="1" Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click"/>
+
+        <TextBlock x:Name="ExtensionsTotal" Grid.Row="6"  Grid.Column="3" Margin="5,0,5,0" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="InValidExtensions" Grid.Row="5" Grid.Column="3" Margin="5,0,5,0" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="TotalValidExtensions" Grid.Row="4" Grid.Column="3" Margin="5,0,5,0" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="PhonesTotal" Grid.Row="7" Grid.Column="3" Margin="5,0,5,0" HorizontalAlignment="Right"/>
+
+        <DataGrid x:Name="ExtensionData" Margin="10,0,0,0" Grid.Row="3" Grid.Column="4"
+                  Grid.RowSpan="6" BorderBrush="{x:Null}" SelectionMode="Extended"
+                  ScrollViewer.HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Auto" 
+                  ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" 
+                  HorizontalAlignment="Center" HorizontalScrollBarVisibility="Auto" Visibility="Hidden" 
+                  ClipToBounds="True" MinWidth="800" MinHeight="600" HorizontalContentAlignment="Stretch" 
+                  VerticalContentAlignment="Stretch" 
+                  Background="{x:Null}" MinColumnWidth="28" AlternatingRowBackground="#FF8DC748" 
+                  RowBackground="White">
+            <DataGrid.ContextMenu>
+                <ContextMenu BorderBrush="Black" BorderThickness="1" >
+                    <MenuItem Header="Details" Click="MenuItem_ExtDetails_Click"/>
+                    <MenuItem Header="Add New Phone..." Click="MenuItem_Add_New_Phone_Click"/>
+                    <MenuItem Header="Remove..." Click="RemoveMEnuITem_click"></MenuItem>
+                    <MenuItem Header="Standardize Ext" Click="MenuItem_Click_Standardize_Stun"></MenuItem>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+        <DataGrid x:Name="DataEntryGrid" Margin="10,0,0,0" Grid.Row="3" Grid.Column="4" Grid.RowSpan="6" 
+                  BorderBrush="{x:Null}" SelectionMode="Extended" ScrollViewer.HorizontalScrollBarVisibility="Visible" 
+                  VerticalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="False" 
+                  HorizontalAlignment="Center" HorizontalScrollBarVisibility="Auto" Visibility="Hidden" ClipToBounds="True" MinWidth="800" MinHeight="100" 
+                  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"  IsSynchronizedWithCurrentItem="True" MinColumnWidth="24" IsManipulationEnabled="False" AutoGenerateColumns="True" Background="{x:Null}" AlternatingRowBackground="LightGray" RowBackground="LightGray">
+        </DataGrid>
+        <Button x:Name="SaveExtensions" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="2"  FontWeight="Bold" FontSize="20" Visibility="Hidden" Foreground="Azure" Content ="" Margin="5,0,0,0" BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Right" Click="SaveExtensionButton_click"/>
+
+    </Grid>
+</Window>

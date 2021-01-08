@@ -1,0 +1,39 @@
+﻿<Window x:Class="ThinkVoip.UpdatesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThinkVoip"
+        mc:Ignorable="d"
+        Title="UpdatesWindow" Height="450" Width="200">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <!--0-->
+            <ColumnDefinition Width="20"/>
+            <!--1-->
+            <ColumnDefinition Width="Auto"/>
+            <!--2-->
+            <ColumnDefinition Width="*"/>
+            <!--3-->
+            <ColumnDefinition Width="20"/>
+
+        </Grid.ColumnDefinitions>
+        
+        
+        <Grid.RowDefinitions>
+            <!--0-->
+            <RowDefinition Height="20"/>
+            <!--1-->
+            <RowDefinition Height="Auto"/>
+            <!--2-->
+            <RowDefinition Height="*"/>
+            <!--3-->
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        
+        
+        
+        
+        
+    </Grid>
+</Window>

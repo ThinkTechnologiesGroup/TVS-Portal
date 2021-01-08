@@ -1,0 +1,84 @@
+﻿<Window x:Class="ThinkVoip.ExtensionTypeSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ThinkVoip"
+        mc:Ignorable="d" FontSize ="12" FontFamily="{StaticResource JetBrainsMono-Regular}" Padding="5" Margin="5,0,5,0"
+        Title="Extension Type" Height="350" Width="450" WindowStartupLocation="CenterScreen" SizeToContent="Width" Closed="Window_Closed" Loaded="Window_Loaded" HorizontalAlignment="Left">
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20"/>
+            <ColumnDefinition Width="Auto"/>
+            <!--Thinky Maybe-->
+            <ColumnDefinition Width="Auto"/>
+            <!--Phones DropDown menu-->
+            <ColumnDefinition Width="Auto"/>
+            <!--Mac Address TextBlock-->
+            <ColumnDefinition Width="Auto"/>
+            <!--Ok Button-->
+            
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="20"/>
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>
+            <!--Thinky-->
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+
+            <!--PhonesDropDown-->
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+
+
+        <Image x:Name="Thinky" Source="/Thinky.png" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" VerticalAlignment="Center" Stretch="Uniform"/>
+        <TextBlock x:Name="ExtensionDropDownTitle" Text="Choose Extension Type" Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" TextAlignment="Center" FontWeight="Bold"/>
+
+        <ComboBox x:Name="ExtensionTypeDropDownList" Grid.Column="1" Grid.Row="3">    
+        </ComboBox>
+        
+        <Button x:Name="SetExtensionType" Grid.Row="3" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1"  FontWeight="Bold" FontSize="20" Visibility="Visible" Content ="OK" Margin="5,0,0,0" HorizontalAlignment="Stretch" Click="SetExtensionType_Click" />
+
+
+
+        <TextBlock x:Name="ExtNumber" Visibility="Hidden" Grid.Row="2" Grid.Column="1"  Text="Ext #"/>
+        <TextBox x:Name="ExtNumberEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="1" MinWidth="75" />
+
+        <TextBlock x:Name="FirstName" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Text="First Name" />
+        <TextBox x:Name="FirstNameEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="2" MinWidth="150" KeyDown="FirstName_KeyDown"/>
+
+        <TextBlock x:Name="LastName" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Text="Last Name" />
+        <TextBox x:Name="LastNameEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="3" MinWidth="150" KeyDown="LastName_KeyDown"/>
+
+        <TextBlock x:Name="Email" Visibility="Hidden" Grid.Row="2" Grid.Column="4"  Text="Email Address" />
+        <TextBox x:Name="EmailEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="4" MinWidth="150" KeyDown="Email_KeyDown"/>
+
+        <TextBlock x:Name="MobileNumber" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Text="Mobile Number" />
+        <TextBox x:Name="MobileNumberEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="3" MinWidth="150" />
+
+        <Button x:Name="AddExtentionButton" Grid.Row="4" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1"  FontWeight="Bold" FontSize="20" Visibility="Hidden" Content ="Add" HorizontalAlignment="Stretch" MinWidth="75" Click="AddExtention_Click" />
+        <Button x:Name="SetExtensionBack" Grid.Row="4" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1"  FontSize="20" Visibility="Hidden" Content ="Back"  HorizontalAlignment="Stretch" Click="SetExtensionBack_Click" />
+
+
+        <TextBlock x:Name="PleaseWaitTextBlock" Grid.Row="5" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" FontWeight="Bold" Foreground="Red" Visibility="Hidden" Text="Please wait..."/>
+
+        <ComboBox x:Name="AvailableExtensionsDropDownList" IsEditable="true" Visibility="Hidden" Grid.Row="3" Grid.Column="1">
+            <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+            </ComboBox.ItemsPanel>
+        </ComboBox>
+
+
+
+
+
+
+    </Grid>
+</Window>

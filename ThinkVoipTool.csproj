@@ -1,0 +1,131 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>Thinky.ico</ApplicationIcon>
+    <AssemblyName>ThinkVoipPortal</AssemblyName>
+    <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
+    <Platforms>AnyCPU;x64</Platforms>
+    <PackageId>ThinkVoipPortal</PackageId>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>TvsKey.pfx</AssemblyOriginatorKeyFile>
+    <DelaySign>false</DelaySign>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Fonts\JetBrainsMono-Bold-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Bold.ttf" />
+    <None Remove="Fonts\JetBrainsMono-ExtraBold-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-ExtraBold.ttf" />
+    <None Remove="Fonts\JetBrainsMono-ExtraLight-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-ExtraLight.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Light-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Light.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Medium-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Medium.ttf" />
+    <None Remove="Fonts\JetBrainsMono-Regular.ttf" />
+    <None Remove="Fonts\JetBrainsMono-SemiLight-Italic.ttf" />
+    <None Remove="Fonts\JetBrainsMono-SemiLight.ttf" />
+    <None Remove="Think-VoIP-Thinky.png" />
+    <None Remove="Thinky %281%29.png" />
+    <None Remove="Thinky.ico" />
+    <None Remove="Thinky.png" />
+    <None Include="C:\Users\mwien\Downloads\Think-VoIP-Thinky.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="4.1.0" />
+    <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="MessagePack" Version="2.1.165" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="RestSharp" Version="106.11.4" />
+    <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Fonts\JetBrainsMono-Bold-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Bold.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-ExtraBold-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-ExtraBold.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-ExtraLight-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-ExtraLight.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Light-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Light.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Medium-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Medium.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-Regular.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-SemiLight-Italic.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Fonts\JetBrainsMono-SemiLight.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Think-VoIP-Thinky.png" />
+    <Resource Include="Thinky (1).png" />
+    <Resource Include="Thinky.ico" />
+    <Resource Include="Thinky.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
