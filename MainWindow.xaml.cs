@@ -44,7 +44,7 @@ namespace ThinkVoip
         {
             InitializeComponent();
             ShowMenu();
-            GetThinkVolipClients();
+            IsDebug();
 
         }
 
@@ -66,7 +66,7 @@ namespace ThinkVoip
         }
 
         [Conditional("DEBUG")]
-        private void GetThinkVolipClients()
+        private void IsDebug()
         {
             debug = true;
         }
