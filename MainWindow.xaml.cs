@@ -99,8 +99,8 @@ namespace ThinkVoip
         {
             ThinkyMainImage.Visibility = Visibility.Hidden;
             ExtensionData.Visibility = Visibility.Hidden;
-            DataEntryGrid.Visibility = Visibility.Hidden;
-            SaveExtensions.Visibility = Visibility.Hidden;
+            //DataEntryGrid.Visibility = Visibility.Hidden;
+            //SaveExtensions.Visibility = Visibility.Hidden;
             AddExt.Visibility = Visibility.Hidden;
             AddPhoneButton.Visibility = Visibility.Hidden;
             ExtensionsHeader.Visibility = Visibility.Hidden;
@@ -127,10 +127,10 @@ namespace ThinkVoip
 
         public void UpdateExtensionDataGrid()
         {
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             ExtensionData.Visibility = Visibility.Hidden;
             VoimailOnlyExtensionsDisplay.Content = "";
@@ -214,10 +214,10 @@ namespace ThinkVoip
                 return;
             }
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
             await UpdateExtensionsCountDisplay(ExtensionList);
             ExtSeperator.Visibility = Visibility.Visible;
             PhoneSeperator.Visibility = Visibility.Visible;
@@ -240,15 +240,15 @@ namespace ThinkVoip
         private async Task DisplayExtensionInfo(int companyId)
         {
             var extensions = await ThreeCxClient.GetExtensionsList();
-            if (DataEntryGrid.Visibility == Visibility.Visible)
-            {
-                DataEntryGrid.Visibility = Visibility.Hidden;
-            }
+            //if (//DataEntryGrid.Visibility == Visibility.Visible)
+            //{
+            //    //DataEntryGrid.Visibility = Visibility.Hidden;
+            //}
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             ExtensionData.Visibility = Visibility.Visible;
             ExtensionData.ItemsSource = extensions;
@@ -267,15 +267,15 @@ namespace ThinkVoip
 
         private async Task DisplayInvalidExtensionInfo(int companyId)
         {
-            if (DataEntryGrid.Visibility == Visibility.Visible)
-            {
-                DataEntryGrid.Visibility = Visibility.Hidden;
-            }
+            //if (DataEntryGrid.Visibility == Visibility.Visible)
+            //{
+            //    DataEntryGrid.Visibility = Visibility.Hidden;
+            //}
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             var extensions = await ThreeCxClient.GetExtensionsList();
             var cleanedExtensions = extensions
@@ -312,15 +312,15 @@ namespace ThinkVoip
 
         public async Task DisplayValidExtensions(int companyId)
         {
-            if (DataEntryGrid.Visibility == Visibility.Visible)
-            {
-                DataEntryGrid.Visibility = Visibility.Hidden;
-            }
+            //if (DataEntryGrid.Visibility == Visibility.Visible)
+            //{
+            //    DataEntryGrid.Visibility = Visibility.Hidden;
+            //}
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             var extensions = await ThreeCxClient.GetExtensionsList();
             var cleanedExtensions = new List<Extension>();
@@ -360,15 +360,15 @@ namespace ThinkVoip
                 cleanedPhones = new List<Phone>();
             }
 
-            if (DataEntryGrid.Visibility == Visibility.Visible)
-            {
-                DataEntryGrid.Visibility = Visibility.Hidden;
-            }
+            //if (DataEntryGrid.Visibility == Visibility.Visible)
+            //{
+            //    DataEntryGrid.Visibility = Visibility.Hidden;
+            //}
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             ExtensionData.ItemsSource = cleanedPhones;
             ExtensionData.Visibility = Visibility.Visible;
@@ -448,28 +448,6 @@ namespace ThinkVoip
             }
         }
 
-        private async void SaveExtensionButton_click(object sender, RoutedEventArgs e)
-        {
-            foreach (var ext in ToBeAdded)
-            {
-                if (!Validate(ext))
-                {
-                    MessageBox.Show("Invalid data entered. All fields are required.");
-                }
-                else
-                {
-                    await ThreeCxClient.CreateExtensionOnServer(ext.Number, ext.FirstName, ext.LastName, ext.Email,
-                        "EmailNotificationType.SendVMailAsAttachmentAndDelete", ext.MobileNumber, ext.MobileNumber, "1234");
-                    ToBeAdded = new List<Extension>();
-                    DataEntryGrid.Visibility = Visibility.Hidden;
-                    SaveExtensions.Visibility = Visibility.Hidden;
-                    ExtensionData.Visibility = Visibility.Visible;
-                    UpdateExtensionDataGrid();
-                    await UpdateView();
-                    await DisplayValidExtensions(CompanyId);
-                }
-            }
-        }
 
         private static bool Validate(Extension extension)
         {
@@ -658,15 +636,15 @@ namespace ThinkVoip
             lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(ExtensionList);
 
-            if (DataEntryGrid.Visibility == Visibility.Visible)
-            {
-                DataEntryGrid.Visibility = Visibility.Hidden;
-            }
+            //if (DataEntryGrid.Visibility == Visibility.Visible)
+            //{
+            //    DataEntryGrid.Visibility = Visibility.Hidden;
+            //}
 
-            if (SaveExtensions.Visibility == Visibility.Visible)
-            {
-                SaveExtensions.Visibility = Visibility.Hidden;
-            }
+            //if (SaveExtensions.Visibility == Visibility.Visible)
+            //{
+            //    SaveExtensions.Visibility = Visibility.Hidden;
+            //}
 
             ExtensionData.ItemsSource = vmOnlyList;
             ExtensionData.Columns[0].Visibility = Visibility.Hidden;
