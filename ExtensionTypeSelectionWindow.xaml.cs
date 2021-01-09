@@ -120,6 +120,7 @@ namespace ThinkVoip
                         case ExtensionTypes.StandardUser:
 
                             this.firstName = firstName
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
@@ -136,6 +137,7 @@ namespace ThinkVoip
                         case ExtensionTypes.VoiceMailOnly:
 
                             this.firstName = firstName
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
@@ -149,6 +151,7 @@ namespace ThinkVoip
                         case ExtensionTypes.ForwardingOnly:
 
                             this.firstName = firstName
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
