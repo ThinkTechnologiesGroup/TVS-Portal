@@ -113,7 +113,5 @@
             </DataGrid.ContextMenu>
         </DataGrid>
         
-        <!--SaveExtensions-->
-        <!--<Button x:Name="SaveExtensions" Grid.Row="7" Grid.Column="2"  Grid.ColumnSpan="2"  FontWeight="Bold" FontSize="20" Visibility="Hidden" Foreground="Azure" Content ="" Margin="5,0,0,0" BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Right" />-->
     </Grid>
 </Window>
