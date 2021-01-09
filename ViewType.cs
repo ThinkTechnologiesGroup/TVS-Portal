@@ -4,6 +4,8 @@
     valid,
     invalid,
     total,
-    phones
+    phones,
+    VoicemailOnly,
+    ForwardingOnly
 }
 
