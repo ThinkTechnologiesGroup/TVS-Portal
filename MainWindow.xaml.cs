@@ -104,6 +104,8 @@ namespace ThinkVoip
             AddExt.Visibility = Visibility.Hidden;
             AddPhoneButton.Visibility = Visibility.Hidden;
             ExtensionsHeader.Visibility = Visibility.Hidden;
+            ExtSeperator.Visibility = Visibility.Hidden;
+            PhoneSeperator.Visibility = Visibility.Hidden;
             ExtensionsTotalDisplay.Content = "";
             VoimailOnlyExtensionsDisplay.Content = "";
             ExtensionsTotalInvalid.Content = "";
@@ -217,7 +219,8 @@ namespace ThinkVoip
                 SaveExtensions.Visibility = Visibility.Hidden;
             }
             await UpdateExtensionsCountDisplay(ExtensionList);
-
+            ExtSeperator.Visibility = Visibility.Visible;
+            PhoneSeperator.Visibility = Visibility.Visible;
             PleaseWaitTextBlock.Visibility = Visibility.Hidden;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
