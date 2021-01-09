@@ -35,7 +35,7 @@
 
         <Menu x:Name="MainMenu" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" Visibility="Hidden">
             <MenuItem x:Name="FileMenu" Header="_File">
-                <MenuItem Header="_Test" Click="MenuItem_Click"/>
+                <MenuItem Header="_Test" Click="OnTestButtonClick"/>
             </MenuItem> 
         </Menu>
         
