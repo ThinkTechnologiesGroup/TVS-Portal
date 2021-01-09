@@ -600,20 +600,18 @@ namespace ThinkVoip
 
         public async Task UpdateDisplay()
         {
-            await UpdateView();
             UpdateExtensionDataGrid();
             await UpdateView();
             switch (lastView)
             {
-                case Views.none:
+                case Views.none: 
+                    //Should never get here.
                     break;
                 case Views.valid:
                     await DisplayValidExtensions(CompanyId);
-
                     break;
                 case Views.invalid:
                     await DisplayInvalidExtensionInfo(CompanyId);
-
                     break;
                 case Views.total:
                     await DisplayExtensionInfo(CompanyId);
