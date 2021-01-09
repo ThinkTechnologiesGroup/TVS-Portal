@@ -120,8 +120,8 @@ namespace ThinkVoip
                         case ExtensionTypes.StandardUser:
 
                             this.firstName = firstName
-                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
                             await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
@@ -137,8 +137,8 @@ namespace ThinkVoip
                         case ExtensionTypes.VoiceMailOnly:
 
                             this.firstName = firstName
-                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
                             firstName = firstName.Trim() + " - Voicemail Only";
@@ -151,8 +151,8 @@ namespace ThinkVoip
                         case ExtensionTypes.ForwardingOnly:
 
                             this.firstName = firstName
-                                .Replace("Voicemail Only", "")
                                 .Replace("- Voicemail Only", "")
+                                .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
                             firstName = firstName.Trim() + " - Forward Only";

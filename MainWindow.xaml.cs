@@ -536,7 +536,6 @@ namespace ThinkVoip
                                 }
                         }
 
-
                         var result = MessageBox.Show($"Are you sure you want to remove extension(s) {extensionListString}?", "Are you sure?",
                             MessageBoxButton.YesNo);
 
@@ -553,7 +552,6 @@ namespace ThinkVoip
                             await UpdateDisplay();
                             //await DisplayValidExtensions(CompanyId);
                         }
-
 
                         break;
                     }
@@ -577,7 +575,6 @@ namespace ThinkVoip
             window.ShowDialog();
             await UpdateSelectedCompanyInfo();
 
-
         }
 
 
@@ -589,7 +586,6 @@ namespace ThinkVoip
 
             var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
             window.Show();
-
 
         }
 
@@ -640,8 +636,6 @@ namespace ThinkVoip
 
             var extensionsToEditList = ExtensionData.SelectedItems;
 
-
-
             if (ExtensionData.SelectedItem == null || ExtensionData.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
@@ -650,16 +644,12 @@ namespace ThinkVoip
 
             ToBeUpdated = extensionsToEditList;
 
-
             var selectedItem = ExtensionData.SelectedItem as Extension;
             CurrentExtension = selectedItem?.Number;
             CurrentExtensionClass = selectedItem;
 
             var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this, update: true);
             window.Show();
-
-
-
 
         }
     }
