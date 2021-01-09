@@ -153,6 +153,7 @@ namespace ThinkVoip
                 SaveExtensions.Visibility = Visibility.Hidden;
             }
 
+            lastView = Views.valid;
             ExtensionsTotalDisplay.Content = "";
             var company = await ConnectWiseConnection.CwClient.GetCompany(companyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
@@ -604,8 +605,7 @@ namespace ThinkVoip
             await UpdateView();
             switch (lastView)
             {
-                case Views.none: 
-                    //Should never get here.
+                case Views.none:
                     break;
                 case Views.valid:
                     await DisplayValidExtensions(CompanyId);
@@ -629,8 +629,9 @@ namespace ThinkVoip
             return;
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void OnTestButtonClick(object sender, RoutedEventArgs e)
         {
+
             return;
         }
 
