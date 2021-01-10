@@ -107,6 +107,7 @@ namespace ThinkVoip
 
         public async Task UpdateSelectedCompanyInfo()
         {
+            lastView = Views.none;
             PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
             PleaseWaitTextBlock.Visibility = Visibility.Visible;
             ThreeCxClient = null;
@@ -133,6 +134,12 @@ namespace ThinkVoip
             ExtensionsHeader.Visibility = Visibility.Hidden;
             ExtSeperator.Visibility = Visibility.Hidden;
             PhoneSeperator.Visibility = Visibility.Hidden;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
+            ForwardingOnlyExtensionsDisplay.Content = "";
+            ForwardingOnlyExtensionsCount.Text = "";
+            BilledUserExtensionsDisplay.Content = "";
+            BilledUserExtensionsCount.Text = "";
             ExtensionsTotalDisplay.Content = "";
             VoimailOnlyExtensionsDisplay.Content = "";
             ExtensionsTotalInvalid.Content = "";
@@ -148,6 +155,9 @@ namespace ThinkVoip
             ExtensionsTotalValid.Visibility = Visibility.Visible;
             PhonesTotalDisplay.Visibility = Visibility.Visible;
             VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
+
 
         }
 
@@ -157,6 +167,8 @@ namespace ThinkVoip
 
             ExtensionData.Visibility = Visibility.Hidden;
             VoimailOnlyExtensionsDisplay.Content = "";
+            ForwardingOnlyExtensionsDisplay.Content = "";
+            BilledUserExtensionsDisplay.Content = "";
             ExtensionsTotalDisplay.Content = "";
             ExtensionsTotalInvalid.Content = "";
             ExtensionsTotalValid.Content = "";
@@ -166,6 +178,8 @@ namespace ThinkVoip
             TotalValidExtensions.Text = "";
             PhonesTotal.Text = "";
             VoicemailOnlyExtensionsCount.Text = "";
+            ForwardingOnlyExtensionsCount.Text = "";
+            BilledUserExtensionsCount.Text = "";
         }
 
         public async Task DisplayClientInfo(int companyId)
@@ -201,7 +215,33 @@ namespace ThinkVoip
                 .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
 
             VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(ExtensionList).Count().ToString();
+            ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(ExtensionList).Count().ToString();
+            BilledUserExtensionsCount.Text = GetBilledUserExtensions(ExtensionList).Count().ToString();
 
+        }
+
+        private List<Extension> GetBilledUserExtensions(List<Extension> extensions)
+        {
+            var forwarding =  extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            var voicemail = extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
+            var op = extensions.Where(ext =>
+                            ext.FirstName.ToLower().Contains("test") ||
+                            ext.LastName.ToLower().Contains("test") ||
+                            ext.FirstName.ToLower().Contains("copy me") ||
+                            ext.FirstName.ToLower().Equals("operator") ||
+                            ext.FirstName.ToLower().Contains("template") ||
+                            ext.LastName.ToLower().Contains("template"));
+
+            var billedExtensions = extensions;
+            billedExtensions.RemoveAll(a => forwarding.Contains(a));
+            billedExtensions.RemoveAll(a => voicemail.Contains(a));
+            billedExtensions.RemoveAll(a => op.Contains(a));
+            return billedExtensions;
+        }
+
+        private List<Extension> GetForwardingOnlyExtensions(List<Extension> extensions)
+        {
+            return extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
         }
 
         private List<Extension> GetVoicemailOnlyExtensions(List<Extension> extensions)
@@ -212,10 +252,13 @@ namespace ThinkVoip
         private void UpdateExtensionDisplayGridNames()
         {
             ExtensionsTotalDisplay.Content = "Total:";
-            ExtensionsTotalInvalid.Content = "UnBilled:";
-            ExtensionsTotalValid.Content = "Valid:";
-            PhonesTotalDisplay.Content = "Phones:";
+            ExtensionsTotalInvalid.Content = "Operator/Tests:";
             VoimailOnlyExtensionsDisplay.Content = "Voicemail Only:";
+            ForwardingOnlyExtensionsDisplay.Content = "Forwarding Only:";
+            ExtensionsTotalValid.Content = "User Extensions:";
+            BilledUserExtensionsDisplay.Content = "Billed to Client:";
+            PhonesTotalDisplay.Content = "Phones:";
+
         }
 
         private static int GetUnbilledExtensionsCount(List<Extension> extensions)
@@ -559,7 +602,7 @@ namespace ThinkVoip
             switch (lastView)
             {
                 case Views.none:
-                    await DisplayValidExtensions(CompanyId);
+                    await DisplayExtensionInfo(CompanyId);
                     break;
                 case Views.valid:
                     await DisplayValidExtensions(CompanyId);
@@ -575,6 +618,12 @@ namespace ThinkVoip
                     break;
                 case Views.VoicemailOnly:
                     DisplayVoicemailExtensionsInGrid();
+                    break;
+                case Views.ForwardingOnly:
+                    DisplayForwardingExtensionsInGrid();
+                    break;
+                case Views.BilledToClient:
+                    DisplayBilledUserExtensions();
                     break;
                 default:
                     break;
@@ -630,6 +679,36 @@ namespace ThinkVoip
 
 
             ExtensionData.ItemsSource = vmOnlyList;
+            ExtensionData.Columns[0].Visibility = Visibility.Hidden;
+            ExtensionData.Visibility = Visibility.Visible;
+        }
+        private async void DisplayForwardingExtensionsInGrid()
+        {
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
+            lastView = Views.ForwardingOnly;
+            var FwdOnlyList = GetForwardingOnlyExtensions(ExtensionList);
+
+            ExtensionData.ItemsSource = FwdOnlyList;
+            ExtensionData.Columns[0].Visibility = Visibility.Hidden;
+            ExtensionData.Visibility = Visibility.Visible;
+        }
+
+        private void ForwardingOnlyExtensionsDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayForwardingExtensionsInGrid();
+        }
+
+        private void BilledUserExtensionsDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayBilledUserExtensions();
+        }
+
+        private void DisplayBilledUserExtensions()
+        {
+            lastView = Views.BilledToClient;
+            var BilledToClient = GetBilledUserExtensions(ExtensionList);
+
+            ExtensionData.ItemsSource = BilledToClient;
             ExtensionData.Columns[0].Visibility = Visibility.Hidden;
             ExtensionData.Visibility = Visibility.Visible;
         }

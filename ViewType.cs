@@ -11,7 +11,8 @@ public enum Views
     total,
     phones,
     VoicemailOnly,
-    ForwardingOnly
+    ForwardingOnly,
+    BilledToClient
 
 }
 
