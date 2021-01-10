@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,14 +19,42 @@ namespace ThinkVoip
     {
         public enum PhoneModels
         {
+            [Description("Yealink Cp 960")]
             YealinkCp960,
+            [Description("Yealink T40g")]
             YealinkT40G,
+            [Description("Yealink T46s")]
             YealinkT46S,
+            [Description("Yealink T48s")]
             YealinkT48S,
+            [Description("Yealink T57W")]
             YealinkT57W,
+            [Description("Fanvil H5")]
             FanvilH5,
+            [Description("Yealink T48s - TVS custom")]
             YealinkT46STVS
         }
+
+        public const string TvsT46s = "Yealink T46S-tvs_yealinkt4x (tvs_yealinkt4x.ph.xml)";
+        public const string YealinkCp960 = "Yealink CP960";
+        public const string YealinkT57W = "Yealink T57W";
+        public const string YealinkT40G = "Yealink T40G";
+        public const string YealinkT46S = "Yealink T46S";
+        public const string YealinkT48S = "Yealink T48s";
+        public const string FanvilH5 = "Fanvil H5";
+
+        public static List<Phone> phoneModels = new List<Phone>()
+        {
+            new Phone{ Model = YealinkCp960},
+            new Phone{ Model = YealinkT40G},
+            new Phone{ Model = YealinkT46S},
+            new Phone{ Model = YealinkT48S},
+            new Phone{ Model = YealinkT57W},
+            new Phone{ Model = FanvilH5},
+            new Phone{ Model = TvsT46s}
+
+        };
+
 
         public static List<Extension> ExtensionList;
         public static ThreeCxClient ThreeCxClient;
@@ -81,10 +111,8 @@ namespace ThinkVoip
             PleaseWaitTextBlock.Visibility = Visibility.Visible;
             ThreeCxClient = null;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            var companyId = selectedCompany.company.id;
+            CompanyId = selectedCompany.company.id;
             CleanExtensionDataGrid();
-            CompanyId = companyId;
             try
             {
                 await DisplayClientInfo(CompanyId);
@@ -159,10 +187,10 @@ namespace ThinkVoip
 
         }
 
-        private async Task UpdateExtensionsCountDisplay(List<Extension> extensions)
+        private async Task UpdateExtensionsCountDisplay()
         {
-            var extCount = extensions.Count();
-            int invalidExtensions = GetUnbilledExtensionsCount(extensions);
+            var extCount = ExtensionList.Count();
+            int invalidExtensions = GetUnbilledExtensionsCount(ExtensionList);
             var phones = await ThreeCxClient.GetPhonesList();
             UpdateExtensionDisplayGridNames();
             ExtensionsTotal.Text = extCount.ToString();
@@ -172,7 +200,7 @@ namespace ThinkVoip
             PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
                 .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
 
-            VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(extensions).Count().ToString();
+            VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(ExtensionList).Count().ToString();
 
         }
 
@@ -203,6 +231,8 @@ namespace ThinkVoip
 
         public async Task UpdateView()
         {
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
+
             if (CompanyId == 19532)
             {
                 ExtensionsTotalDisplay.Content = "No valid Info";
@@ -210,7 +240,7 @@ namespace ThinkVoip
             }
 
 
-            await UpdateExtensionsCountDisplay(ExtensionList);
+            await UpdateExtensionsCountDisplay();
             ExtSeperator.Visibility = Visibility.Visible;
             PhoneSeperator.Visibility = Visibility.Visible;
             PleaseWaitTextBlock.Visibility = Visibility.Hidden;
@@ -231,10 +261,10 @@ namespace ThinkVoip
 
         private async Task DisplayExtensionInfo(int companyId)
         {
-            var extensions = await ThreeCxClient.GetExtensionsList();
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
 
             ExtensionData.Visibility = Visibility.Visible;
-            ExtensionData.ItemsSource = extensions;
+            ExtensionData.ItemsSource = ExtensionList;
             ExtensionData.BorderBrush = Brushes.Black;
             ExtensionData.Columns[0].Visibility = Visibility.Collapsed;
         }
@@ -252,8 +282,8 @@ namespace ThinkVoip
         {
 
 
-            var extensions = await ThreeCxClient.GetExtensionsList();
-            var cleanedExtensions = extensions
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
+            var cleanedExtensions = ExtensionList
                 .Where(ext =>
                     ext.FirstName.ToLower().Contains("test") ||
                     ext.LastName.ToLower().Contains("test") ||
@@ -289,9 +319,9 @@ namespace ThinkVoip
         {
 
 
-            var extensions = await ThreeCxClient.GetExtensionsList();
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
             var cleanedExtensions = new List<Extension>();
-            cleanedExtensions.AddRange(extensions
+            cleanedExtensions.AddRange(ExtensionList
                 .Where(ext => !ext.FirstName.ToLower().Contains("test"))
                 .Where(ext => !ext.LastName.ToLower().Contains("test"))
                 .Where(ext => !ext.FirstName.ToLower().Contains("copy me"))
@@ -390,7 +420,8 @@ namespace ThinkVoip
                         var selectedItem = ExtensionData.SelectedItem as Extension;
                         CurrentExtension = selectedItem?.Number;
                         CurrentExtensionClass = selectedItem;
-                        var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = Enum.GetValues(typeof(PhoneModels)) } };
+                        //var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = Enum.GetValues(typeof(PhoneModels))} };
+                        var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = phoneModels, DisplayMemberPath = "Model"} };
                         phoneWindow.ShowDialog();
                         await UpdateView();
                         await DisplayExtensionInfo(CompanyId);
@@ -474,11 +505,9 @@ namespace ThinkVoip
                                 await ThreeCxClient.DeleteExtension(extension.Number);
                             }
 
-                            // await UpdateView();
                             UpdateExtensionDataGrid();
                             await UpdateView();
-                            await UpdateDisplay();
-                            //await DisplayValidExtensions(CompanyId);
+                            
                         }
 
                         break;
@@ -530,6 +559,7 @@ namespace ThinkVoip
             switch (lastView)
             {
                 case Views.none:
+                    await DisplayValidExtensions(CompanyId);
                     break;
                 case Views.valid:
                     await DisplayValidExtensions(CompanyId);
@@ -549,6 +579,7 @@ namespace ThinkVoip
                 default:
                     break;
             }
+            
         }
 
         private void FileMenu_Click(object sender, RoutedEventArgs e)
@@ -590,8 +621,9 @@ namespace ThinkVoip
 
         }
 
-        private void DisplayVoicemailExtensionsInGrid()
+        private async void DisplayVoicemailExtensionsInGrid()
         {
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
             lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(ExtensionList);
 
@@ -602,4 +634,5 @@ namespace ThinkVoip
             ExtensionData.Visibility = Visibility.Visible;
         }
     }
+    
 }
