@@ -251,13 +251,13 @@ namespace ThinkVoip
 
         private void UpdateExtensionDisplayGridNames()
         {
-            ExtensionsTotalDisplay.Content = "Total:";
+            ExtensionsTotalDisplay.Content = "Total Extensions:";
             ExtensionsTotalInvalid.Content = "Operator/Tests:";
             VoimailOnlyExtensionsDisplay.Content = "Voicemail Only:";
             ForwardingOnlyExtensionsDisplay.Content = "Forwarding Only:";
             ExtensionsTotalValid.Content = "User Extensions:";
             BilledUserExtensionsDisplay.Content = "Billed to Client:";
-            PhonesTotalDisplay.Content = "Phones:";
+            PhonesTotalDisplay.Content = "Phones Detected:";
 
         }
 
@@ -323,7 +323,6 @@ namespace ThinkVoip
 
         private async Task DisplayInvalidExtensionInfo(int companyId)
         {
-
 
             ExtensionList = await ThreeCxClient.GetExtensionsList();
             var cleanedExtensions = ExtensionList
@@ -550,6 +549,7 @@ namespace ThinkVoip
 
                             UpdateExtensionDataGrid();
                             await UpdateView();
+                            await UpdateDisplay();
                             
                         }
 
