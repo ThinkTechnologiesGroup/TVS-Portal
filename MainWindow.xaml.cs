@@ -134,6 +134,7 @@ namespace ThinkVoip
             ExtensionsHeader.Visibility = Visibility.Hidden;
             ExtSeperator.Visibility = Visibility.Hidden;
             PhoneSeperator.Visibility = Visibility.Hidden;
+            ExtSeperatorOperators.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsDisplay.Content = "";
@@ -157,6 +158,7 @@ namespace ThinkVoip
             VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
+
 
 
         }
@@ -285,6 +287,7 @@ namespace ThinkVoip
 
             await UpdateExtensionsCountDisplay();
             ExtSeperator.Visibility = Visibility.Visible;
+            ExtSeperatorOperators.Visibility = Visibility.Visible;
             PhoneSeperator.Visibility = Visibility.Visible;
             PleaseWaitTextBlock.Visibility = Visibility.Hidden;
             AddExt.Visibility = Visibility.Visible;

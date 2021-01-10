@@ -99,49 +99,53 @@
         
         <TextBlock x:Name="InValidExtensions"  MaxHeight="20" Grid.Row="5" Grid.Column="3" Grid.RowSpan="1" HorizontalAlignment="Right"/>
 
+        <!--extensions seperator-->
+        <Separator x:Name="ExtSeperatorOperators" Grid.Column="2" Grid.Row="6" BorderThickness="3" BorderBrush="Black" VerticalAlignment="Top"
+                   HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Visibility="Hidden"></Separator>
+
         <!--valid extensions-->
-        <Button x:Name="ExtensionsTotalValid" MaxHeight="20" Grid.Row="6" Grid.RowSpan="1" Grid.Column="2"   Content =""
+        <Button x:Name="ExtensionsTotalValid" MaxHeight="20" Grid.Row="7" Grid.RowSpan="1" Grid.Column="2"   Content =""
                 BorderBrush="{x:Null}" Background="{x:Null}" VerticalContentAlignment="Top" HorizontalAlignment="Left"
                 Click="ExtensionsTotalValid_Click" Visibility="Hidden"/>
 
-        <TextBlock x:Name="TotalValidExtensions"  MaxHeight="20" Grid.Row="6" Grid.Column="3" Grid.RowSpan="1"  HorizontalAlignment="Right"/>
+        <TextBlock x:Name="TotalValidExtensions"  MaxHeight="20" Grid.Row="7" Grid.Column="3" Grid.RowSpan="1"  HorizontalAlignment="Right"/>
 
         <!--Voicemail Only extensions-->
-        <Button x:Name="VoimailOnlyExtensionsDisplay" Grid.Row="7" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20" Content=""
+        <Button x:Name="VoimailOnlyExtensionsDisplay" Grid.Row="8" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20" Content=""
                 BorderBrush="{x:Null}" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Click="VoimailOnlyExtensionsDisplay_Click" Visibility="Hidden" />
-        <TextBlock x:Name="VoicemailOnlyExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="7" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <TextBlock x:Name="VoicemailOnlyExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="8" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
         
         <!--ForwardingOnlyExtensions-->
-        <Button x:Name="ForwardingOnlyExtensionsDisplay" Grid.Row="8" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20"
+        <Button x:Name="ForwardingOnlyExtensionsDisplay" Grid.Row="9" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20"
                 Content=""  BorderBrush="{x:Null}" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Click="ForwardingOnlyExtensionsDisplay_Click" Visibility="Hidden" />
         
-        <TextBlock x:Name="ForwardingOnlyExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="8" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <TextBlock x:Name="ForwardingOnlyExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="9" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
 
         <!--Billed To Client Extensions-->
-        <Button x:Name="BilledUserExtensionsDisplay" Grid.Row="9" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20"
+        <Button x:Name="BilledUserExtensionsDisplay" Grid.Row="10" Grid.Column="2"  Grid.RowSpan="1" MaxHeight="20"
                 Content=""  BorderBrush="{x:Null}" Background="{x:Null}" VerticalAlignment="Top" HorizontalAlignment="Left" Click="BilledUserExtensionsDisplay_Click" Visibility="Hidden" />
 
-        <TextBlock x:Name="BilledUserExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="9" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
+        <TextBlock x:Name="BilledUserExtensionsCount"  MaxHeight="20"  Grid.RowSpan="1"  Grid.Row="10" Grid.Column="3"  VerticalAlignment="Top" HorizontalAlignment="Right" />
 
         <!--extensions seperator-->
-        <Separator x:Name="ExtSeperator" Grid.Column="2" Grid.Row="10" BorderThickness="3" BorderBrush="Black" VerticalAlignment="Top"
+        <Separator x:Name="ExtSeperator" Grid.Column="2" Grid.Row="11" BorderThickness="3" BorderBrush="Black" VerticalAlignment="Top"
                    HorizontalAlignment="Stretch" Grid.ColumnSpan="2" Visibility="Hidden"></Separator>
         
         <!--Phones display-->
-        <Button x:Name="PhonesTotalDisplay"  MaxHeight="20" Grid.Row="11" Grid.Column="2"  VerticalAlignment="Top" Grid.RowSpan="1" Content=""
+        <Button x:Name="PhonesTotalDisplay"  MaxHeight="20" Grid.Row="12" Grid.Column="2"  VerticalAlignment="Top" Grid.RowSpan="1" Content=""
                 BorderBrush="{x:Null}" Background="{x:Null}" HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Hidden" />
         
-        <TextBlock x:Name="PhonesTotal"   MaxHeight="20" Grid.Row="11"  Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="1" HorizontalAlignment="Right"/>
+        <TextBlock x:Name="PhonesTotal"   MaxHeight="20" Grid.Row="12"  Grid.Column="3" VerticalAlignment="Top" Grid.RowSpan="1" HorizontalAlignment="Right"/>
         
         <!--phones seperator-->
-        <Separator x:Name="PhoneSeperator" Grid.Column="2" Grid.Row="12" HorizontalAlignment="Stretch"  VerticalAlignment="Top"  BorderThickness="3"
+        <Separator x:Name="PhoneSeperator" Grid.Column="2" Grid.Row="13" HorizontalAlignment="Stretch"  VerticalAlignment="Top"  BorderThickness="3"
                    BorderBrush="Black" Grid.ColumnSpan="2" Visibility="Hidden"></Separator>
         
         <!--Add buttons-->
-        <Button x:Name="AddExt" Grid.Row="13" Grid.Column="2"   MaxHeight="20" Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748"
+        <Button x:Name="AddExt" Grid.Row="14" Grid.Column="2"   MaxHeight="20" Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748"
                 VerticalAlignment="Top" HorizontalAlignment="Stretch" Content="Add Extension" BorderBrush="Black" BorderThickness="1" Visibility="Hidden" Click="AddExtension_Click"/>
         
-        <Button x:Name="AddPhoneButton" Grid.Row="13"  MaxHeight="20" Grid.Column="3" Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748" 
+        <Button x:Name="AddPhoneButton" Grid.Row="14"  MaxHeight="20" Grid.Column="3" Grid.RowSpan="1"  FontWeight="DemiBold" Background="#FF8DC748" 
                 VerticalAlignment="Top" HorizontalAlignment="Stretch" Content="  Add Phone  " BorderBrush="Black" BorderThickness="1" Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click"/>
         
         <!--Extensions and phones datagrid-->
