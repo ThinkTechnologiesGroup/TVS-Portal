@@ -118,13 +118,13 @@ namespace ThinkVoip
 
         public async Task UpdateSelectedCompanyInfo()
         {
+            CleanExtensionDataGrid();
             lastView = Views.none;
             PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
             PleaseWaitTextBlock.Visibility = Visibility.Visible;
             ThreeCxClient = null;
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             CompanyId = selectedCompany.company.id;
-            CleanExtensionDataGrid();
             try
             {
                 await DisplayClientInfo(CompanyId);
@@ -148,29 +148,21 @@ namespace ThinkVoip
             ExtSeperatorOperators.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Content = "";
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+
             ForwardingOnlyExtensionsCount.Text = "";
-            BilledUserExtensionsDisplay.Content = "";
+            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsCount.Text = "";
-            ExtensionsTotalDisplay.Content = "";
-            VoimailOnlyExtensionsDisplay.Content = "";
-            ExtensionsTotalInvalid.Content = "";
-            ExtensionsTotalValid.Content = "";
-            PhonesTotalDisplay.Content = "";
+            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
+            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
+            ExtensionsTotalValid.Visibility = Visibility.Hidden;
+            PhonesTotalDisplay.Visibility = Visibility.Hidden;
             ExtensionsTotal.Text = "";
             InValidExtensions.Text = "";
             TotalValidExtensions.Text = "";
             PhonesTotal.Text = "";
             VoicemailOnlyExtensionsCount.Text = "";
-            ExtensionsTotalDisplay.Visibility = Visibility.Visible;
-            ExtensionsTotalInvalid.Visibility = Visibility.Visible;
-            ExtensionsTotalValid.Visibility = Visibility.Visible;
-            PhonesTotalDisplay.Visibility = Visibility.Visible;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
-            BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
-
-
 
         }
 
@@ -179,13 +171,13 @@ namespace ThinkVoip
 
 
             ExtensionData.Visibility = Visibility.Hidden;
-            VoimailOnlyExtensionsDisplay.Content = "";
-            ForwardingOnlyExtensionsDisplay.Content = "";
-            BilledUserExtensionsDisplay.Content = "";
-            ExtensionsTotalDisplay.Content = "";
-            ExtensionsTotalInvalid.Content = "";
-            ExtensionsTotalValid.Content = "";
-            PhonesTotalDisplay.Content = "";
+            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
+            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
+            ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
+            ExtensionsTotalValid.Visibility = Visibility.Hidden;
+            PhonesTotalDisplay.Visibility = Visibility.Hidden;
             ExtensionsTotal.Text = "";
             InValidExtensions.Text = "";
             TotalValidExtensions.Text = "";
@@ -200,7 +192,7 @@ namespace ThinkVoip
 
 
             lastView = Views.valid;
-            ExtensionsTotalDisplay.Content = "";
+            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
             var company = await ConnectWiseConnection.CwClient.GetCompany(companyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
             var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
@@ -264,13 +256,13 @@ namespace ThinkVoip
 
         private void UpdateExtensionDisplayGridNames()
         {
-            ExtensionsTotalDisplay.Content = "Total Extensions:";
-            ExtensionsTotalInvalid.Content = "Operator/Tests:";
-            VoimailOnlyExtensionsDisplay.Content = "Voicemail Only:";
-            ForwardingOnlyExtensionsDisplay.Content = "Forwarding Only:";
-            ExtensionsTotalValid.Content = "User Extensions:";
-            BilledUserExtensionsDisplay.Content = "Billed to Client:";
-            PhonesTotalDisplay.Content = "Phones Detected:";
+            ExtensionsTotalDisplay.Visibility = Visibility.Visible;
+            ExtensionsTotalInvalid.Visibility = Visibility.Visible;
+            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            ExtensionsTotalValid.Visibility = Visibility.Visible;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
+            PhonesTotalDisplay.Visibility = Visibility.Visible;
 
         }
 
