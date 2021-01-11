@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Configuration;
+using System.Collections.Specialized;
+
+using MaterialDesignThemes.Wpf;
 
 namespace ThinkVoip
 {
@@ -34,6 +38,8 @@ namespace ThinkVoip
             [Description("Yealink T48s - TVS custom")]
             YealinkT46STVS
         }
+
+        private bool isDark;
 
         public const string TvsT46s = "Yealink T46S-tvs_yealinkt4x (tvs_yealinkt4x.ph.xml)";
         public const string YealinkCp960 = "Yealink CP960";
@@ -75,10 +81,15 @@ namespace ThinkVoip
             InitializeComponent();
             ShowMenu();
             IsDebug();
-
+            var dark = ConfigurationManager.AppSettings.Get("DarkMode");
+            if (dark == "false")
+                isDark = false;
+            else
+                isDark = true;
+            SetTheme();
         }
 
-        [Conditional("DEBUG")]
+        //[Conditional("DEBUG")]
         private void ShowMenu()
         {
 
@@ -641,8 +652,52 @@ namespace ThinkVoip
 
         private void OnTestButtonClick(object sender, RoutedEventArgs e)
         {
+            //return;
+            SetTheme();
 
-            return;
+        }
+
+        private void SetTheme()
+        {
+          
+
+            var _paletteHelper = new PaletteHelper();
+            ITheme theme = _paletteHelper.GetTheme();
+
+
+            IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
+            theme.SetBaseTheme(baseTheme);
+            _paletteHelper.SetTheme(theme);
+
+            var value = "";
+            if (isDark)
+            {
+                value = "true";
+
+            }
+            else
+            {
+                value = "false";
+
+            }
+            
+
+            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            configuration.AppSettings.Settings["DarkMode"].Value = value;
+            configuration.Save();
+
+            if (isDark)
+            {
+                isDark = false;
+
+            }
+            else
+            {
+                isDark = true;
+
+            }
+
+
         }
 
         private void MenuItem_Click_Standardize_Stun(object sender, RoutedEventArgs e)

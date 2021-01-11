@@ -4,8 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThinkVoip"
-        mc:Ignorable="d" FontSize ="13" FontFamily="{StaticResource JetBrainsMono-Regular}" Padding="5" Margin="5,0,5,0"
-        Title="Add New Phone" Height="350" Width="500" WindowStartupLocation="CenterScreen">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="12"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d" FontSize ="12"  Padding="5" Margin="5,0,5,0"
+        Title="Add New Phone" Height="350" Width="550" WindowStartupLocation="CenterScreen">
     <Grid VerticalAlignment="Stretch">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20"/>

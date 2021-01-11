@@ -4,7 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThinkVoip"
-        mc:Ignorable="d" FontSize ="12" FontFamily="{StaticResource JetBrainsMono-Regular}" Padding="5" Margin="5,0,5,0"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="12"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"        
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        mc:Ignorable="d" FontSize ="12"  Padding="5" Margin="5,0,5,0"
         Title="Extension Type" Height="350" Width="450" WindowStartupLocation="CenterScreen" SizeToContent="Width" Closed="Window_Closed" Loaded="Window_Loaded" HorizontalAlignment="Left">
     <Grid >
         <Grid.ColumnDefinitions>
@@ -56,13 +63,13 @@
         <TextBox x:Name="LastNameEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="3" MinWidth="150" KeyDown="LastName_KeyDown"/>
 
         <TextBlock x:Name="Email" Visibility="Hidden" Grid.Row="2" Grid.Column="4"  Text="Email Address" />
-        <TextBox x:Name="EmailEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="4" MinWidth="150" KeyDown="Email_KeyDown"/>
+        <TextBox x:Name="EmailEntry" Visibility="Hidden"  Grid.Row="3" Grid.Column="4" MinWidth="150" KeyDown="Email_KeyDown"/>
 
         <TextBlock x:Name="MobileNumber" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Text="Mobile Number" />
-        <TextBox x:Name="MobileNumberEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="3" MinWidth="150" />
+        <TextBox x:Name="MobileNumberEntry" Visibility="Hidden"  Grid.Row="3" Grid.Column="3" MinWidth="150" />
 
-        <Button x:Name="AddExtentionButton" Grid.Row="4" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1"  FontWeight="Bold" FontSize="20" Visibility="Hidden" Content ="Add" HorizontalAlignment="Stretch" MinWidth="75" Click="AddExtention_Click" />
-        <Button x:Name="SetExtensionBack" Grid.Row="4" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1"  FontSize="20" Visibility="Hidden" Content ="Back"  HorizontalAlignment="Stretch" Click="SetExtensionBack_Click" />
+        <Button x:Name="AddExtentionButton" Grid.Row="4" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="0,2,2,0" FontWeight="Bold" FontSize="20" Visibility="Hidden" Content ="Add" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" MinWidth="75" Click="AddExtention_Click" />
+        <Button x:Name="SetExtensionBack" Grid.Row="4" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="0,2,2,0" FontSize="20" Visibility="Hidden" Content ="Back"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Click="SetExtensionBack_Click" />
 
 
         <TextBlock x:Name="PleaseWaitTextBlock" Grid.Row="5" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" FontWeight="Bold" Foreground="Red" Visibility="Hidden" Text="Please wait..."/>
