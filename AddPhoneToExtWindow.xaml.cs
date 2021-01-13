@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Windows;
-using static ThinkVoip.MainWindow;
 
 namespace ThinkVoip
 {
@@ -25,7 +23,7 @@ namespace ThinkVoip
         private async void AddPhoneToExtension_Click(object sender, RoutedEventArgs e)
         {
 
-          
+
             var extensionNumber = MainWindow.CurrentExtension;
             var selectedPhone = PhonesDropDownList.SelectedItem as Phone;
             var phoneType = selectedPhone.Model;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -21,7 +22,10 @@ namespace ThinkVoip
 {
     internal class Docs
     {
-        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", "mwiener", "PLokijuh1");
+        private static string user = ConfigurationManager.AppSettings["AdAuthUser"];
+        private static string pass = ConfigurationManager.AppSettings["AdAuthPass"];
+
+        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", user, pass);
         private readonly string _authKey;
         private readonly string _baseUrl;
 

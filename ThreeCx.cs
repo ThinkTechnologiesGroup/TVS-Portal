@@ -162,7 +162,6 @@ namespace ThinkVoip
             }
         }
 
-
         public async Task<List<Phone>> GetPhonesList()
         {
             _apiEndPoint = "PhoneList";
@@ -1708,6 +1707,9 @@ namespace ThinkVoip
     [MessagePackObject]
     public class Phone
     {
+        private string _modelShortName;
+
+
         [Key(0)]
         public string WhateverThisThingIs { get; set; }
 
@@ -1729,6 +1731,18 @@ namespace ThinkVoip
 
         [Key(6)]
         public string Model { get; set; }
+        [IgnoreMember]
+        public string ModelShortName
+        {
+            get;
+            set;
+        }
+        [IgnoreMember]
+        public string ModelDisplayName
+        {
+            get => _modelShortName ?? Model;
+            set { _modelShortName = value; }
+        }
 
         [Key(7)]
         public string Vendor { get; set; }

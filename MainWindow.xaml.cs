@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
-using System.Configuration;
-using System.Collections.Specialized;
 
 using MaterialDesignThemes.Wpf;
+
+using ThinkVoipTool;
+using ThinkVoipTool.Properties;
 
 namespace ThinkVoip
 {
@@ -21,25 +23,6 @@ namespace ThinkVoip
     /// </summary>
     public partial class MainWindow : Window
     {
-        public enum PhoneModels
-        {
-            [Description("Yealink Cp 960")]
-            YealinkCp960,
-            [Description("Yealink T40g")]
-            YealinkT40G,
-            [Description("Yealink T46s")]
-            YealinkT46S,
-            [Description("Yealink T48s")]
-            YealinkT48S,
-            [Description("Yealink T57W")]
-            YealinkT57W,
-            [Description("Fanvil H5")]
-            FanvilH5,
-            [Description("Yealink T48s - TVS custom")]
-            YealinkT46STVS
-        }
-
-        private bool isDark;
 
         public const string TvsT46s = "Yealink T46S-tvs_yealinkt4x (tvs_yealinkt4x.ph.xml)";
         public const string YealinkCp960 = "Yealink CP960";
@@ -49,6 +32,9 @@ namespace ThinkVoip
         public const string YealinkT48S = "Yealink T48s";
         public const string FanvilH5 = "Fanvil H5";
 
+
+
+
         public static List<Phone> phoneModels = new List<Phone>()
         {
             new Phone{ Model = YealinkCp960},
@@ -57,11 +43,12 @@ namespace ThinkVoip
             new Phone{ Model = YealinkT48S},
             new Phone{ Model = YealinkT57W},
             new Phone{ Model = FanvilH5},
-            new Phone{ Model = TvsT46s}
+            new Phone{ Model = TvsT46s, ModelDisplayName = "TVS - Yealink T46s"}
 
         };
 
-
+        public bool isDark = Settings.Default.isDark;
+        public static bool isAuthenticated = false;
         public static List<Extension> ExtensionList;
         public static ThreeCxClient ThreeCxClient;
         public static int CompanyId;
@@ -72,52 +59,96 @@ namespace ThinkVoip
         public static List<Extension> systemExtensions;
         public static Extension CurrentExtensionClass;
         public static IList ToBeUpdated;
-        private bool debug = false;
         public Views lastView;
+        public bool showTtg => Settings.Default.showTtgClients;
+        public static string savedUser => Settings.Default.userName;
 
 
         public MainWindow()
         {
             InitializeComponent();
             ShowMenu();
-            IsDebug();
-            var dark = ConfigurationManager.AppSettings.Get("DarkMode");
-            if (dark == "false")
-                isDark = false;
-            else
-                isDark = true;
             SetTheme();
+
+            try
+            {
+                if (Settings.Default.RememberMe)
+                {
+
+                    if (Login.TryLogin(savedUser, TryGetPassword()))
+                    {
+                        MainWindow.isAuthenticated = true;
+                    }
+                }
+
+                if (!isAuthenticated)
+                {
+                    var window = new Login();
+                    window.ShowDialog();
+                }
+                if (!isAuthenticated)
+                {
+                    this.Close();
+                    return;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Unable to connect to domain for authentication", "Error");
+            }
+
         }
 
-        //[Conditional("DEBUG")]
+        public string TryGetPassword()
+        {
+            try
+            {
+                var storedPassword = Settings.Default.passWord;
+                var entropy = Settings.Default.entropy;
+                byte[] encodedPassword = ProtectedData.Unprotect(storedPassword, entropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(encodedPassword);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+
+        }
+
         private void ShowMenu()
         {
-
             MainMenu.Visibility = Visibility.Visible;
+            ShowqTtgCheckbox.IsChecked = showTtg;
+
         }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            await updateCustomerList();
+        }
+
+        private async Task updateCustomerList()
+        {
             var allVoipClients = await ConnectWiseConnection.CwClient.GetAllTvsVoIpClients();
-            if (debug)
+
+            if (showTtg)
             {
                 allVoipClients.AddRange(await ConnectWiseConnection.CwClient.GetAllThinkVoIpClients());
             }
             CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
+
         }
 
-        [Conditional("DEBUG")]
-        private void IsDebug()
-        {
-            debug = true;
-        }
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var listBoxSender = sender as ListBox;
+            if (listBoxSender.SelectedItems.Count == 0) return;
             await UpdateSelectedCompanyInfo();
         }
 
         public async Task UpdateSelectedCompanyInfo()
         {
+
             CleanExtensionDataGrid();
             lastView = Views.none;
             PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
@@ -133,12 +164,13 @@ namespace ThinkVoip
             {
                 this.PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Failed to Open Client");
             }
+
         }
 
         public void CleanExtensionDataGrid()
         {
             ThinkyMainImage.Visibility = Visibility.Hidden;
-            ExtensionData.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Hidden;
 
             AddExt.Visibility = Visibility.Hidden;
             AddPhoneButton.Visibility = Visibility.Hidden;
@@ -170,7 +202,8 @@ namespace ThinkVoip
         {
 
 
-            ExtensionData.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Hidden;
+
             VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
@@ -213,21 +246,24 @@ namespace ThinkVoip
             var phones = await ThreeCxClient.GetPhonesList();
             UpdateExtensionDisplayGridNames();
             ExtensionsTotal.Text = extCount.ToString();
-
             InValidExtensions.Text = invalidExtensions.ToString();
             TotalValidExtensions.Text = (extCount - invalidExtensions).ToString();
+
+
             PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
                 .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
 
+
             VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(ExtensionList).Count().ToString();
             ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(ExtensionList).Count().ToString();
+
             BilledUserExtensionsCount.Text = GetBilledUserExtensions(ExtensionList).Count().ToString();
 
         }
 
         private List<Extension> GetBilledUserExtensions(List<Extension> extensions)
         {
-            var forwarding =  extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            var forwarding = extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
             var voicemail = extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
             var op = extensions.Where(ext =>
                             ext.FirstName.ToLower().Contains("test") ||
@@ -306,16 +342,16 @@ namespace ThinkVoip
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayExtensionInfo(companyId);
+
         }
 
         private async Task DisplayExtensionInfo(int companyId)
         {
             ExtensionList = await ThreeCxClient.GetExtensionsList();
-
-            ExtensionData.Visibility = Visibility.Visible;
-            ExtensionData.ItemsSource = ExtensionList;
-            ExtensionData.BorderBrush = Brushes.Black;
-            ExtensionData.Columns[0].Visibility = Visibility.Collapsed;
+            ExtensionList = ExtensionList.OrderBy(a => a.Number).ToList();
+            ListViewGrid.ItemsSource = ExtensionList;
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Visible;
         }
 
         private async void ExtensionsTotalInvalid_Click(object sender, RoutedEventArgs e)
@@ -341,15 +377,15 @@ namespace ThinkVoip
                     ext.LastName.ToLower().Contains("template")).ToList();
             if (!cleanedExtensions.Any())
             {
-                ExtensionData.Visibility = Visibility.Hidden;
+                ListViewGrid.Visibility = Visibility.Hidden;
                 return;
             }
             else
             {
-                ExtensionData.Visibility = Visibility.Visible;
-                ExtensionData.ItemsSource = cleanedExtensions;
-                ExtensionData.BorderBrush = Brushes.Black;
-                ExtensionData.Columns[0].Visibility = Visibility.Collapsed;
+                ListViewGrid.ItemsSource = cleanedExtensions;
+                PhoneListViewGrid.Visibility = Visibility.Hidden;
+
+                ListViewGrid.Visibility = Visibility.Visible;
             }
         }
 
@@ -377,11 +413,9 @@ namespace ThinkVoip
                 .Where(ext => !ext.FirstName.ToLower().Contains("template"))
                 .Where(ext => !ext.LastName.ToLower().Contains("template")));
 
-
-            ExtensionData.ItemsSource = cleanedExtensions;
-            ExtensionData.Visibility = Visibility.Visible;
-            ExtensionData.BorderBrush = Brushes.Black;
-            ExtensionData.Columns[0].Visibility = Visibility.Collapsed;
+            ListViewGrid.ItemsSource = cleanedExtensions;
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Visible;
         }
 
         private async void PhonesTotalDisplay_Click(object sender, RoutedEventArgs e)
@@ -406,70 +440,34 @@ namespace ThinkVoip
             }
 
 
+            ListViewGrid.Visibility = Visibility.Hidden;
+            cleanedPhones = cleanedPhones.ToList().OrderBy(a => a.ExtensionNumber);
+            PhoneListViewGrid.ItemsSource = cleanedPhones;
+            PhoneListViewGrid.Visibility = Visibility.Visible;
 
-            ExtensionData.ItemsSource = cleanedPhones;
-            ExtensionData.Visibility = Visibility.Visible;
 
-            foreach (var extensionColumn in ExtensionData.Columns.Where(column =>
-                column.DisplayIndex != 6 &&
-                column.DisplayIndex != 7 &&
-                column.DisplayIndex != 8 &&
-                column.DisplayIndex != 9 &&
-                column.DisplayIndex != 30 &&
-                column.DisplayIndex != 31 &&
-                column.DisplayIndex != 16 &&
-                column.DisplayIndex != 13))
-            {
-                extensionColumn.Visibility = Visibility.Hidden;
-            }
         }
 
 
-        private void MenuItem_ExtDetails_Click(object sender, RoutedEventArgs e)
-        {
-            if (ExtensionData.SelectedItem == null)
-            {
-                return;
-            }
-
-            switch (ExtensionData.SelectedItem.GetType().Name)
-            {
-                case "Extension":
-                    {
-                        var extension = ExtensionData.SelectedItem as Extension;
-                        Debug.Assert(extension != null, nameof(extension) + " != null");
-                        MessageBox.Show($"{extension.Number} {extension.FirstName}");
-                        break;
-                    }
-                case "Phone":
-                    {
-                        var phone = ExtensionData.SelectedItem as Phone;
-                        Debug.Assert(phone != null, nameof(phone) + " != null");
-                        MessageBox.Show($"{phone.Vendor} {phone.Model}");
-                        break;
-                    }
-            }
-        }
 
         private async void MenuItem_Add_New_Phone_Click(object sender, RoutedEventArgs e)
         {
 
-            if (ExtensionData.SelectedItem == null || ExtensionData.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
                 return;
             }
 
 
-            switch (ExtensionData.SelectedItem.GetType().Name)
+            switch (ListViewGrid.SelectedItem.GetType().Name)
             {
                 case "Extension":
                     {
-                        var selectedItem = ExtensionData.SelectedItem as Extension;
+                        var selectedItem = ListViewGrid.SelectedItem as Extension;
                         CurrentExtension = selectedItem?.Number;
                         CurrentExtensionClass = selectedItem;
-                        //var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = Enum.GetValues(typeof(PhoneModels))} };
-                        var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = phoneModels, DisplayMemberPath = "Model"} };
+                        var phoneWindow = new AddPhoneToExtWindow(CurrentExtension) { PhonesDropDownList = { ItemsSource = phoneModels, DisplayMemberPath = "ModelDisplayName" } };
                         phoneWindow.ShowDialog();
                         await UpdateView();
                         await DisplayExtensionInfo(CompanyId);
@@ -478,7 +476,7 @@ namespace ThinkVoip
                     }
                 case "Phone":
                     {
-                        var phone = ExtensionData.SelectedItem as Phone;
+                        var phone = ListViewGrid.SelectedItem as Phone;
                         MessageBox.Show($"Add new phone eventually.....");
 
                         break;
@@ -508,18 +506,18 @@ namespace ThinkVoip
             return valid;
         }
 
-        private async void RemoveMEnuITem_click(object sender, RoutedEventArgs e)
+        private async void OnRemoveClick(object sender, RoutedEventArgs e)
         {
-            if (ExtensionData.SelectedItem == null)
+            if (ListViewGrid.SelectedItem == null)
             {
                 return;
             }
 
-            switch (ExtensionData.SelectedItem.GetType().Name)
+            switch (ListViewGrid.SelectedItem.GetType().Name)
             {
                 case "Extension":
                     {
-                        var extensions = ExtensionData.SelectedItems.Cast<Extension>().ToList();
+                        var extensions = ListViewGrid.SelectedItems.Cast<Extension>().ToList();
                         var extensionListString = "";
                         if (extensions.Count == 1)
                         {
@@ -556,17 +554,12 @@ namespace ThinkVoip
                             UpdateExtensionDataGrid();
                             await UpdateView();
                             await UpdateDisplay();
-                            
+
                         }
 
                         break;
                     }
-                case "Phone":
-                    {
-                        var phone = ExtensionData.SelectedItem as Phone;
-                        MessageBox.Show($"Add new phone eventually.....");
-                        break;
-                    }
+
             }
         }
 
@@ -603,101 +596,82 @@ namespace ThinkVoip
 
         public async Task UpdateDisplay()
         {
+            ListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
             UpdateExtensionDataGrid();
             await UpdateView();
             switch (lastView)
             {
                 case Views.none:
                     await DisplayExtensionInfo(CompanyId);
+
                     break;
                 case Views.valid:
                     await DisplayValidExtensions(CompanyId);
+
                     break;
                 case Views.invalid:
                     await DisplayInvalidExtensionInfo(CompanyId);
+
                     break;
                 case Views.total:
                     await DisplayExtensionInfo(CompanyId);
+
                     break;
                 case Views.phones:
                     await DisplayPhones();
+
                     break;
                 case Views.VoicemailOnly:
                     DisplayVoicemailExtensionsInGrid();
+
                     break;
                 case Views.ForwardingOnly:
                     DisplayForwardingExtensionsInGrid();
+
                     break;
                 case Views.BilledToClient:
                     DisplayBilledUserExtensions();
+
                     break;
                 default:
                     break;
             }
-            
+
         }
 
-        private void FileMenu_Click(object sender, RoutedEventArgs e)
-        {
-            return;
-        }
 
-        private void OnTestButtonClick(object sender, RoutedEventArgs e)
+
+        private void OnThemeClick(object sender, RoutedEventArgs e)
         {
-            //return;
+            isDark = isDark ? false : true;
             SetTheme();
-
         }
+
+
 
         private void SetTheme()
         {
-          
 
             var _paletteHelper = new PaletteHelper();
             ITheme theme = _paletteHelper.GetTheme();
-
 
             IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
             theme.SetBaseTheme(baseTheme);
             _paletteHelper.SetTheme(theme);
 
-            var value = "";
-            if (isDark)
-            {
-                value = "true";
-
-            }
-            else
-            {
-                value = "false";
-
-            }
-            
-
-            Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            configuration.AppSettings.Settings["DarkMode"].Value = value;
-            configuration.Save();
-
-            if (isDark)
-            {
-                isDark = false;
-
-            }
-            else
-            {
-                isDark = true;
-
-            }
+            Settings.Default.isDark = isDark;
+            Settings.Default.Save();
 
 
         }
 
-        private void MenuItem_Click_Standardize_Stun(object sender, RoutedEventArgs e)
+        private void OnStandardizeClick(object sender, RoutedEventArgs e)
         {
 
-            var extensionsToEditList = ExtensionData.SelectedItems;
+            var extensionsToEditList = ListViewGrid.SelectedItems;
 
-            if (ExtensionData.SelectedItem == null || ExtensionData.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
                 return;
@@ -705,19 +679,17 @@ namespace ThinkVoip
 
             ToBeUpdated = extensionsToEditList;
 
-            var selectedItem = ExtensionData.SelectedItem as Extension;
+            var selectedItem = ListViewGrid.SelectedItem as Extension;
             CurrentExtension = selectedItem?.Number;
             CurrentExtensionClass = selectedItem;
 
             var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this, update: true);
             window.Show();
-
         }
 
         private void VoimailOnlyExtensionsDisplay_Click(object sender, RoutedEventArgs e)
         {
             DisplayVoicemailExtensionsInGrid();
-
         }
 
         private async void DisplayVoicemailExtensionsInGrid()
@@ -726,11 +698,9 @@ namespace ThinkVoip
             lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(ExtensionList);
 
-
-
-            ExtensionData.ItemsSource = vmOnlyList;
-            ExtensionData.Columns[0].Visibility = Visibility.Hidden;
-            ExtensionData.Visibility = Visibility.Visible;
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.ItemsSource = vmOnlyList.OrderBy(a => a.Number).ToList();
+            ListViewGrid.Visibility = Visibility.Visible;
         }
         private async void DisplayForwardingExtensionsInGrid()
         {
@@ -738,9 +708,11 @@ namespace ThinkVoip
             lastView = Views.ForwardingOnly;
             var FwdOnlyList = GetForwardingOnlyExtensions(ExtensionList);
 
-            ExtensionData.ItemsSource = FwdOnlyList;
-            ExtensionData.Columns[0].Visibility = Visibility.Hidden;
-            ExtensionData.Visibility = Visibility.Visible;
+
+
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.ItemsSource = FwdOnlyList.OrderBy(a => a.Number).ToList();
+            ListViewGrid.Visibility = Visibility.Visible;
         }
 
         private void ForwardingOnlyExtensionsDisplay_Click(object sender, RoutedEventArgs e)
@@ -758,10 +730,89 @@ namespace ThinkVoip
             lastView = Views.BilledToClient;
             var BilledToClient = GetBilledUserExtensions(ExtensionList);
 
-            ExtensionData.ItemsSource = BilledToClient;
-            ExtensionData.Columns[0].Visibility = Visibility.Hidden;
-            ExtensionData.Visibility = Visibility.Visible;
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.ItemsSource = BilledToClient.OrderBy(a => a.Number).ToList();
+            ListViewGrid.Visibility = Visibility.Visible;
+
+        }
+
+        private void OnTestClick(object sender, RoutedEventArgs e)
+        {
+            return;
+        }
+
+
+        private async void OnShowTtgClientsClick(object sender, RoutedEventArgs e)
+        {
+            ThinkVoipTool.Properties.Settings.Default.showTtgClients = ShowqTtgCheckbox.IsChecked;
+            ThinkVoipTool.Properties.Settings.Default.Save();
+            await updateCustomerList();
+        }
+
+        private async void OnTestyButtonClick(object sender, RoutedEventArgs e)
+        {
+
+            ExtensionList = await ThreeCxClient.GetExtensionsList();
+            var cleanedExtensions = new List<Extension>();
+            cleanedExtensions.AddRange(ExtensionList
+                .Where(ext => !ext.FirstName.ToLower().Contains("test"))
+                .Where(ext => !ext.LastName.ToLower().Contains("test"))
+                .Where(ext => !ext.FirstName.ToLower().Contains("copy me"))
+                .Where(ext => !ext.FirstName.ToLower().Equals("operator"))
+                .Where(ext => !ext.FirstName.ToLower().Contains("template"))
+                .Where(ext => !ext.LastName.ToLower().Contains("template")));
+
+
+
+            ListViewGrid.ItemsSource = cleanedExtensions;
+            ListViewGrid.Visibility = Visibility.Visible;
+
+
+
+        }
+
+        private async void OnCustListDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+            var company = await ConnectWiseConnection.CwClient.GetCompany(CompanyId);
+            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
+
+
+            var hostName = loginInfo.HostName;
+            var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
+
+            OpenUrl(cleanedHostName);
+
+
+        }
+        private void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
-    
 }
