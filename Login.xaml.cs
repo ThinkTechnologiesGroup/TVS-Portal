@@ -25,7 +25,10 @@ namespace ThinkVoipTool
         }
         private void Window_Activated(object sender, System.EventArgs e)
         {
-            UserNameEntry.Text = Settings.Default.userName;
+            UserNameEntry.Text =  MainWindow.TryGetUser();
+            RemeberMeCheckBox.IsChecked = false;
+            Settings.Default.RememberMe = false;
+            Settings.Default.Save();
         }
 
         public static string StripDomain(string input) => Regex.Replace(input, @"(.*)\\|@(.*)", string.Empty);
@@ -110,8 +113,18 @@ namespace ThinkVoipTool
 
         private void SaveUsername()
         {
-            Settings.Default.userName = StripDomain(UserNameEntry.Text);
+            byte[] plaintext = Encoding.UTF8.GetBytes(StripDomain(UserNameEntry.Text));
+            byte[] userentropy = new byte[20];
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                rng.GetBytes(userentropy);
+            }
+            byte[] ciphertext = ProtectedData.Protect(plaintext, userentropy, DataProtectionScope.CurrentUser);
+
+            Settings.Default.userName = ciphertext;
+            Settings.Default.userEntropy = userentropy;
             Settings.Default.Save();
+
         }
 
         public static bool TryLogin(string userName, string pass1)

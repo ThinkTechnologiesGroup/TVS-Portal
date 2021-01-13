@@ -5,8 +5,8 @@
     <Setting Name="isDark" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="userName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="userName" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="showTtgClients" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -18,6 +18,9 @@
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="entropy" Type="System.Byte" Scope="User">
+      <Value Profile="(Default)">0</Value>
+    </Setting>
+    <Setting Name="userEntropy" Type="System.Byte" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>

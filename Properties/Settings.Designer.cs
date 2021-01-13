@@ -37,10 +37,10 @@ namespace ThinkVoipTool.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string userName {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte[] userName {
             get {
-                return ((string)(this["userName"]));
+                return ((byte[])(this["userName"]));
             }
             set {
                 this["userName"] = value;
@@ -92,6 +92,18 @@ namespace ThinkVoipTool.Properties {
             }
             set {
                 this["entropy"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public byte[] userEntropy {
+            get {
+                return ((byte[])(this["userEntropy"]));
+            }
+            set {
+                this["userEntropy"] = value;
             }
         }
     }

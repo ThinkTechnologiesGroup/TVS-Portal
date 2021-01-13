@@ -61,8 +61,8 @@ namespace ThinkVoip
         public static IList ToBeUpdated;
         public Views lastView;
         public bool showTtg => Settings.Default.showTtgClients;
-        public static string savedUser => Settings.Default.userName;
-
+        public static string savedUser => TryGetUser();
+        public static string savedPass => TryGetPassword();
 
         public MainWindow()
         {
@@ -75,7 +75,7 @@ namespace ThinkVoip
                 if (Settings.Default.RememberMe)
                 {
 
-                    if (Login.TryLogin(savedUser, TryGetPassword()))
+                    if (Login.TryLogin(savedUser, savedPass))
                     {
                         MainWindow.isAuthenticated = true;
                     }
@@ -99,7 +99,21 @@ namespace ThinkVoip
 
         }
 
-        public string TryGetPassword()
+        public static string TryGetUser()
+        {
+            try
+            {
+                var storedUser = Settings.Default.userName;
+                var userEntropy = Settings.Default.userEntropy;
+                byte[] encodedUser = ProtectedData.Unprotect(storedUser, userEntropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(encodedUser);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        public static string TryGetPassword()
         {
             try
             {
@@ -584,7 +598,7 @@ namespace ThinkVoip
             CompanyId = companyId;
 
             var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
-            window.Show();
+            window.ShowDialog();
 
         }
 
@@ -749,24 +763,8 @@ namespace ThinkVoip
             await updateCustomerList();
         }
 
-        private async void OnTestyButtonClick(object sender, RoutedEventArgs e)
+        private void OnTestyButtonClick(object sender, RoutedEventArgs e)
         {
-
-            ExtensionList = await ThreeCxClient.GetExtensionsList();
-            var cleanedExtensions = new List<Extension>();
-            cleanedExtensions.AddRange(ExtensionList
-                .Where(ext => !ext.FirstName.ToLower().Contains("test"))
-                .Where(ext => !ext.LastName.ToLower().Contains("test"))
-                .Where(ext => !ext.FirstName.ToLower().Contains("copy me"))
-                .Where(ext => !ext.FirstName.ToLower().Equals("operator"))
-                .Where(ext => !ext.FirstName.ToLower().Contains("template"))
-                .Where(ext => !ext.LastName.ToLower().Contains("template")));
-
-
-
-            ListViewGrid.ItemsSource = cleanedExtensions;
-            ListViewGrid.Visibility = Visibility.Visible;
-
 
 
         }
@@ -786,7 +784,7 @@ namespace ThinkVoip
 
 
         }
-        private void OpenUrl(string url)
+        public static void OpenUrl(string url)
         {
             try
             {

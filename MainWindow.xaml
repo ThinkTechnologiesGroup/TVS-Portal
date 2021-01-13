@@ -196,8 +196,8 @@
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="#FFF35626" BorderThickness="1" Content="  Add Phone  "   Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" Grid.ColumnSpan="1"/>
 
         <!--Extensions and phones datagrid-->
-        <ListView x:Name="ListViewGrid"   Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0" Grid.RowSpan="14" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
-                  MinWidth="600" MinHeight="600" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="False" AlternationCount="2" ItemContainerStyle="{DynamicResource alternatingWithTriggers}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+        <ListView x:Name="ListViewGrid"   Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0" Grid.RowSpan="13" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
+                  MinWidth="600" MinHeight="600" Grid.ColumnSpan="2"  IsSynchronizedWithCurrentItem="False" AlternationCount="2" ItemContainerStyle="{DynamicResource alternatingWithTriggers}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             
             <ListView.ContextMenu>
                 <ContextMenu>

@@ -49,7 +49,7 @@
 
 
         <TextBlock x:Name="UserName" Margin="5,5,5,5" Text="Username"  Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Left" FontWeight="Bold"/>
-        <TextBox x:Name="UserNameEntry" Margin="5,5,5,5" Visibility="Visible"  Grid.Row="3" Grid.Column="1" MinWidth="75"  VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <TextBox x:Name="UserNameEntry" Margin="5,5,5,5" Visibility="Visible"  Grid.Row="3" Grid.Column="1" MinWidth="75"  VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center"/>
 
         <TextBlock x:Name="Password" Margin="5,5,5,5" Text="Password" Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Left" FontWeight="Bold"/>
 
