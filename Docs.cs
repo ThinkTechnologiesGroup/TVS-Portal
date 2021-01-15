@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 
 using DocSync;
@@ -16,16 +17,16 @@ using RestSharp;
 
 using Serilog;
 
+using ThinkVoipTool;
+
 // ReSharper disable UnusedMember.Global
 
 namespace ThinkVoip
 {
     internal class Docs
     {
-        private static string user = ConfigurationManager.AppSettings["AdAuthUser"];
-        private static string pass = ConfigurationManager.AppSettings["AdAuthPass"];
 
-        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", user, pass);
+        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", MainWindow.authU, MainWindow.authP);
         private readonly string _authKey;
         private readonly string _baseUrl;
 
@@ -40,6 +41,11 @@ namespace ThinkVoip
             _scaffoldingUrl = baseUrl.Replace("api/", "");
             _restClient = new RestClient(_baseUrl);
             _authKey = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{userName}:{password}"));
+        }
+
+        public static async Task<string> getUserName()
+        {
+           return await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
         }
 
         public string FindThreeCxPageId(string spaceKey)

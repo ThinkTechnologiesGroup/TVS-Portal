@@ -5,16 +5,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.DirectoryServices;
+
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 
 using MaterialDesignThemes.Wpf;
 
 using ThinkVoipTool;
 using ThinkVoipTool.Properties;
+using System.DirectoryServices.AccountManagement;
 
 namespace ThinkVoip
 {
@@ -25,6 +31,7 @@ namespace ThinkVoip
     {
 
         public const string TvsT46s = "Yealink T46S-tvs_yealinkt4x (tvs_yealinkt4x.ph.xml)";
+        public const string TvsT48s = "Yealink T48S-tvs_yealinkt4x (tvs_yealinkt4x.ph.xml)";
         public const string YealinkCp960 = "Yealink CP960";
         public const string YealinkT57W = "Yealink T57W";
         public const string YealinkT40G = "Yealink T40G";
@@ -37,13 +44,14 @@ namespace ThinkVoip
 
         public static List<Phone> phoneModels = new List<Phone>()
         {
+            new Phone{ Model = TvsT46s, ModelDisplayName = "TVS - Yealink T46s"},
+            new Phone{ Model = TvsT48s, ModelDisplayName = "TVS - Yealink T48s"},
             new Phone{ Model = YealinkCp960},
             new Phone{ Model = YealinkT40G},
             new Phone{ Model = YealinkT46S},
             new Phone{ Model = YealinkT48S},
             new Phone{ Model = YealinkT57W},
-            new Phone{ Model = FanvilH5},
-            new Phone{ Model = TvsT46s, ModelDisplayName = "TVS - Yealink T46s"}
+            new Phone{ Model = FanvilH5}           
 
         };
 
@@ -60,74 +68,25 @@ namespace ThinkVoip
         public static Extension CurrentExtensionClass;
         public static IList ToBeUpdated;
         public Views lastView;
+        public bool isFirstLaunch = Settings.Default.firstLaunch;
         public bool showTtg => Settings.Default.showTtgClients;
-        public static string savedUser => TryGetUser();
-        public static string savedPass => TryGetPassword();
+        public static string savedUser => AdAuthClient.TryGetUser();
+        public static string savedPass => AdAuthClient.TryGetPassword();
+        public static string authU = string.Empty;
+        public static string authP = string.Empty;
+        public static bool isAdmin = false;
+        private static ConnectWiseConnection CwClient;
 
         public MainWindow()
         {
             InitializeComponent();
             ShowMenu();
-            SetTheme();
 
-            try
-            {
-                if (Settings.Default.RememberMe)
-                {
-
-                    if (Login.TryLogin(savedUser, savedPass))
-                    {
-                        MainWindow.isAuthenticated = true;
-                    }
-                }
-
-                if (!isAuthenticated)
-                {
-                    var window = new Login();
-                    window.ShowDialog();
-                }
-                if (!isAuthenticated)
-                {
-                    this.Close();
-                    return;
-                }
-            }
-            catch
-            {
-                MessageBox.Show("Unable to connect to domain for authentication", "Error");
-            }
 
         }
 
-        public static string TryGetUser()
-        {
-            try
-            {
-                var storedUser = Settings.Default.userName;
-                var userEntropy = Settings.Default.userEntropy;
-                byte[] encodedUser = ProtectedData.Unprotect(storedUser, userEntropy, DataProtectionScope.CurrentUser);
-                return Encoding.UTF8.GetString(encodedUser);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-        }
-        public static string TryGetPassword()
-        {
-            try
-            {
-                var storedPassword = Settings.Default.passWord;
-                var entropy = Settings.Default.entropy;
-                byte[] encodedPassword = ProtectedData.Unprotect(storedPassword, entropy, DataProtectionScope.CurrentUser);
-                return Encoding.UTF8.GetString(encodedPassword);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-
-        }
+  
+        
 
         private void ShowMenu()
         {
@@ -136,18 +95,89 @@ namespace ThinkVoip
 
         }
 
+        private async void Window_Initialized(object sender, EventArgs e)
+        {
+            if (isFirstLaunch)
+            {
+                isDark = ReadRegistry.isDarkEnabled;
+                Settings.Default.firstLaunch = false;
+                Settings.Default.Save();
+            }
+
+            ThemeControl.SetTheme(this);
+
+            if (!isAuthenticated)
+            {
+
+                try
+                {
+                    if (Settings.Default.RememberMe)
+                    {
+
+                        if (LoginWindow.TryLogin(savedUser, savedPass))
+                        {
+                            MainWindow.isAuthenticated = true;
+
+                        }
+                    }
+
+                    if (!isAuthenticated)
+                    {
+                        var window = new LoginWindow();
+                        window.ShowDialog();
+                    }
+                    if (!isAuthenticated)
+                    {
+                        this.Close();
+                        return;
+                    }
+                    
+                }
+                catch
+                {
+                    MessageBox.Show("Unable to connect to domain for authentication", "Error");
+                }
+
+                authU = await Secrets.GetSecretValue("AdAuthUser");
+                authP = await Secrets.GetSecretValue("AdAuthPass");
+                ConnectWiseConnection.CwApiUser = await Secrets.GetSecretValue("CWApiKey");
+                ConnectWiseConnection.CwApiKey = await Secrets.GetSecretValue("CWApiUser");
+                
+
+                if (isAdmin)
+                {
+                    AdminMenu.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (ConnectWiseConnection.CwApiUser == null)
+            {
+                ConnectWiseConnection.CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+            }
+            if (ConnectWiseConnection.CwApiKey == null)
+            {
+                ConnectWiseConnection.CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+
+            }
+
+            CwClient = new ConnectWiseConnection();
             await updateCustomerList();
+
+
         }
 
         private async Task updateCustomerList()
         {
-            var allVoipClients = await ConnectWiseConnection.CwClient.GetAllTvsVoIpClients();
+            
+            var allVoipClients = await CwClient.GetAllTvsVoIpClients();
 
             if (showTtg)
             {
-                allVoipClients.AddRange(await ConnectWiseConnection.CwClient.GetAllThinkVoIpClients());
+                allVoipClients.AddRange(await CwClient.GetAllThinkVoIpClients());
             }
             CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
 
@@ -236,11 +266,13 @@ namespace ThinkVoip
 
         public async Task DisplayClientInfo(int companyId)
         {
+            var user =  await Secrets.GetSecretValue("AdAuthUser");
+            var pass = await Secrets.GetSecretValue("AdAuthPass");
 
 
             lastView = Views.valid;
             ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            var company = await ConnectWiseConnection.CwClient.GetCompany(companyId);
+            var company = await CwClient.GetCompany(companyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
             var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
             this.loginInfo = loginInfo;
@@ -656,29 +688,15 @@ namespace ThinkVoip
 
 
 
-        private void OnThemeClick(object sender, RoutedEventArgs e)
+        private async void OnThemeClick(object sender, RoutedEventArgs e)
         {
             isDark = isDark ? false : true;
-            SetTheme();
-        }
-
-
-
-        private void SetTheme()
-        {
-
-            var _paletteHelper = new PaletteHelper();
-            ITheme theme = _paletteHelper.GetTheme();
-
-            IBaseTheme baseTheme = isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
-            theme.SetBaseTheme(baseTheme);
-            _paletteHelper.SetTheme(theme);
-
-            Settings.Default.isDark = isDark;
-            Settings.Default.Save();
+            ThemeControl.SetTheme(this);
 
 
         }
+
+      
 
         private void OnStandardizeClick(object sender, RoutedEventArgs e)
         {
@@ -763,16 +781,13 @@ namespace ThinkVoip
             await updateCustomerList();
         }
 
-        private void OnTestyButtonClick(object sender, RoutedEventArgs e)
-        {
 
-
-        }
 
         private async void OnCustListDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
 
-            var company = await ConnectWiseConnection.CwClient.GetCompany(CompanyId);
+
+            var company = await CwClient.GetCompany(CompanyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
             var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
@@ -812,5 +827,20 @@ namespace ThinkVoip
                 }
             }
         }
+        private void OnTestyButtonClick(object sender, RoutedEventArgs e)
+        {
+           
+            MessageBox.Show("You had to click this, huh?", "It does nothing")
+;
+        }
+
+        public static string GetUserSid()
+        {
+            WindowsIdentity user = WindowsIdentity.GetCurrent();
+            SecurityIdentifier sid = user.User;
+            return sid.ToString();
+        }
+
+      
     }
 }

@@ -1,0 +1,19 @@
+AdAuthCred
+AdAuthUser
+TVSApp
+
+
+TVSAppClientSecret
+Secret Value: saFZRKIQpvnK5i1xt88~~y__G5_iFTo.1~
+Secret ID:  752eebed-b8a4-4105-a341-b1c3281342cd
+
+
+https://login.microsoftonline.com/common/oauth2/nativeclient
+
+
+$user.pwdLastSet = 0
+$user.PasswordNeverExpires = $false
+Set-ADUser -Instance $user
+
+$user.pwdLastSet = -1
+Set-ADUser -Instance $user

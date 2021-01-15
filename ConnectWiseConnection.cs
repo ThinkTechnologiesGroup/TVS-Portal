@@ -9,15 +9,16 @@ using RestSharp;
 
 using ThinkVoip.Models;
 
+using ThinkVoipTool;
+
 namespace ThinkVoip
 {
     public class ConnectWiseConnection : ConnectWiseModel
     {
-        private const string UserName = "WA8uBbN3A6q9nJXv";
-        private const string PassWord = "l8R9ZzmMBtJSb6yW";
-        private const string InitialUrl = "https://cw.think-team.com/login/companyinfo/think";
 
-        public static ConnectWiseConnection CwClient = new ConnectWiseConnection();
+        private const string InitialUrl = "https://cw.think-team.com/login/companyinfo/think";
+        public static string CwApiUser;
+        public static string CwApiKey;
 
         public ConnectWiseConnection()
         {
@@ -26,13 +27,15 @@ namespace ThinkVoip
             var restResponse = restClient.Execute(restRequest);
             JsonConvert.PopulateObject(restResponse.Content, this);
             ApiUrl = "https://" + SiteUrl + "/" + Codebase + "apis/3.0/";
-            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{UserName}:{PassWord}"));
+            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{CwApiUser}:{CwApiKey}"));
         }
 
 
         private string AuthKey { get; }
         private string ApiUrl { get; }
 
+
+       
         public async Task<string> GetRestResponse(Method method, string query)
         {
             var newRequest = new RestRequest(method);

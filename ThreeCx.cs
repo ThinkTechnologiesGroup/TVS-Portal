@@ -20,6 +20,8 @@ using RestSharp;
 
 using Serilog;
 
+using ThinkVoipTool;
+
 #pragma warning disable 618
 
 namespace ThinkVoip
@@ -753,6 +755,12 @@ namespace ThinkVoip
             }
         }
 
+        //public async Task testMakeNewExtension(VoiceMailOnlyExtensionSettings settings)
+        //{
+
+
+        //}
+
         public async Task CreateExtensionOnServer(string extensionNumber, string firstName, string lastName, string email,
             string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false, bool VmOnly = false, bool fwdOnly = false)
         {
@@ -801,6 +809,108 @@ namespace ThinkVoip
 
             var id = properties["Id"].ToString();
 
+            await SendUpdates(extensionNumber, firstName, lastName, email, voiceMailOptions, mobileNumber, callerId, pin, disAllowUseOffLan, VmOnly, fwdOnly, response, id).ConfigureAwait(false);
+            await SendBlfUpdates(exists, response, properties, id).ConfigureAwait(false);
+            await SaveExtensionUpdatesToServer(response, id).ConfigureAwait(false);
+        }
+
+        private async Task SendBlfUpdates(bool exists, IRestResponse response, Dictionary<string, object> properties, string id)
+        {
+            var blfConfig = new JObject();
+            if (id != null)
+            {
+                var cleanProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
+                    new JsonSerializerSettings
+                    {
+                        Formatting = Formatting.Indented,
+                        NullValueHandling = NullValueHandling.Ignore
+                    });
+                blfConfig = JsonConvert.DeserializeObject<JObject>(cleanProperties?["BLFConfiguration"].ToString() ??
+                                                                   throw new ArgumentNullException());
+            }
+
+            var blfOne = blfConfig["_value"];
+
+            if (blfOne != null && !exists)
+            {
+                var blfId = JsonConvert.DeserializeObject<JArray>(blfOne.ToString());
+                var blfIdList = blfId.Values("Id").ToList();
+
+                //line Keys
+                const int lineKeys = 2;
+                await UpdateExtensionLineKeys(lineKeys, response, id, blfIdList).ConfigureAwait(false);
+
+                //Shared parks
+                const int sharedParksCount = 3;
+                await UpdateExtensionSharedParks(response, id, blfIdList, lineKeys, sharedParksCount).ConfigureAwait(false);
+            }
+        }
+
+
+        //private async Task SendUpdatesTest(string extensionNumber, string firstName, string lastName, string email, IRestResponse response, string id)
+        //{
+            
+        //        //ext number
+        //        await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
+
+        //        //Firstname
+        //        await UpdateExtensionFirstName(response, id, firstName).ConfigureAwait(false);
+
+        //        //Lastname
+        //        await UpdateExtensionLastName(response, id, lastName).ConfigureAwait(false);
+
+        //        //Mobile Number
+        //        await UpdateExtensionMobileNumber(response, id, mobileNumber).ConfigureAwait(false);
+
+        //        //Caller Id Number
+        //        await UpdateExtensionOutboundCallerId(response, id, callerId).ConfigureAwait(false);
+
+        //        if (email != string.Empty)
+        //        {
+        //            //Email address
+        //            await UpdateExtensionEmail(response, id, email).ConfigureAwait(false);
+        //            //voiceMail options
+        //            await UpdateExtensionVoiceMailOptions(response, id, voiceMailOptions).ConfigureAwait(false);
+        //        }
+
+        //        //VoiceMail PIN
+        //        await UpdateExtensionVoiceMailPin(response, id, pin).ConfigureAwait(false);
+
+        //        //PBX delivers audio
+        //        await UpdateExtensionPbxDeliversAudioOption(response, id).ConfigureAwait(false);
+
+        //        //Allow use off of LAN
+        //        await UpdateExtensionAllowedUSeOffLan(response, id, disAllowUseOffLan).ConfigureAwait(false);
+
+        //        //Disable ReInvites
+        //        await UpdateExtensionDisableReInvites(response, id).ConfigureAwait(false);
+
+        //        //Accept Multiple Calls
+        //        await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
+
+        //        //voicemail Only Extension FOrwarding and restriction settings
+        //        if (VmOnly)
+        //        {
+        //            await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
+        //            await UpdateRestrictionsForVmOnly(response, id).ConfigureAwait(false);
+
+        //        }
+        //        if (fwdOnly)
+        //        {
+        //            await UpdateForwardingRulesForFwdOnly(response, id).ConfigureAwait(false);
+        //            await UpdateRestrictionsForFwdOnly(response, id).ConfigureAwait(false);
+
+        //        }
+        //        else
+        //        {
+        //            await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
+        //            await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
+        //        }
+            
+        //}
+
+        private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions, string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool VmOnly, bool fwdOnly, IRestResponse response, string id)
+        {
             //ext number
             await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
 
@@ -857,39 +967,6 @@ namespace ThinkVoip
                 await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
                 await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
             }
-
-
-            var blfConfig = new JObject();
-            if (id != null)
-            {
-                var cleanProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
-                    new JsonSerializerSettings
-                    {
-                        Formatting = Formatting.Indented,
-                        NullValueHandling = NullValueHandling.Ignore
-                    });
-                blfConfig = JsonConvert.DeserializeObject<JObject>(cleanProperties?["BLFConfiguration"].ToString() ??
-                                                                   throw new ArgumentNullException());
-            }
-
-            var blfOne = blfConfig["_value"];
-
-            if (blfOne != null && !exists)
-            {
-                var blfId = JsonConvert.DeserializeObject<JArray>(blfOne.ToString());
-                var blfIdList = blfId.Values("Id").ToList();
-
-                //line Keys
-                const int lineKeys = 2;
-                await UpdateExtensionLineKeys(lineKeys, response, id, blfIdList).ConfigureAwait(false);
-
-                //Shared parks
-                const int sharedParksCount = 3;
-                await UpdateExtensionSharedParks(response, id, blfIdList, lineKeys, sharedParksCount).ConfigureAwait(false);
-            }
-
-            //Save extension to server
-            await SaveExtensionUpdatesToServer(response, id).ConfigureAwait(false);
         }
 
         private async Task SaveExtensionUpdatesToServer(IRestResponse response, string id)
@@ -1401,6 +1478,9 @@ namespace ThinkVoip
 
         public static string SerializeExtProperty(string objectId, string propertyPath, bool value) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"PropertyValue\":{value.ToString().ToLower()}}}";
+
+
+        
     }
 
     public class ExtensionExtendedPropertyModel
@@ -1457,7 +1537,7 @@ namespace ThinkVoip
 
         public string Id { get; set; }
         //public bool IsOperator { get; set; }
-        // public bool IsRegistered { get; set; }
+        public bool IsRegistered { get; set; }
 
         //[JsonProperty("Str")]
         // public string Str { get; set; }

@@ -106,5 +106,44 @@ namespace ThinkVoipTool.Properties {
                 this["userEntropy"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool firstLaunch {
+            get {
+                return ((bool)(this["firstLaunch"]));
+            }
+            set {
+                this["firstLaunch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("TTG-Secrets")]
+        public string keyVaultName {
+            get {
+                return ((string)(this["keyVaultName"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("b8aad1d2-dfec-44f0-9e1f-d1896e5e1031")]
+        public string ClientId {
+            get {
+                return ((string)(this["ClientId"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("saFZRKIQpvnK5i1xt88~~y__G5_iFTo.1~")]
+        public string clientSecret {
+            get {
+                return ((string)(this["clientSecret"]));
+            }
+        }
     }
 }

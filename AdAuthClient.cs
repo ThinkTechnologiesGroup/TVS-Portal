@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Configuration;
 using System.DirectoryServices.Protocols;
+using System.DirectoryServices.AccountManagement;
 using System.Net;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
+using ThinkVoipTool.Properties;
+using System.Text;
+using System.Windows;
+using ThinkVoip;
+using System.Security.Cryptography;
 
 namespace ThinkVoipTool
 {
     public class AdAuthClient
     {
-        private LdapConnection connection;
-
-        public AdAuthClient(string domain = "ttg.local", string url = "auth.think-team.com")
+        
+        public static bool validateUserByBind(string username, string password, string domain = "ttg.local", string url = "auth.think-team.com")
         {
-            var user = ConfigurationManager.AppSettings["AdAuthUser"];
-            var pass = ConfigurationManager.AppSettings["AdAuthPass"];
-            var credentials = new NetworkCredential(user, pass, domain);
+            username = username.StripDomain();
+            var credentials = new NetworkCredential(username, password, domain);
             var serverId = new LdapDirectoryIdentifier(url);
 
-            connection = new LdapConnection(serverId, credentials);
-            connection.Bind();
-
-        }
-
-        public bool validateUserByBind(string username, string password)
-        {
             bool result = true;
-            var credentials = new NetworkCredential(username, password);
-            var serverId = new LdapDirectoryIdentifier(connection.SessionOptions.HostName);
 
             var conn = new LdapConnection(serverId, credentials);
             try
@@ -37,10 +36,70 @@ namespace ThinkVoipTool
                 result = false;
             }
 
+            var dName = "DC=ttg,Dc=Local";
+            var ldapFilter = $"samAccountName={username}";
+            var AttributeList = new string[3] { @"SAMAccountName", "memberOf", "cn" };
+            try
+            {
+                SearchResponse response = (SearchResponse)conn.SendRequest(new SearchRequest(dName, ldapFilter, SearchScope.Subtree, AttributeList));
+                var memberships = response.Entries[0].Attributes["memberOf"];
+                HashSet<string> groupsList = new HashSet<string>();
+                foreach (byte[] group in memberships)
+                {
+                    var TextGroup = Encoding.UTF8.GetString(group);
+                    groupsList.Add(TextGroup.ToString());
+                }
+                if (groupsList.Contains("CN=TVS Restricted Access,OU=TTG Security Groups,DC=ttg,DC=local"))
+                {
+                    MainWindow.isAdmin = true;
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Unable to connect to domain for authentication", "Error");
+
+            }
+
+
+
+
+
             conn.Dispose();
 
             return result;
         }
+
+        public static string TryGetUser()
+        {
+            try
+            {
+                var storedUser = Settings.Default.userName;
+                var userEntropy = Settings.Default.userEntropy;
+                byte[] encodedUser = ProtectedData.Unprotect(storedUser, userEntropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(encodedUser);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+        public static string TryGetPassword()
+        {
+            try
+            {
+                var storedPassword = Settings.Default.passWord;
+                var entropy = Settings.Default.entropy;
+                byte[] encodedPassword = ProtectedData.Unprotect(storedPassword, entropy, DataProtectionScope.CurrentUser);
+                return Encoding.UTF8.GetString(encodedPassword);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+
+        }
+
 
     }
 }
