@@ -13,7 +13,7 @@
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
         mc:Ignorable="d" FontSize ="14"
-        Title="Th!nk" Height="750" Width="1375" Loaded="Window_Loaded" Icon="/Thinky (1).png" SizeToContent="Width" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" Initialized="Window_Initialized" >
+        Title="Th!nk" Height="750" Width="1375" Loaded="Window_Loaded" Icon="/Thinky (1).png" SizeToContent="Width" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow" Initialized="Window_Initialized" ContentRendered="OnContentRendered" >
    
 
     
@@ -110,7 +110,7 @@
             
 
         </Grid.Resources>
-        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="2" Grid.RowSpan="14" Grid.ColumnSpan="6" Source="/Think-VoIP-Thinky.png" Stretch="Uniform"/>
+        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="1" Grid.RowSpan="14" Grid.ColumnSpan="6" HorizontalAlignment="Center" Source="/Think-VoIP-Thinky.png" Stretch="Uniform"/>
 
         <!--Main Menu-->
         <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="10" Visibility="Hidden" Padding="0" Height="Auto"  Effect="{DynamicResource MaterialDesignShadowDepth1}">

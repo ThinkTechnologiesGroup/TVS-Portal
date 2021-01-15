@@ -89,7 +89,7 @@ namespace ThinkVoip
 
         public async void PasswordResetInit(int companyId)
         {
-            var CwClient = new ConnectWiseConnection();
+            var CwClient = new ConnectWiseConnection(MainWindow.CwApiUser, MainWindow.CwApiKey);
 
             var company = await CwClient.GetCompany(companyId);
             pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", ""));

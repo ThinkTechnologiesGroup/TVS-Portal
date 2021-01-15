@@ -74,6 +74,8 @@ namespace ThinkVoip
         public static string savedPass => AdAuthClient.TryGetPassword();
         public static string authU = string.Empty;
         public static string authP = string.Empty;
+        public static string CwApiUser = string.Empty;
+        public static string CwApiKey = string.Empty;
         public static bool isAdmin = false;
         private static ConnectWiseConnection CwClient;
 
@@ -97,6 +99,9 @@ namespace ThinkVoip
 
         private async void Window_Initialized(object sender, EventArgs e)
         {
+            
+            
+
             if (isFirstLaunch)
             {
                 isDark = ReadRegistry.isDarkEnabled;
@@ -138,37 +143,37 @@ namespace ThinkVoip
                     MessageBox.Show("Unable to connect to domain for authentication", "Error");
                 }
 
-                authU = await Secrets.GetSecretValue("AdAuthUser");
-                authP = await Secrets.GetSecretValue("AdAuthPass");
-                ConnectWiseConnection.CwApiUser = await Secrets.GetSecretValue("CWApiKey");
-                ConnectWiseConnection.CwApiKey = await Secrets.GetSecretValue("CWApiUser");
-                
-
                 if (isAdmin)
                 {
                     AdminMenu.Visibility = Visibility.Visible;
                 }
+
+                authU = await Secrets.GetSecretValue("AdAuthUser");
+                authP = await Secrets.GetSecretValue("AdAuthPass");
             }
         }
 
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ConnectWiseConnection.CwApiUser == null)
+
+            if (CwApiUser == "")
             {
-                ConnectWiseConnection.CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+                CwApiUser = await Secrets.GetSecretValue("CWApiUser");
             }
-            if (ConnectWiseConnection.CwApiKey == null)
+            if (CwApiKey == "")
             {
-                ConnectWiseConnection.CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+                CwApiKey = await Secrets.GetSecretValue("CWApiKey");
 
             }
 
-            CwClient = new ConnectWiseConnection();
+            CwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
             await updateCustomerList();
-
-
         }
+        private void OnContentRendered(object sender, EventArgs e)
+        {
+        }
+
 
         private async Task updateCustomerList()
         {
@@ -841,6 +846,6 @@ namespace ThinkVoip
             return sid.ToString();
         }
 
-      
+       
     }
 }

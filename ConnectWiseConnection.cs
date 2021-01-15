@@ -17,17 +17,16 @@ namespace ThinkVoip
     {
 
         private const string InitialUrl = "https://cw.think-team.com/login/companyinfo/think";
-        public static string CwApiUser;
-        public static string CwApiKey;
+        
 
-        public ConnectWiseConnection()
+        public ConnectWiseConnection(string User, string Pass)
         {
             var restClient = new RestClient(InitialUrl);
             var restRequest = new RestRequest(Method.GET);
             var restResponse = restClient.Execute(restRequest);
             JsonConvert.PopulateObject(restResponse.Content, this);
             ApiUrl = "https://" + SiteUrl + "/" + Codebase + "apis/3.0/";
-            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{CwApiUser}:{CwApiKey}"));
+            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{User}:{Pass}"));
         }
 
 
