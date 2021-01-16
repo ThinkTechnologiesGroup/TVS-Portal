@@ -4,23 +4,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 using System.Security.Principal;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.DirectoryServices;
-
-using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-
-using MaterialDesignThemes.Wpf;
 
 using ThinkVoipTool;
 using ThinkVoipTool.Properties;
-using System.DirectoryServices.AccountManagement;
 
 namespace ThinkVoip
 {
@@ -51,7 +42,7 @@ namespace ThinkVoip
             new Phone{ Model = YealinkT46S},
             new Phone{ Model = YealinkT48S},
             new Phone{ Model = YealinkT57W},
-            new Phone{ Model = FanvilH5}           
+            new Phone{ Model = FanvilH5}
 
         };
 
@@ -79,6 +70,7 @@ namespace ThinkVoip
         public static bool isAdmin = false;
         private static ConnectWiseConnection CwClient;
 
+
         public MainWindow()
         {
             InitializeComponent();
@@ -87,8 +79,8 @@ namespace ThinkVoip
 
         }
 
-  
-        
+
+
 
         private void ShowMenu()
         {
@@ -99,8 +91,8 @@ namespace ThinkVoip
 
         private async void Window_Initialized(object sender, EventArgs e)
         {
-            
-            
+
+
 
             if (isFirstLaunch)
             {
@@ -136,7 +128,7 @@ namespace ThinkVoip
                         this.Close();
                         return;
                     }
-                    
+
                 }
                 catch
                 {
@@ -146,6 +138,8 @@ namespace ThinkVoip
                 if (isAdmin)
                 {
                     AdminMenu.Visibility = Visibility.Visible;
+                    extensionRemoveButton.IsEnabled = true;
+                    passwordResetMenuItem.IsEnabled = true;
                 }
 
                 authU = await Secrets.GetSecretValue("AdAuthUser");
@@ -172,12 +166,13 @@ namespace ThinkVoip
         }
         private void OnContentRendered(object sender, EventArgs e)
         {
+
         }
 
 
         private async Task updateCustomerList()
         {
-            
+
             var allVoipClients = await CwClient.GetAllTvsVoIpClients();
 
             if (showTtg)
@@ -185,6 +180,8 @@ namespace ThinkVoip
                 allVoipClients.AddRange(await CwClient.GetAllThinkVoIpClients());
             }
             CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
+            CustomersList.Visibility = Visibility.Visible;
+
 
         }
 
@@ -271,7 +268,7 @@ namespace ThinkVoip
 
         public async Task DisplayClientInfo(int companyId)
         {
-            var user =  await Secrets.GetSecretValue("AdAuthUser");
+            var user = await Secrets.GetSecretValue("AdAuthUser");
             var pass = await Secrets.GetSecretValue("AdAuthPass");
 
 
@@ -701,7 +698,7 @@ namespace ThinkVoip
 
         }
 
-      
+
 
         private void OnStandardizeClick(object sender, RoutedEventArgs e)
         {
@@ -832,12 +829,36 @@ namespace ThinkVoip
                 }
             }
         }
-        private void OnTestyButtonClick(object sender, RoutedEventArgs e)
+
+        private void OnTestButtonClick(object sender, RoutedEventArgs e)
         {
-           
-            MessageBox.Show("You had to click this, huh?", "It does nothing")
-;
+
+            //MyExtensions.JobSecurityVersion();
+
+            //MyExtensions.NormalVersion();
+            //var n = 10;
+            //var test = Enumerable.Range(0, n.ToString().Length);
+
+            //MessageBox.Show( , "It does nothing");
+
+            var sw = new Stopwatch();
+            sw.Start();
+            var loopsResult = MyExtensions.returnFibOfWithLoops(50);
+            sw.Stop();
+            var speedOfLoop = sw.Elapsed;
+            sw.Reset();
+
+            sw.Start();
+            var recursiveResult =  MyExtensions.FibOfRecursvive(50);
+            sw.Stop();
+            var speedOfRecursive = sw.Elapsed;
+            sw.Reset();
+
+            MessageBox.Show("Loop:        " + speedOfLoop.ToString() + " "  + loopsResult.ToString() + "\nRecursive: " + speedOfRecursive.ToString() + " " + recursiveResult.ToString());
+
+
         }
+
 
         public static string GetUserSid()
         {
@@ -846,6 +867,6 @@ namespace ThinkVoip
             return sid.ToString();
         }
 
-       
+
     }
 }

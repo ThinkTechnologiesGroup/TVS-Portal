@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
 
+using ThinkVoipTool;
+
 namespace ThinkVoip
 {
     /// <summary>
@@ -27,7 +29,7 @@ namespace ThinkVoip
             var extensionNumber = MainWindow.CurrentExtension;
             var selectedPhone = PhonesDropDownList.SelectedItem as Phone;
             var phoneType = selectedPhone.Model;
-            await SavePhone(phoneType, MacAddressTextBlock.Text, extensionNumber);
+            await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber);
             Close();
         }
 

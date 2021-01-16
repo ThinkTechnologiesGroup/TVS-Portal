@@ -52,8 +52,8 @@ namespace ThinkVoipTool
 
         public async static Task<string> GetSecretValue(string requestedSecret)
         {
-            var result =  await client.GetSecretAsync(requestedSecret);
-            return result.Value.Value ?? string.Empty ;
+            var result = await client.GetSecretAsync(requestedSecret);
+            return result.Value.Value ?? string.Empty;
         }
 
         public async static Task<string> SetSecretValue(string requestedSecret, string newSecretValue)

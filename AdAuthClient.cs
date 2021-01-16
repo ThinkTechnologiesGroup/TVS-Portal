@@ -1,23 +1,20 @@
 ﻿using System;
-using System.Configuration;
-using System.DirectoryServices.Protocols;
-using System.DirectoryServices.AccountManagement;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Linq;
 using System.Collections.Generic;
-using ThinkVoipTool.Properties;
+using System.DirectoryServices.Protocols;
+using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+
 using ThinkVoip;
-using System.Security.Cryptography;
+
+using ThinkVoipTool.Properties;
 
 namespace ThinkVoipTool
 {
     public class AdAuthClient
     {
-        
+
         public static bool validateUserByBind(string username, string password, string domain = "ttg.local", string url = "auth.think-team.com")
         {
             username = username.StripDomain();

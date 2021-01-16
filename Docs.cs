@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace ThinkVoip
 
         public static async Task<string> getUserName()
         {
-           return await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
+            return await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
         }
 
         public string FindThreeCxPageId(string spaceKey)

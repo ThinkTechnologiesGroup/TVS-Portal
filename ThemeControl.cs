@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using MaterialDesignThemes.Wpf;
 
-using MaterialDesignColors;
-using MaterialDesignThemes.Wpf;
-using System.Windows.Media;
 using ThinkVoip;
+
 using ThinkVoipTool.Properties;
 
 namespace ThinkVoipTool
@@ -37,7 +33,7 @@ namespace ThinkVoipTool
             Settings.Default.isDark = window.isDark;
             Settings.Default.Save();
 
-            
+
 
 
         }

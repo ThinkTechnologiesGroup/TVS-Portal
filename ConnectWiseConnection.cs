@@ -9,15 +9,13 @@ using RestSharp;
 
 using ThinkVoip.Models;
 
-using ThinkVoipTool;
-
 namespace ThinkVoip
 {
     public class ConnectWiseConnection : ConnectWiseModel
     {
 
         private const string InitialUrl = "https://cw.think-team.com/login/companyinfo/think";
-        
+
 
         public ConnectWiseConnection(string User, string Pass)
         {
@@ -34,7 +32,7 @@ namespace ThinkVoip
         private string ApiUrl { get; }
 
 
-       
+
         public async Task<string> GetRestResponse(Method method, string query)
         {
             var newRequest = new RestRequest(method);

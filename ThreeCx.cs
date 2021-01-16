@@ -20,8 +20,6 @@ using RestSharp;
 
 using Serilog;
 
-using ThinkVoipTool;
-
 #pragma warning disable 618
 
 namespace ThinkVoip
@@ -849,7 +847,7 @@ namespace ThinkVoip
 
         //private async Task SendUpdatesTest(string extensionNumber, string firstName, string lastName, string email, IRestResponse response, string id)
         //{
-            
+
         //        //ext number
         //        await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
 
@@ -906,7 +904,7 @@ namespace ThinkVoip
         //            await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
         //            await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
         //        }
-            
+
         //}
 
         private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions, string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool VmOnly, bool fwdOnly, IRestResponse response, string id)
@@ -1480,7 +1478,7 @@ namespace ThinkVoip
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"PropertyValue\":{value.ToString().ToLower()}}}";
 
 
-        
+
     }
 
     public class ExtensionExtendedPropertyModel
