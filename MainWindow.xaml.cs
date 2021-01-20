@@ -145,6 +145,8 @@ namespace ThinkVoip
                     AdminMenu.Visibility = Visibility.Visible;
                     extensionRemoveButton.IsEnabled = true;
                     passwordResetMenuItem.IsEnabled = true;
+                    makeExtAdminMenuItem.IsEnabled = true;
+
                 }
 
                 authU = await Secrets.GetSecretValue("AdAuthUser");
@@ -197,32 +199,34 @@ namespace ThinkVoip
             var listBoxSender = sender as ListBox;
             if (listBoxSender.SelectedItems.Count == 0) return;
 
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                await UpdateSelectedCompanyInfo();
-            }
-
             if (Mouse.RightButton == MouseButtonState.Pressed)
             {
-                e.Handled = false;
+                var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+                CompanyId = selectedCompany.company.id;
+
             }
+
+            //if (Mouse.LeftButton == MouseButtonState.Pressed)
+            //{
+            //    await UpdateSelectedCompanyInfo();
+            //}
+
+            await UpdateSelectedCompanyInfo();
 
 
         }
-        private async void CustomersList_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                await UpdateSelectedCompanyInfo();
-            }
-        }
+       
         private async void CustomersList_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            if (e.LeftButton == MouseButtonState.Released)
             {
                 await UpdateSelectedCompanyInfo();
+               
             }
+            
         }
+
+     
         public async Task UpdateSelectedCompanyInfo()
         {
 
@@ -903,6 +907,47 @@ namespace ThinkVoip
             await UpdateDisplay();
         }
 
-      
+        private async void makeExtAdminMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var extensionsToEditList = ListViewGrid.SelectedItems;
+
+            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            {
+                MessageBox.Show("Please select an extension first.", "Error :(");
+                return;
+            }
+
+            ToBeUpdated = extensionsToEditList;
+
+            var selectedItem = ListViewGrid.SelectedItem as Extension;
+            CurrentExtension = selectedItem?.Number;
+            CurrentExtensionClass = selectedItem;
+
+
+
+            var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
+            if (result == "Failed")
+            {
+                MessageBox.Show("Failed to set as admin", "Error");
+            }
+            else
+            {
+                MessageBox.Show("Success");
+
+            }
+
+
+
+        }
     }
 }
+
+//  {"Path":{"ObjectId":"72","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
+//  {"Path":{"ObjectId":"72","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
+// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessRole"}]},"PropertyValue":"AccessRole.GlobalExtensionManager"}
+
+// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessAdmin"}]},"PropertyValue":true}
+
+// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporter"}]},"PropertyValue":true}
+
+// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporterRecording"}]},"PropertyValue":true}

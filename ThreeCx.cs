@@ -97,6 +97,55 @@ namespace ThinkVoip
 
         }
 
+        public async Task<string> MakeExtensionAdmin(string extensionNumber)
+        {
+            //  {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
+            // {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessRole"}]},"PropertyValue":"AccessRole.GlobalExtensionManager"}
+
+            // {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessAdmin"}]},"PropertyValue":true}
+
+            // {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporter"}]},"PropertyValue":true}
+
+            // {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporterRecording"}]},"PropertyValue":true}
+
+            var extensionId = await GetExtensionId(extensionNumber).ConfigureAwait(false);
+            _apiEndPoint = "ExtensionList/set";
+            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
+            _restRequest = new RestRequest(Method.POST);
+            _restRequest.AddJsonBody(new
+            {
+                ContentType = "Application/Json",
+                Name = "",
+                Id = extensionId
+            });
+            _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
+            var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
+            if (response.StatusCode.ToString() != "OK")
+            {
+                throw new Exception();
+            }
+
+            var properties = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.Content,
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+            if (properties == null)
+            {
+                throw new Exception();
+            }
+
+            _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
+            
+
+            var id = properties["Id"].ToString();
+            await UpdateExtensionAdminSettings(response, id);
+            var saveResult = await SaveUpdate(response, id);
+            return saveResult;
+
+        }
+
         public async Task<string> GetExtensionPinNumber(string extension)
         {
             var extensionId = await GetExtensionId(extension).ConfigureAwait(false);
@@ -753,12 +802,7 @@ namespace ThinkVoip
             }
         }
 
-        //public async Task testMakeNewExtension(VoiceMailOnlyExtensionSettings settings)
-        //{
-
-
-        //}
-
+      
         public async Task CreateExtensionOnServer(string extensionNumber, string firstName, string lastName, string email,
             string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false, bool VmOnly = false, bool fwdOnly = false)
         {
@@ -845,68 +889,7 @@ namespace ThinkVoip
         }
 
 
-        //private async Task SendUpdatesTest(string extensionNumber, string firstName, string lastName, string email, IRestResponse response, string id)
-        //{
-
-        //        //ext number
-        //        await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
-
-        //        //Firstname
-        //        await UpdateExtensionFirstName(response, id, firstName).ConfigureAwait(false);
-
-        //        //Lastname
-        //        await UpdateExtensionLastName(response, id, lastName).ConfigureAwait(false);
-
-        //        //Mobile Number
-        //        await UpdateExtensionMobileNumber(response, id, mobileNumber).ConfigureAwait(false);
-
-        //        //Caller Id Number
-        //        await UpdateExtensionOutboundCallerId(response, id, callerId).ConfigureAwait(false);
-
-        //        if (email != string.Empty)
-        //        {
-        //            //Email address
-        //            await UpdateExtensionEmail(response, id, email).ConfigureAwait(false);
-        //            //voiceMail options
-        //            await UpdateExtensionVoiceMailOptions(response, id, voiceMailOptions).ConfigureAwait(false);
-        //        }
-
-        //        //VoiceMail PIN
-        //        await UpdateExtensionVoiceMailPin(response, id, pin).ConfigureAwait(false);
-
-        //        //PBX delivers audio
-        //        await UpdateExtensionPbxDeliversAudioOption(response, id).ConfigureAwait(false);
-
-        //        //Allow use off of LAN
-        //        await UpdateExtensionAllowedUSeOffLan(response, id, disAllowUseOffLan).ConfigureAwait(false);
-
-        //        //Disable ReInvites
-        //        await UpdateExtensionDisableReInvites(response, id).ConfigureAwait(false);
-
-        //        //Accept Multiple Calls
-        //        await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
-
-        //        //voicemail Only Extension FOrwarding and restriction settings
-        //        if (VmOnly)
-        //        {
-        //            await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
-        //            await UpdateRestrictionsForVmOnly(response, id).ConfigureAwait(false);
-
-        //        }
-        //        if (fwdOnly)
-        //        {
-        //            await UpdateForwardingRulesForFwdOnly(response, id).ConfigureAwait(false);
-        //            await UpdateRestrictionsForFwdOnly(response, id).ConfigureAwait(false);
-
-        //        }
-        //        else
-        //        {
-        //            await UndoRestrictionsForVmOnly(response, id).ConfigureAwait(false);
-        //            await UndoForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
-        //        }
-
-        //}
-
+        
         private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions, string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool VmOnly, bool fwdOnly, IRestResponse response, string id)
         {
             //ext number
@@ -1039,6 +1022,9 @@ namespace ThinkVoip
 
 
         }
+
+       
+
         private async Task UpdateExtensionSharedParks(IRestResponse response, string id, List<JToken> blfIdList, int lineKeys, int sharedParksCount)
         {
             if (response == null)
@@ -1366,6 +1352,32 @@ namespace ThinkVoip
                     Console.ResetColor();
                 }
             }
+        }
+
+        private async Task UpdateExtensionAdminSettings(IRestResponse response, string id)
+        {
+            var updateResponse = await SendUpdate(response,
+               ExtensionPropertyModel.SerializeExtProperty(id, "AccessEnabled", value: true))
+               .ConfigureAwait(false);
+
+            updateResponse = await SendUpdate(response,
+              ExtensionPropertyModel.SerializeExtProperty(id, "AccessRole", "AccessRole.GlobalExtensionManager"))
+              .ConfigureAwait(false);
+
+            updateResponse = await SendUpdate(response,
+              ExtensionPropertyModel.SerializeExtProperty(id, "AccessAdmin", value: true))
+              .ConfigureAwait(false);
+
+
+            updateResponse = await SendUpdate(response,
+              ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporter", value: true))
+              .ConfigureAwait(false);
+
+            updateResponse = await SendUpdate(response,
+             ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporterRecording", value: true))
+             .ConfigureAwait(false);
+
+
         }
 
         private async Task<string> SendUpdate(IRestResponse originalResponse, string update)

@@ -140,7 +140,7 @@
 
         <!--Customer ListBox-->
         <ListBox x:Name="CustomersList" Margin="0,0,4,0" Visibility="Hidden" BorderBrush="Gray" BorderThickness="0,1,1,0" Grid.Row="3"  Grid.Column="1"  DisplayMemberPath="company.name" SelectionChanged="CustomersList_SelectionChanged"
-                 Grid.RowSpan="16"  FontWeight="Normal"  ScrollViewer.CanContentScroll="True" MouseDoubleClick="OnCustListDoubleClick" MouseUp="CustomersList_MouseUp" MouseDown="CustomersList_MouseDown"  >
+                 Grid.RowSpan="16"  FontWeight="Normal"  ScrollViewer.CanContentScroll="True" MouseDoubleClick="OnCustListDoubleClick" MouseUp="CustomersList_MouseUp" >
            
             <ListBox.ContextMenu>
                 <ContextMenu  x:Name="rightClickeMenu" BorderThickness="1" >
@@ -234,6 +234,7 @@
                 <ContextMenu>
                     <MenuItem x:Name="extensionRemoveButton" IsEnabled="False" Header="Remove" Click="OnRemoveClick"/>
                     <MenuItem Header="Standardize" Click="OnStandardizeClick"/>
+                    <MenuItem x:Name="makeExtAdminMenuItem" Header="Make Extention Admin" Click="makeExtAdminMenuItem_Click" IsEnabled="False"/>
                 </ContextMenu>
             </ListView.ContextMenu>
             
