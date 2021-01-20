@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 using ThinkVoipTool;
 using ThinkVoipTool.Properties;
@@ -69,6 +70,7 @@ namespace ThinkVoip
         public static string CwApiKey = string.Empty;
         public static bool isAdmin = false;
         private static ConnectWiseConnection CwClient;
+        private static System.Timers.Timer timer = new System.Timers.Timer(300000);
 
 
         public MainWindow()
@@ -76,10 +78,8 @@ namespace ThinkVoip
             InitializeComponent();
             ShowMenu();
 
-
+          
         }
-
-
 
 
         private void ShowMenu()
@@ -91,8 +91,13 @@ namespace ThinkVoip
 
         private async void Window_Initialized(object sender, EventArgs e)
         {
-
-
+            // Copy user settings from previous application version if necessary
+            if (Settings.Default.UpdateSettings)
+            {
+                Settings.Default.Upgrade();
+                Settings.Default.UpdateSettings = false;
+                Settings.Default.Save();
+            }
 
             if (isFirstLaunch)
             {
@@ -183,15 +188,41 @@ namespace ThinkVoip
             CustomersList.Visibility = Visibility.Visible;
 
 
+
         }
 
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+
             var listBoxSender = sender as ListBox;
             if (listBoxSender.SelectedItems.Count == 0) return;
-            await UpdateSelectedCompanyInfo();
-        }
 
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                await UpdateSelectedCompanyInfo();
+            }
+
+            if (Mouse.RightButton == MouseButtonState.Pressed)
+            {
+                e.Handled = false;
+            }
+
+
+        }
+        private async void CustomersList_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                await UpdateSelectedCompanyInfo();
+            }
+        }
+        private async void CustomersList_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (Mouse.LeftButton == MouseButtonState.Pressed)
+            {
+                await UpdateSelectedCompanyInfo();
+            }
+        }
         public async Task UpdateSelectedCompanyInfo()
         {
 
@@ -227,7 +258,8 @@ namespace ThinkVoip
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-
+            RefreshButton.Visibility = Visibility.Hidden;
+            RefreshSeperator.Visibility = Visibility.Hidden;
             ForwardingOnlyExtensionsCount.Text = "";
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsCount.Text = "";
@@ -248,15 +280,15 @@ namespace ThinkVoip
         {
 
 
-            ListViewGrid.Visibility = Visibility.Hidden;
+            //ListViewGrid.Visibility = Visibility.Hidden;
 
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
-            ExtensionsTotalValid.Visibility = Visibility.Hidden;
-            PhonesTotalDisplay.Visibility = Visibility.Hidden;
+            //VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            //ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
+            //BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
+            //ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
+            //ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
+            //ExtensionsTotalValid.Visibility = Visibility.Hidden;
+            //PhonesTotalDisplay.Visibility = Visibility.Hidden;
             ExtensionsTotal.Text = "";
             InValidExtensions.Text = "";
             TotalValidExtensions.Text = "";
@@ -380,6 +412,8 @@ namespace ThinkVoip
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
+            RefreshButton.Visibility = Visibility.Visible;
+            RefreshSeperator.Visibility = Visibility.Visible;
 
         }
 
@@ -644,8 +678,8 @@ namespace ThinkVoip
 
         public async Task UpdateDisplay()
         {
-            ListViewGrid.Visibility = Visibility.Hidden;
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            //ListViewGrid.Visibility = Visibility.Hidden;
+            //PhoneListViewGrid.Visibility = Visibility.Hidden;
             UpdateExtensionDataGrid();
             await UpdateView();
             switch (lastView)
@@ -690,7 +724,7 @@ namespace ThinkVoip
 
 
 
-        private async void OnThemeClick(object sender, RoutedEventArgs e)
+        private void OnThemeClick(object sender, RoutedEventArgs e)
         {
             isDark = isDark ? false : true;
             ThemeControl.SetTheme(this);
@@ -784,10 +818,8 @@ namespace ThinkVoip
         }
 
 
-
         private async void OnCustListDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
 
             var company = await CwClient.GetCompany(CompanyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
@@ -832,31 +864,7 @@ namespace ThinkVoip
 
         private void OnTestButtonClick(object sender, RoutedEventArgs e)
         {
-
-            //MyExtensions.JobSecurityVersion();
-
-            //MyExtensions.NormalVersion();
-            //var n = 10;
-            //var test = Enumerable.Range(0, n.ToString().Length);
-
-            //MessageBox.Show( , "It does nothing");
-
-            var sw = new Stopwatch();
-            sw.Start();
-            var loopsResult = MyExtensions.returnFibOfWithLoops(50);
-            sw.Stop();
-            var speedOfLoop = sw.Elapsed;
-            sw.Reset();
-
-            sw.Start();
-            var recursiveResult =  MyExtensions.FibOfRecursvive(50);
-            sw.Stop();
-            var speedOfRecursive = sw.Elapsed;
-            sw.Reset();
-
-            MessageBox.Show("Loop:        " + speedOfLoop.ToString() + " "  + loopsResult.ToString() + "\nRecursive: " + speedOfRecursive.ToString() + " " + recursiveResult.ToString());
-
-
+            return;
         }
 
 
@@ -866,7 +874,35 @@ namespace ThinkVoip
             SecurityIdentifier sid = user.User;
             return sid.ToString();
         }
+  
+        private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            CompanyId = selectedCompany.company.id;
+            var company = await CwClient.GetCompany(CompanyId);
+            var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
+
+            OpenUrl($"https://docs.think-team.com" + url);
+        }
+
+        private async void open3cxPage_Click(object sender, RoutedEventArgs e)
+        {
+            var company = await CwClient.GetCompany(CompanyId);
+            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
 
+            var hostName = loginInfo.HostName;
+            var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
+
+            OpenUrl(cleanedHostName);
+        }
+
+        private async void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            await UpdateDisplay();
+        }
+
+      
     }
 }

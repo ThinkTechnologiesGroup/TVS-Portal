@@ -9,8 +9,8 @@
     <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
     <Platforms>AnyCPU;x64</Platforms>
     <PackageId>ThinkVoipPortal</PackageId>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>TvsKey.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>TVSPortal.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
@@ -19,6 +19,7 @@
     <Authors>Matt Wiener</Authors>
     <Company>Think VoIP Services</Company>
     <NeutralLanguage>en</NeutralLanguage>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

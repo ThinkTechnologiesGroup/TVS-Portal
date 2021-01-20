@@ -145,5 +145,24 @@ namespace ThinkVoipTool.Properties {
                 return ((string)(this["clientSecret"]));
             }
         }
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool UpdateSettings
+        {
+            get
+            {
+                return ((bool)(this["UpdateSettings"]));
+            }
+            set
+            {
+                this["UpdateSettings"] = value;
+            }
+        }
+
+
+        //UpdateSettings type = bool Scope=User Value = True
+
+
     }
 }

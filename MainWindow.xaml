@@ -61,6 +61,9 @@
             <RowDefinition Height="Auto" />
             <!--row 14-->
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <!--row 15-->
             <RowDefinition Height="*"/>
             <!--row 16-->
@@ -109,7 +112,7 @@
             
 
         </Grid.Resources>
-        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="1" Grid.RowSpan="14" Grid.ColumnSpan="6" HorizontalAlignment="Center" Source="/Think-VoIP-Thinky.png" Stretch="Uniform"/>
+        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="1" Grid.RowSpan="20" Grid.ColumnSpan="6" HorizontalAlignment="Center" Source="/Think-VoIP-Thinky.png" Stretch="Uniform"/>
 
         <!--Main Menu-->
         <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="10" Visibility="Hidden" Padding="0" Height="Auto"  Effect="{DynamicResource MaterialDesignShadowDepth1}">
@@ -137,12 +140,14 @@
 
         <!--Customer ListBox-->
         <ListBox x:Name="CustomersList" Margin="0,0,4,0" Visibility="Hidden" BorderBrush="Gray" BorderThickness="0,1,1,0" Grid.Row="3"  Grid.Column="1"  DisplayMemberPath="company.name" SelectionChanged="CustomersList_SelectionChanged"
-                 Grid.RowSpan="13"  FontWeight="Normal"  ScrollViewer.CanContentScroll="True" MouseDoubleClick="OnCustListDoubleClick" >
+                 Grid.RowSpan="16"  FontWeight="Normal"  ScrollViewer.CanContentScroll="True" MouseDoubleClick="OnCustListDoubleClick" MouseUp="CustomersList_MouseUp" MouseDown="CustomersList_MouseDown"  >
            
             <ListBox.ContextMenu>
-                <ContextMenu  BorderThickness="1">
+                <ContextMenu  x:Name="rightClickeMenu" BorderThickness="1" >
                     <Separator/>
                     <MenuItem x:Name="passwordResetMenuItem" Header="Reset Password"  IsEnabled="False" Click="Menu_Item_ResetPassword"/>
+                    <MenuItem x:Name="openConfluenceButton" Header="Open Confluence page"  IsEnabled="True" Click="openConfluenceButton_Click"/>
+                    <MenuItem x:Name="open3cxPage" Header="Open 3cx Page"  IsEnabled="True" Click="open3cxPage_Click"/>
                     <Separator/>
                 </ContextMenu>
             </ListBox.ContextMenu>
@@ -203,7 +208,7 @@
 
         <!--phones seperator-->
         <Separator x:Name="PhoneSeperator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"  BorderThickness="3" Width="142" HorizontalAlignment="Left"
-                    Grid.ColumnSpan="1" Visibility="Hidden" BorderBrush="#FFF35626"/>
+                    Grid.ColumnSpan="1" Visibility="Hidden" BorderBrush="#FF8DC748"/>
 
         <!--Add buttons-->
         <Button x:Name="AddExt" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="2" Margin="5,5,2,0"  MaxHeight="25"  FontWeight="Normal" Background="#FF8DC748"
@@ -212,8 +217,17 @@
         <Button x:Name="AddPhoneButton" Grid.Row="15" Margin="5,5,2,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FF8DC748"  Width="142"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="#FFF35626" BorderThickness="1" Content="  Add Phone  "   Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" Grid.ColumnSpan="1"/>
 
+        <!--phones seperator-->
+        <Separator x:Name="RefreshSeperator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"  BorderThickness="3" Width="142" HorizontalAlignment="Left"
+                    Grid.ColumnSpan="1" Visibility="Hidden" BorderBrush="#FF8DC748"/>
+
+
+        <Button x:Name="RefreshButton" Grid.Row="17" Margin="5,25,2,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FFF35626"  Width="80"
+                VerticalAlignment="top" HorizontalAlignment="Left"  BorderBrush="#FFF35626" BorderThickness="1" Content="Refresh"   Visibility="Hidden" Click="RefreshButton_Click" Grid.ColumnSpan="1"/>
+
+
         <!--Extensions and phones datagrid-->
-        <ListView x:Name="ListViewGrid"   Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0" Grid.RowSpan="13" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
+        <ListView x:Name="ListViewGrid"   Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0" Grid.RowSpan="16" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
                   MinWidth="600" MinHeight="600" Grid.ColumnSpan="2"  IsSynchronizedWithCurrentItem="False" AlternationCount="2" ItemContainerStyle="{DynamicResource alternatingWithTriggers}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
             
             <ListView.ContextMenu>
@@ -263,7 +277,7 @@
             </ListView.View>
         </ListView>
 
-        <ListView x:Name="PhoneListViewGrid" Visibility="Hidden" Margin="5,0,0,0" FontSize="14" Grid.Row="3" Grid.Column="5" Grid.RowSpan="14" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
+        <ListView x:Name="PhoneListViewGrid" Visibility="Hidden" Margin="5,0,0,0" FontSize="14" Grid.Row="3" Grid.Column="5" Grid.RowSpan="16" SelectionMode="Single" HorizontalContentAlignment="Stretch" HorizontalAlignment="Stretch" 
                   MinWidth="600" MinHeight="600" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="False" AlternationCount="2" ItemContainerStyle="{DynamicResource alternatingWithTriggers}" ScrollViewer.CanContentScroll="True" UseLayoutRounding="True" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
 
             <ListView.ContextMenu>

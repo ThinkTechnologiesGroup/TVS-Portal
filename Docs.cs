@@ -71,7 +71,7 @@ namespace ThinkVoip
 
         private static string StripHtml(string input) => Regex.Replace(input, "<.*?>", string.Empty);
 
-        public string FindThreeCxPageIdByTitle(string spaceTitle)
+        public string FindThreeCxPageIdByTitle(string spaceTitle, bool getUrl = false)
         {
             spaceTitle = spaceTitle.Replace("&", string.Empty);
             spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
@@ -87,7 +87,37 @@ namespace ThinkVoip
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
+                if (getUrl)
+                {
+                    return results.First()._links.tinyui;
+                }
                 return results.First().Id;
+            }
+            catch (Exception e)
+            {
+                Logging.Logger.Error($"Failed to find pageId \"{spaceTitle}\" : " + e.Message);
+                MessageBox.Show("No 3cx Confluence page found for selected client");
+                throw;
+            }
+        }
+        public string FindThreeCxPageUrlByTitle(string spaceTitle)
+        {
+            spaceTitle = spaceTitle.Replace("&", string.Empty);
+            spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
+
+            _restClient = new RestClient(_baseUrl + $"content/search?cql=space.title ~ \"{spaceTitle}\" and label=\"3cxinfo\"");
+            _restRequest = new RestRequest(Method.GET);
+            _restRequest.AddHeader("Authorization", "Basic " + _authKey);
+
+            try
+            {
+                var response = _restClient.Execute(_restRequest).Content;
+                var obj = JsonConvert.DeserializeObject<JObject>(response);
+                var list = obj.GetValue("results");
+                Debug.Assert(list != null, nameof(list) + " != null");
+                var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
+                var link = results.First()._links.tinyui;
+                return results.First()._links.tinyui;
             }
             catch (Exception e)
             {
@@ -195,11 +225,20 @@ namespace ThinkVoip
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; set; }
-
+        public Links _links { get; set; }
         //public string type { get; set; }
         //public string status { get; set; }
         //public string Title { get; set; }
         //public List<ThreeCxPageMacros> PageTables { get; set; }
+    }
+
+    public class Links
+    {
+        public string webui { get; set; }
+        public string tinyui { get; set; }
+        public string self { get; set; }
+        public string @base { get; set; }
+        public string context { get; set; }
     }
 
     public class ThreeCxLoginInfo
