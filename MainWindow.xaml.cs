@@ -144,7 +144,7 @@ namespace ThinkVoip
                 {
                     AdminMenu.Visibility = Visibility.Visible;
                     extensionRemoveButton.IsEnabled = true;
-                    passwordResetMenuItem.IsEnabled = true;
+                    resetPassordMenuItem.IsEnabled = true;
                     makeExtAdminMenuItem.IsEnabled = true;
 
                 }
@@ -214,17 +214,10 @@ namespace ThinkVoip
             await UpdateSelectedCompanyInfo();
 
 
+
         }
        
-        private async void CustomersList_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Released)
-            {
-                await UpdateSelectedCompanyInfo();
-               
-            }
-            
-        }
+        
 
      
         public async Task UpdateSelectedCompanyInfo()
@@ -239,6 +232,7 @@ namespace ThinkVoip
             CompanyId = selectedCompany.company.id;
             try
             {
+                resetPassordMenuItem.Visibility = Visibility.Visible;
                 await DisplayClientInfo(CompanyId);
             }
             catch
@@ -264,6 +258,9 @@ namespace ThinkVoip
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
             RefreshButton.Visibility = Visibility.Hidden;
             RefreshSeperator.Visibility = Visibility.Hidden;
+            Open3cxButton.Visibility = Visibility.Hidden;
+            OpenConfluenceButton.Visibility = Visibility.Hidden;
+
             ForwardingOnlyExtensionsCount.Text = "";
             BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
             BilledUserExtensionsCount.Text = "";
@@ -418,6 +415,8 @@ namespace ThinkVoip
             ExtensionsHeader.Visibility = Visibility.Visible;
             RefreshButton.Visibility = Visibility.Visible;
             RefreshSeperator.Visibility = Visibility.Visible;
+            Open3cxButton.Visibility = Visibility.Visible;
+            OpenConfluenceButton.Visibility = Visibility.Visible;
 
         }
 
@@ -822,21 +821,7 @@ namespace ThinkVoip
         }
 
 
-        private async void OnCustListDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-
-            var company = await CwClient.GetCompany(CompanyId);
-            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
-
-
-            var hostName = loginInfo.HostName;
-            var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
-
-            OpenUrl(cleanedHostName);
-
-
-        }
+       
         public static void OpenUrl(string url)
         {
             try
