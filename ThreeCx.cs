@@ -986,6 +986,8 @@ namespace ThinkVoip
         }
         private async Task UpdateRestrictionsForVmOnly(IRestResponse response, string id)
         {
+
+
             var updateResponse = await SendUpdate(response,
                ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", value: true))
                .ConfigureAwait(false);
@@ -1015,6 +1017,9 @@ namespace ThinkVoip
         }
         private async Task UpdateForwardingRulesForFwdOnly(IRestResponse response, string id)
         {
+
+
+
             var updateResponse = await SendUpdate(response,
                 ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", propertyValue: "1"))
                 .ConfigureAwait(false);
@@ -1215,6 +1220,10 @@ namespace ThinkVoip
 
         private async Task UpdateExtensionVoiceMailPin(IRestResponse response, string id, string pin)
         {
+
+            var enabledResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
+
+
             var updateResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMPin", pin)).ConfigureAwait(false);
             if (updateResponse != "OK")
             {
@@ -1231,6 +1240,11 @@ namespace ThinkVoip
 
         private async Task UpdateExtensionVoiceMailOptions(IRestResponse response, string id, string voiceMailOptions)
         {
+
+
+
+            var enabledResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
+
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEmailOptions", voiceMailOptions))
                 .ConfigureAwait(false);
 
