@@ -107,7 +107,11 @@ namespace ThinkVoip
 
                     var extensionId = await threeCxClient.GetExtensionId(currentExtension);
                     var phonesList = await threeCxClient.GetListOfPhonesForExtension(currentExtension, extensionId);
-
+                    var vmPin = await threeCxClient.GetExtensionPinNumber(currentExtension);
+                    if (vmPin == null)
+                    {
+                        vmPin = "1234";
+                    }
                     if (phonesList.Count > 1)
                     {
                         //pop up new window to pick from or choose all and return new list to loop around of whats to update
@@ -125,7 +129,7 @@ namespace ThinkVoip
                                 .Replace("- Forward Only", "");
 
                             await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
-                            disAllowUseOffLan: false);
+                            disAllowUseOffLan: false, pin: vmPin);
 
                             foreach (var phone in phonesList)
                             {
