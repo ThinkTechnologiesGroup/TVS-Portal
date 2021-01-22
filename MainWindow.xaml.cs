@@ -648,7 +648,7 @@ namespace ThinkVoip
             }
         }
 
-        private async void Menu_Item_ResetPassword(object sender, RoutedEventArgs e)
+        private void Menu_Item_ResetPassword(object sender, RoutedEventArgs e)
         {
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
@@ -657,7 +657,6 @@ namespace ThinkVoip
 
             var window = new PasswordResetWindow(companyId);
             window.ShowDialog();
-            await UpdateSelectedCompanyInfo();
 
         }
 
@@ -681,8 +680,6 @@ namespace ThinkVoip
 
         public async Task UpdateDisplay()
         {
-            //ListViewGrid.Visibility = Visibility.Hidden;
-            //PhoneListViewGrid.Visibility = Visibility.Hidden;
             UpdateExtensionDataGrid();
             await UpdateView();
             switch (lastView)
