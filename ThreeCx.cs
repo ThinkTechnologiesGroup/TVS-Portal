@@ -137,7 +137,7 @@ namespace ThinkVoip
             }
 
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
-            
+
 
             var id = properties["Id"].ToString();
             await UpdateExtensionAdminSettings(response, id);
@@ -802,10 +802,15 @@ namespace ThinkVoip
             }
         }
 
-      
+
         public async Task CreateExtensionOnServer(string extensionNumber, string firstName, string lastName, string email,
             string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false, bool VmOnly = false, bool fwdOnly = false)
         {
+            var currentPin = await GetExtensionPinNumber(extensionNumber);
+            if (currentPin != "")
+            {
+                pin = currentPin;
+            }
             var exists = await ExtensionExists(extensionNumber).ConfigureAwait(false);
             if (!exists)
             {
@@ -889,7 +894,7 @@ namespace ThinkVoip
         }
 
 
-        
+
         private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions, string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool VmOnly, bool fwdOnly, IRestResponse response, string id)
         {
             //ext number
@@ -1028,7 +1033,7 @@ namespace ThinkVoip
 
         }
 
-       
+
 
         private async Task UpdateExtensionSharedParks(IRestResponse response, string id, List<JToken> blfIdList, int lineKeys, int sharedParksCount)
         {

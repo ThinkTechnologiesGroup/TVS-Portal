@@ -27,8 +27,9 @@ namespace ThinkVoip
         public const string YealinkCp960 = "Yealink CP960";
         public const string YealinkT57W = "Yealink T57W";
         public const string YealinkT40G = "Yealink T40G";
+        public const string YealinkT42S = "Yealink T42S";
         public const string YealinkT46S = "Yealink T46S";
-        public const string YealinkT48S = "Yealink T48s";
+        public const string YealinkT48S = "Yealink T48S";
         public const string FanvilH5 = "Fanvil H5";
 
 
@@ -40,6 +41,7 @@ namespace ThinkVoip
             new Phone{ Model = TvsT48s, ModelDisplayName = "TVS - Yealink T48s"},
             new Phone{ Model = YealinkCp960},
             new Phone{ Model = YealinkT40G},
+            new Phone{ Model = YealinkT42S},
             new Phone{ Model = YealinkT46S},
             new Phone{ Model = YealinkT48S},
             new Phone{ Model = YealinkT57W},
@@ -78,7 +80,7 @@ namespace ThinkVoip
             InitializeComponent();
             ShowMenu();
 
-          
+
         }
 
 
@@ -91,6 +93,8 @@ namespace ThinkVoip
 
         private async void Window_Initialized(object sender, EventArgs e)
         {
+
+
             // Copy user settings from previous application version if necessary
             if (Settings.Default.UpdateSettings)
             {
@@ -111,7 +115,7 @@ namespace ThinkVoip
             if (!isAuthenticated)
             {
 
-                try
+                if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
                 {
                     if (Settings.Default.RememberMe)
                     {
@@ -122,23 +126,20 @@ namespace ThinkVoip
 
                         }
                     }
-
-                    if (!isAuthenticated)
-                    {
-                        var window = new LoginWindow();
-                        window.ShowDialog();
-                    }
-                    if (!isAuthenticated)
-                    {
-                        this.Close();
-                        return;
-                    }
-
                 }
-                catch
+
+
+                if (!isAuthenticated)
                 {
-                    MessageBox.Show("Unable to connect to domain for authentication", "Error");
+                    var window = new LoginWindow();
+                    window.ShowDialog();
                 }
+                if (!isAuthenticated)
+                {
+                    this.Close();
+                    return;
+                }
+
 
                 if (isAdmin)
                 {
@@ -216,10 +217,10 @@ namespace ThinkVoip
 
 
         }
-       
-        
 
-     
+
+
+
         public async Task UpdateSelectedCompanyInfo()
         {
 
@@ -650,13 +651,22 @@ namespace ThinkVoip
 
         private void Menu_Item_ResetPassword(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            var companyId = selectedCompany.company.id;
-            CompanyId = companyId;
+            if (CustomersList.SelectedItem != null)
+            {
+                var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+                Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+                var companyId = selectedCompany.company.id;
+                CompanyId = companyId;
 
-            var window = new PasswordResetWindow(companyId);
-            window.ShowDialog();
+                var window = new PasswordResetWindow(companyId);
+                window.ShowDialog();
+            }
+
+            else
+            {
+                MessageBox.Show("Please select a client first.", "Error");
+            }
+
 
         }
 
@@ -818,7 +828,7 @@ namespace ThinkVoip
         }
 
 
-       
+
         public static void OpenUrl(string url)
         {
             try
@@ -860,7 +870,7 @@ namespace ThinkVoip
             SecurityIdentifier sid = user.User;
             return sid.ToString();
         }
-  
+
         private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
@@ -919,6 +929,11 @@ namespace ThinkVoip
             }
 
 
+
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
 
         }
     }

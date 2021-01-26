@@ -20,17 +20,19 @@ namespace ThinkVoipTool
             username = username.StripDomain();
             var credentials = new NetworkCredential(username, password, domain);
             var serverId = new LdapDirectoryIdentifier(url);
-
-            bool result = true;
-
             var conn = new LdapConnection(serverId, credentials);
+
+            bool result;
             try
             {
                 conn.Bind();
+                result = true;
             }
             catch (Exception)
             {
                 result = false;
+                conn.Dispose();
+                return result;
             }
 
             var dName = "DC=ttg,Dc=Local";
@@ -52,18 +54,12 @@ namespace ThinkVoipTool
                 }
 
             }
-            catch
+            catch (Exception ex) when (ex.Message == "The supplied credential is invalid.")
             {
-                MessageBox.Show("Unable to connect to domain for authentication", "Error");
-
+                MessageBox.Show("The supplied credentials are invalid.", "Error");
             }
 
-
-
-
-
             conn.Dispose();
-
             return result;
         }
 

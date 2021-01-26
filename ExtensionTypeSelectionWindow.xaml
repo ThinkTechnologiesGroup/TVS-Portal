@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ThinkVoip"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="12"
@@ -43,8 +44,8 @@
         </Grid.RowDefinitions>
 
 
-        <Image x:Name="Thinky" Source="/Thinky.png" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" VerticalAlignment="Center" Stretch="Uniform"/>
-        <TextBlock x:Name="ExtensionDropDownTitle" Text="Choose Extension Type" Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" TextAlignment="Center" FontWeight="Bold"/>
+        <Image x:Name="Thinky" Source="/Resources/Thinky.png" Grid.Column="1" Grid.Row="1" Grid.RowSpan="1" VerticalAlignment="Center" Stretch="Uniform"/>
+        <TextBlock x:Name="ExtensionDropDownTitle" Text="Choose Extension Type" Grid.Column="1" Grid.Row="2" VerticalAlignment="Bottom" TextAlignment="Center" FontWeight="Bold" Margin="0,5,5,0"/>
 
         <ComboBox x:Name="ExtensionTypeDropDownList" Grid.Column="1" Grid.Row="3">    
         </ComboBox>
@@ -53,20 +54,15 @@
 
 
 
-        <TextBlock x:Name="ExtNumber" Visibility="Hidden" Grid.Row="2" Grid.Column="1"  Text="Ext #"/>
-        <TextBox x:Name="ExtNumberEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="1" MinWidth="75" />
+        <TextBox x:Name="ExtNumberEntry" Margin="5,5,5,5" Visibility="Hidden"   Grid.Row="3" Grid.Column="1" MinWidth="75" Style="{DynamicResource MaterialDesignTextBox}" />
 
-        <TextBlock x:Name="FirstName" Visibility="Hidden" Grid.Row="2" Grid.Column="2"  Text="First Name" />
-        <TextBox x:Name="FirstNameEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="2" MinWidth="150" KeyDown="FirstName_KeyDown"/>
+        <TextBox x:Name="FirstNameEntry" Margin="5,5,5,5" Visibility="Hidden" materialDesign:HintAssist.Hint="First Name" Grid.Row="3" Grid.Column="2" MinWidth="150" KeyDown="FirstName_KeyDown" Style="{DynamicResource MaterialDesignTextBox}"/>
 
-        <TextBlock x:Name="LastName" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Text="Last Name" />
-        <TextBox x:Name="LastNameEntry" Visibility="Hidden" Grid.Row="3" Grid.Column="3" MinWidth="150" KeyDown="LastName_KeyDown"/>
+        <TextBox x:Name="LastNameEntry" Margin="5,5,5,5" Visibility="Hidden" materialDesign:HintAssist.Hint="Last Name" Grid.Row="3" Grid.Column="3" MinWidth="150" KeyDown="LastName_KeyDown" Style="{DynamicResource MaterialDesignTextBox}"/>
 
-        <TextBlock x:Name="Email" Visibility="Hidden" Grid.Row="2" Grid.Column="4"  Text="Email Address" />
-        <TextBox x:Name="EmailEntry" Visibility="Hidden"  Grid.Row="3" Grid.Column="4" MinWidth="150" KeyDown="Email_KeyDown"/>
+        <TextBox x:Name="EmailEntry" Margin="5,5,5,5" Visibility="Hidden" materialDesign:HintAssist.Hint="Email Address" Grid.Row="3" Grid.Column="4" MinWidth="150" KeyDown="Email_KeyDown" Style="{DynamicResource MaterialDesignTextBox}"/>
 
-        <TextBlock x:Name="MobileNumber" Visibility="Hidden" Grid.Row="2" Grid.Column="3"  Text="Mobile Number" />
-        <TextBox x:Name="MobileNumberEntry" Visibility="Hidden"  Grid.Row="3" Grid.Column="3" MinWidth="150" />
+        <TextBox x:Name="MobileNumberEntry" Margin="5,5,5,5" Visibility="Hidden" materialDesign:HintAssist.Hint="Mobile Number" Grid.Row="3" Grid.Column="3" MinWidth="150"  Style="{DynamicResource MaterialDesignTextBox}"/>
 
         <Button x:Name="AddExtentionButton" Grid.Row="4" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="0,2,2,0" FontWeight="Bold" FontSize="20" Visibility="Hidden" Content ="Add" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" MinWidth="75" Click="AddExtention_Click" />
         <Button x:Name="SetExtensionBack" Grid.Row="4" Grid.Column="2" Grid.RowSpan="1" Grid.ColumnSpan="1" Margin="0,2,2,0" FontSize="20" Visibility="Hidden" Content ="Back"  VerticalAlignment="Bottom" HorizontalAlignment="Stretch" Click="SetExtensionBack_Click" />
@@ -74,7 +70,7 @@
 
         <TextBlock x:Name="PleaseWaitTextBlock" Grid.Row="5" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="1" FontWeight="Bold" Foreground="Red" Visibility="Hidden" Text="Please wait..."/>
 
-        <ComboBox x:Name="AvailableExtensionsDropDownList" IsEditable="true" Visibility="Hidden" Grid.Row="3" Grid.Column="1">
+        <ComboBox x:Name="AvailableExtensionsDropDownList" materialDesign:HintAssist.Hint="Ext"  IsEditable="true" Visibility="Hidden" Grid.Row="3" Grid.Column="1" Style="{DynamicResource MaterialDesignComboBox}">
             <ComboBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <VirtualizingStackPanel />

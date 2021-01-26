@@ -4,7 +4,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <ApplicationIcon>Thinky.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Thinky.ico</ApplicationIcon>
     <AssemblyName>TSVPortal</AssemblyName>
     <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
     <Platforms>AnyCPU;x64</Platforms>
@@ -53,15 +53,12 @@
     <None Remove="Fonts\JetBrainsMono-Regular.ttf" />
     <None Remove="Fonts\JetBrainsMono-SemiLight-Italic.ttf" />
     <None Remove="Fonts\JetBrainsMono-SemiLight.ttf" />
-    <None Remove="Think-VoIP-Thinky.png" />
-    <None Remove="Think-VoIP-v2-gray.png" />
-    <None Remove="Thinky %281%29.png" />
-    <None Remove="Thinky.ico" />
-    <None Remove="Thinky.png" />
-    <None Include="C:\Users\mwien\Downloads\Think-VoIP-Thinky.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
+    <None Remove="Resources\Think-VoIP-Thinky Smaller.png" />
+    <None Remove="Resources\Think-VoIP-Thinky.png" />
+    <None Remove="Resources\Think-VoIP-v2-gray.png" />
+    <None Remove="Resources\Thinky %281%29.png" />
+    <None Remove="Resources\Thinky.ico" />
+    <None Remove="Resources\Thinky.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -124,11 +121,24 @@
     <Resource Include="Fonts\JetBrainsMono-SemiLight.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Think-VoIP-Thinky.png" />
-    <Resource Include="Think-VoIP-v2-gray.png" />
-    <Resource Include="Thinky (1).png" />
-    <Resource Include="Thinky.ico" />
-    <Resource Include="Thinky.png" />
+    <Resource Include="Resources\Think-VoIP-Thinky Smaller.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Think-VoIP-Thinky.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Think-VoIP-v2-gray.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Thinky (1).png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Thinky.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Thinky.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>

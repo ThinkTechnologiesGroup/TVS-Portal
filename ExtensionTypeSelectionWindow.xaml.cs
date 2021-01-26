@@ -148,7 +148,7 @@ namespace ThinkVoip
                             firstName = firstName.Trim() + " - Voicemail Only";
 
                             await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
-                                disAllowUseOffLan: true, VmOnly: true);
+                                disAllowUseOffLan: true, VmOnly: true, pin: vmPin);
 
                             break;
 
@@ -181,43 +181,43 @@ namespace ThinkVoip
             switch (extType)
             {
                 case ExtensionTypes.StandardUser:
-                    this.FirstName.Text = "First Name";
-                    this.Email.SetValue(Grid.ColumnProperty, 4);
+                    //this.FirstName.Text = "First Name";
+                    //this.Email.SetValue(Grid.ColumnProperty, 4);
                     this.EmailEntry.SetValue(Grid.ColumnProperty, 4);
-                    this.ExtNumber.Visibility = Visibility.Visible;
+                   // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
-                    this.FirstName.Visibility = Visibility.Visible;
+                    //this.FirstName.Visibility = Visibility.Visible;
                     this.FirstNameEntry.Visibility = Visibility.Visible;
-                    this.LastName.Visibility = Visibility.Visible;
+                    //this.LastName.Visibility = Visibility.Visible;
                     this.LastNameEntry.Visibility = Visibility.Visible;
-                    this.Email.Visibility = Visibility.Visible;
+                    //this.Email.Visibility = Visibility.Visible;
                     this.EmailEntry.Visibility = Visibility.Visible;
                     this.AddExtentionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.VoiceMailOnly:
-                    this.ExtNumber.Visibility = Visibility.Visible;
+                   // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
-                    this.FirstName.Text = "Display Name";
-                    this.FirstName.Visibility = Visibility.Visible;
+                   // this.FirstName.Text = "Display Name";
+                   // this.FirstName.Visibility = Visibility.Visible;
                     this.FirstNameEntry.Visibility = Visibility.Visible;
-                    this.Email.SetValue(Grid.ColumnProperty, 3);
+                   // this.Email.SetValue(Grid.ColumnProperty, 3);
                     this.EmailEntry.SetValue(Grid.ColumnProperty, 3);
-                    this.Email.Visibility = Visibility.Visible;
+                   // this.Email.Visibility = Visibility.Visible;
                     this.EmailEntry.Visibility = Visibility.Visible;
                     this.AddExtentionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.ForwardingOnly:
-                    this.ExtNumber.Visibility = Visibility.Visible;
+                   // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
-                    this.FirstName.Text = "Display Name";
-                    this.FirstName.Visibility = Visibility.Visible;
+                   // this.FirstName.Text = "Display Name";
+                   // this.FirstName.Visibility = Visibility.Visible;
                     this.FirstNameEntry.Visibility = Visibility.Visible;
-                    this.MobileNumber.Visibility = Visibility.Visible;
+                   // this.MobileNumber.Visibility = Visibility.Visible;
                     this.MobileNumberEntry.Visibility = Visibility.Visible;
                     this.AddExtentionButton.Visibility = Visibility.Visible;
                     break;
@@ -316,18 +316,18 @@ namespace ThinkVoip
 
         private void SetExtensionBack_Click(object sender, RoutedEventArgs e)
         {
-            this.MobileNumber.Visibility = Visibility.Hidden;
+            //this.MobileNumber.Visibility = Visibility.Hidden;
             this.MobileNumberEntry.Visibility = Visibility.Hidden;
             this.AddExtentionButton.Visibility = Visibility.Hidden;
             this.SetExtensionBack.Visibility = Visibility.Hidden;
-            this.ExtNumber.Visibility = Visibility.Hidden;
+            //this.ExtNumber.Visibility = Visibility.Hidden;
             this.ExtNumberEntry.Visibility = Visibility.Hidden;
             this.AvailableExtensionsDropDownList.Visibility = Visibility.Hidden;
-            this.FirstName.Visibility = Visibility.Hidden;
+            //this.FirstName.Visibility = Visibility.Hidden;
             this.FirstNameEntry.Visibility = Visibility.Hidden;
-            this.LastName.Visibility = Visibility.Hidden;
+            //this.LastName.Visibility = Visibility.Hidden;
             this.LastNameEntry.Visibility = Visibility.Hidden;
-            this.Email.Visibility = Visibility.Hidden;
+            //this.Email.Visibility = Visibility.Hidden;
             this.EmailEntry.Visibility = Visibility.Hidden;
             this.AddExtentionButton.Visibility = Visibility.Hidden;
             this.ExtensionDropDownTitle.Text = "Choose Extension Type";

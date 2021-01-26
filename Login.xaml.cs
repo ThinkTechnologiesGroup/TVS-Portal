@@ -33,7 +33,9 @@ namespace ThinkVoipTool
 
         private async void OnLoginClick(object sender, RoutedEventArgs e)
         {
-            ResultLabel.Visibility = Visibility.Hidden;
+            ResultLabel.Visibility = Visibility.Visible;
+
+
 
             var username = UserNameEntry.Text.StripDomain();
             var password = PasswordEntry.Password;
@@ -45,6 +47,8 @@ namespace ThinkVoipTool
             }
 
             DisplayLoginResultInfo(Brushes.Green, "Attempting Login...");
+
+
             if (await RunLogonProcess(username, password))
             {
 
@@ -88,7 +92,12 @@ namespace ThinkVoipTool
 
         private async Task<bool> RunLogonProcess(string userName, string passWord)
         {
-            var result = Task.Run(() => TryLogin(userName, passWord));
+            var result = Task.Run(() =>
+            {
+
+                return TryLogin(userName, passWord);
+            });
+
             return await result;
         }
 
