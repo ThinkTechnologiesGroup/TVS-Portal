@@ -542,6 +542,7 @@ namespace ThinkVoip
             if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
+                
                 return;
             }
 
