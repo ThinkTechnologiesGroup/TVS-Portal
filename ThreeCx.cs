@@ -806,14 +806,12 @@ namespace ThinkVoip
         public async Task CreateExtensionOnServer(string extensionNumber, string firstName, string lastName, string email,
             string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false, bool VmOnly = false, bool fwdOnly = false)
         {
-            var currentPin = await GetExtensionPinNumber(extensionNumber);
-            if (currentPin != "")
-            {
-                pin = currentPin;
-            }
+           
+           
             var exists = await ExtensionExists(extensionNumber).ConfigureAwait(false);
             if (!exists)
             {
+
                 _apiEndPoint = "ExtensionList/new";
                 _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
                 _restRequest = new RestRequest(Method.POST);
@@ -826,7 +824,11 @@ namespace ThinkVoip
             }
             else
             {
-
+                var currentPin = await GetExtensionPinNumber(extensionNumber);
+                if (currentPin != "")
+                {
+                    pin = currentPin;
+                }
                 var extId = await GetExtensionId(extensionNumber);
                 _apiEndPoint = "ExtensionList/set";
                 _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);

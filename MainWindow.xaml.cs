@@ -197,6 +197,8 @@ namespace ThinkVoip
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
+           
+
             var listBoxSender = sender as ListBox;
             if (listBoxSender.SelectedItems.Count == 0) return;
 
@@ -207,10 +209,6 @@ namespace ThinkVoip
 
             }
 
-            //if (Mouse.LeftButton == MouseButtonState.Pressed)
-            //{
-            //    await UpdateSelectedCompanyInfo();
-            //}
 
             await UpdateSelectedCompanyInfo();
 
@@ -282,15 +280,6 @@ namespace ThinkVoip
         {
 
 
-            //ListViewGrid.Visibility = Visibility.Hidden;
-
-            //VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            //ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            //BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            //ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            //ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
-            //ExtensionsTotalValid.Visibility = Visibility.Hidden;
-            //PhonesTotalDisplay.Visibility = Visibility.Hidden;
             ExtensionsTotal.Text = "";
             InValidExtensions.Text = "";
             TotalValidExtensions.Text = "";
@@ -305,7 +294,6 @@ namespace ThinkVoip
             var user = await Secrets.GetSecretValue("AdAuthUser");
             var pass = await Secrets.GetSecretValue("AdAuthPass");
 
-
             lastView = Views.valid;
             ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
             var company = await CwClient.GetCompany(companyId);
@@ -315,9 +303,17 @@ namespace ThinkVoip
             ThreeCxPassword = loginInfo.Password;
             ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
             systemExtensions = await ThreeCxClient.GetSystemExtensions();
-            ExtensionList = await ThreeCxClient.GetExtensionsList();
+           
+                if (ThreeCxClient != null)
+                {
+                    ExtensionList = await ThreeCxClient.GetExtensionsList();
+                    await UpdateDisplay();
 
-            await UpdateDisplay();
+                }
+                else
+                {
+                    return;
+                }
 
         }
 
@@ -897,7 +893,16 @@ namespace ThinkVoip
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            await UpdateDisplay();
+            try
+            {
+                await UpdateDisplay();
+
+            }
+            catch
+            {
+                await UpdateSelectedCompanyInfo();
+
+            }
         }
 
         private async void makeExtAdminMenuItem_Click(object sender, RoutedEventArgs e)

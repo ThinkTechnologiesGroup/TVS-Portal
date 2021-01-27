@@ -157,7 +157,7 @@
 
 
 
-        <Image x:Name="ThinkyTitleIMage" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" Visibility="Visible" Grid.Row="1" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="15" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" StretchDirection="DownOnly"/>
+        <Image x:Name="ThinkyTitleIMage" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" Visibility="Visible" Grid.Row="1" Grid.Column="1" Grid.RowSpan="1" Grid.ColumnSpan="15" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
 
 
         <!--PLease wait label-->
@@ -226,10 +226,10 @@
 
         <!--Add buttons-->
         <Button x:Name="AddExt" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="2" Margin="5,5,2,0"  MaxHeight="25"  FontWeight="Normal" Background="#FF8DC748"
-                VerticalAlignment="Center" BorderBrush="#FFF35626" BorderThickness="1" Content="Add Extension"   Visibility="Hidden" Click="AddExtension_Click" Width="142"/>
+                VerticalAlignment="Center" BorderBrush="Gray" BorderThickness="1" Content="Add Extension"   Visibility="Hidden" Click="AddExtension_Click" Width="142"/>
 
         <Button x:Name="AddPhoneButton" Grid.Row="15" Margin="5,5,2,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FF8DC748"  Width="142"
-                VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="#FFF35626" BorderThickness="1" Content="  Add Phone  "   Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" Grid.ColumnSpan="1"/>
+                VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1" Content="  Add Phone  "   Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" Grid.ColumnSpan="1"/>
 
         <!--phones seperator-->
         <Separator x:Name="RefreshSeperator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"  BorderThickness="3" Width="142" HorizontalAlignment="Left"
@@ -237,15 +237,15 @@
 
         <!--Refresh Button-->
 
-        <Button x:Name="RefreshButton" Grid.Row="18" Margin="5,10,2,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FFF35626"  Width="145"
-                VerticalAlignment="top" HorizontalAlignment="Left"  BorderBrush="#FFF35626" BorderThickness="1" Content="Refresh"   Visibility="Hidden" Click="RefreshButton_Click" Grid.ColumnSpan="1"/>
+        <Button x:Name="RefreshButton" Grid.Row="18" Margin="5,10,2,0" MaxHeight="25"  Grid.Column="2"  FontWeight="Bold"   Width="145"
+                VerticalAlignment="top" HorizontalAlignment="Left"  BorderBrush="Gray" BorderThickness="1" Content="Refresh"   Visibility="Hidden" Click="RefreshButton_Click" Grid.ColumnSpan="1" Style="{DynamicResource MaterialDesignOutlinedButton}" />
 
         <!--Launch Pages-->
-        <Button x:Name="OpenConfluenceButton" Grid.Row="17" Margin="5,5,0,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FFF35626"  Width="65"
-                VerticalAlignment="top" HorizontalAlignment="Left"  BorderBrush="#FFF35626" BorderThickness="1" Content="Docs"   Visibility="Hidden" Click="openConfluenceButton_Click" Grid.ColumnSpan="1"/>
+        <Button x:Name="OpenConfluenceButton" Grid.Row="17" Margin="5,5,0,0" MaxHeight="25" Grid.Column="2"  FontWeight="Bold"   Width="65"
+                VerticalAlignment="top" HorizontalAlignment="Left"  BorderBrush="Gray" Style="{DynamicResource MaterialDesignOutlinedButton}" BorderThickness="1" Content="Docs"   Visibility="Hidden" Click="openConfluenceButton_Click" Grid.ColumnSpan="1"/>
 
-        <Button x:Name="Open3cxButton" Grid.Row="17" Margin="50,5,2,0" MaxHeight="25" Grid.Column="2"  FontWeight="Normal" Background="#FFF35626"  Width="65"
-                VerticalAlignment="top" HorizontalAlignment="Right"  BorderBrush="#FFF35626" BorderThickness="1" Content="3cx "   Visibility="Hidden" Click="open3cxPage_Click" Grid.ColumnSpan="1"/>
+        <Button x:Name="Open3cxButton" Grid.Row="17" Margin="50,5,2,0" Style="{DynamicResource MaterialDesignOutlinedButton}" MaxHeight="25" Grid.Column="2"  FontWeight="Bold"   Width="65"
+                VerticalAlignment="top" HorizontalAlignment="Right"  BorderBrush="Gray" BorderThickness="1" Content="3cx "   Visibility="Hidden" Click="open3cxPage_Click" Grid.ColumnSpan="1"/>
 
 
 
