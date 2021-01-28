@@ -73,6 +73,9 @@ namespace ThinkVoip
         public static bool isAdmin = false;
         private static ConnectWiseConnection CwClient;
         private static System.Timers.Timer timer = new System.Timers.Timer(300000);
+        private static SkySwitchTelcoToken skySwitchTelcoToken = new SkySwitchTelcoToken();
+
+
 
 
         public MainWindow()
@@ -94,6 +97,7 @@ namespace ThinkVoip
         private async void Window_Initialized(object sender, EventArgs e)
         {
 
+            
 
             // Copy user settings from previous application version if necessary
             if (Settings.Default.UpdateSettings)
@@ -197,7 +201,7 @@ namespace ThinkVoip
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
-           
+
 
             var listBoxSender = sender as ListBox;
             if (listBoxSender.SelectedItems.Count == 0) return;
@@ -303,17 +307,17 @@ namespace ThinkVoip
             ThreeCxPassword = loginInfo.Password;
             ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
             systemExtensions = await ThreeCxClient.GetSystemExtensions();
-           
-                if (ThreeCxClient != null)
-                {
-                    ExtensionList = await ThreeCxClient.GetExtensionsList();
-                    await UpdateDisplay();
 
-                }
-                else
-                {
-                    return;
-                }
+            if (ThreeCxClient != null)
+            {
+                ExtensionList = await ThreeCxClient.GetExtensionsList();
+                await UpdateDisplay();
+
+            }
+            else
+            {
+                return;
+            }
 
         }
 
@@ -538,7 +542,7 @@ namespace ThinkVoip
             if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
-                
+
                 return;
             }
 

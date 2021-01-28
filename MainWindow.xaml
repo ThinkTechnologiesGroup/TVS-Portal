@@ -257,6 +257,7 @@
 
             <ListView.ContextMenu>
                 <ContextMenu>
+                    <MenuItem x:Name="addPhoneMenuItem" IsEnabled="True" Header="Add Phone" Click="MenuItem_Add_New_Phone_Click"/>
                     <MenuItem x:Name="extensionRemoveButton" IsEnabled="False" Header="Remove" Click="OnRemoveClick"/>
                     <MenuItem Header="Standardize" Click="OnStandardizeClick"/>
                     <MenuItem x:Name="makeExtAdminMenuItem" Header="Make Extention Admin" Click="makeExtAdminMenuItem_Click" IsEnabled="False"/>

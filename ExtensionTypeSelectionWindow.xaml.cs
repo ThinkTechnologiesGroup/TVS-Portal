@@ -184,7 +184,7 @@ namespace ThinkVoip
                     //this.FirstName.Text = "First Name";
                     //this.Email.SetValue(Grid.ColumnProperty, 4);
                     this.EmailEntry.SetValue(Grid.ColumnProperty, 4);
-                   // this.ExtNumber.Visibility = Visibility.Visible;
+                    // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
                     //this.FirstName.Visibility = Visibility.Visible;
@@ -197,27 +197,27 @@ namespace ThinkVoip
                     break;
 
                 case ExtensionTypes.VoiceMailOnly:
-                   // this.ExtNumber.Visibility = Visibility.Visible;
+                    // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
-                   // this.FirstName.Text = "Display Name";
-                   // this.FirstName.Visibility = Visibility.Visible;
+                    // this.FirstName.Text = "Display Name";
+                    // this.FirstName.Visibility = Visibility.Visible;
                     this.FirstNameEntry.Visibility = Visibility.Visible;
-                   // this.Email.SetValue(Grid.ColumnProperty, 3);
+                    // this.Email.SetValue(Grid.ColumnProperty, 3);
                     this.EmailEntry.SetValue(Grid.ColumnProperty, 3);
-                   // this.Email.Visibility = Visibility.Visible;
+                    // this.Email.Visibility = Visibility.Visible;
                     this.EmailEntry.Visibility = Visibility.Visible;
                     this.AddExtentionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.ForwardingOnly:
-                   // this.ExtNumber.Visibility = Visibility.Visible;
+                    // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
                     this.ExtNumberEntry.Visibility = Visibility.Hidden;
-                   // this.FirstName.Text = "Display Name";
-                   // this.FirstName.Visibility = Visibility.Visible;
+                    // this.FirstName.Text = "Display Name";
+                    // this.FirstName.Visibility = Visibility.Visible;
                     this.FirstNameEntry.Visibility = Visibility.Visible;
-                   // this.MobileNumber.Visibility = Visibility.Visible;
+                    // this.MobileNumber.Visibility = Visibility.Visible;
                     this.MobileNumberEntry.Visibility = Visibility.Visible;
                     this.AddExtentionButton.Visibility = Visibility.Visible;
                     break;

@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# Default severity for all analyzer diagnostics
+dotnet_analyzer_diagnostic.severity = none
+
+# CS0169: The field 'SkySwitchSProviders._aor' is never used
+dotnet_diagnostic.CS0169.severity = none
