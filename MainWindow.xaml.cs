@@ -11,10 +11,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-using ThinkVoipTool;
+
 using ThinkVoipTool.Properties;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -37,8 +37,8 @@ namespace ThinkVoip
 
         public static List<Phone> phoneModels = new List<Phone>()
         {
-            new Phone{ Model = TvsT46s, ModelDisplayName = "TVS - Yealink T46s"},
-            new Phone{ Model = TvsT48s, ModelDisplayName = "TVS - Yealink T48s"},
+            new Phone{ Model = TvsT46s, ModelDisplayName = "TVS - Yealink T46S"},
+            new Phone{ Model = TvsT48s, ModelDisplayName = "TVS - Yealink T48S"},
             new Phone{ Model = YealinkCp960},
             new Phone{ Model = YealinkT40G},
             new Phone{ Model = YealinkT42S},
@@ -97,7 +97,7 @@ namespace ThinkVoip
         private async void Window_Initialized(object sender, EventArgs e)
         {
 
-            
+
 
             // Copy user settings from previous application version if necessary
             if (Settings.Default.UpdateSettings)
@@ -184,12 +184,24 @@ namespace ThinkVoip
 
         private async Task updateCustomerList()
         {
+            // var test = await CwClient.GetCompany(250);
 
             var allVoipClients = await CwClient.GetAllTvsVoIpClients();
+
+            //var tempRitCompany = new BaseModels.Company() { name = "Ricciardis Italian Table", id = 19638 };
+            //var tempRit = new CompanyModel.Agreement() { company = tempRitCompany};
+            //allVoipClients.Add(tempRit);
 
             if (showTtg)
             {
                 allVoipClients.AddRange(await CwClient.GetAllThinkVoIpClients());
+            }
+
+            if (isAdmin)
+            {
+                var ttgCompany = new BaseModels.Company() { name = "!Think", id = 250 };
+                var ttgAgreement = new CompanyModel.Agreement() { company = ttgCompany };
+                allVoipClients.Add(ttgAgreement);
             }
             CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
             CustomersList.Visibility = Visibility.Visible;
@@ -208,15 +220,12 @@ namespace ThinkVoip
 
             if (Mouse.RightButton == MouseButtonState.Pressed)
             {
-                var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+                var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
                 CompanyId = selectedCompany.company.id;
 
             }
 
-
             await UpdateSelectedCompanyInfo();
-
-
 
         }
 
@@ -231,7 +240,7 @@ namespace ThinkVoip
             PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
             PleaseWaitTextBlock.Visibility = Visibility.Visible;
             ThreeCxClient = null;
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             CompanyId = selectedCompany.company.id;
             try
             {
@@ -424,7 +433,7 @@ namespace ThinkVoip
         private async void ExtensionsTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             lastView = Views.total;
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayExtensionInfo(companyId);
@@ -443,7 +452,7 @@ namespace ThinkVoip
         private async void ExtensionsTotalInvalid_Click(object sender, RoutedEventArgs e)
         {
             lastView = Views.invalid;
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayInvalidExtensionInfo(companyId);
@@ -478,7 +487,7 @@ namespace ThinkVoip
         private async void ExtensionsTotalValid_Click(object sender, RoutedEventArgs e)
         {
             lastView = Views.valid;
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayValidExtensions(companyId);
@@ -507,7 +516,7 @@ namespace ThinkVoip
         private async void PhonesTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             lastView = Views.phones;
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
             var companyId = selectedCompany.company.id;
             await DisplayPhones();
@@ -654,7 +663,7 @@ namespace ThinkVoip
         {
             if (CustomersList.SelectedItem != null)
             {
-                var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+                var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
                 Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
                 var companyId = selectedCompany.company.id;
                 CompanyId = companyId;
@@ -674,7 +683,7 @@ namespace ThinkVoip
 
         private void AddExtension_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             var companyId = selectedCompany.company.id;
             CompanyId = companyId;
 
@@ -874,7 +883,7 @@ namespace ThinkVoip
 
         private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (Models.CompanyModel.Agreement)CustomersList.SelectedItems[0];
+            var selectedCompany = (CompanyModel.Agreement)CustomersList.SelectedItems[0];
             CompanyId = selectedCompany.company.id;
             var company = await CwClient.GetCompany(CompanyId);
             var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);

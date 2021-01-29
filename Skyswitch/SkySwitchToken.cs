@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 using RestSharp;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     public class SkySwitchToken
     {
@@ -57,11 +57,7 @@ namespace ThinkVoip
         {
             get
             {
-                if (ExpirationTime > DateTime.Now)
-                {
-                    return _accessToken;
-                }
-                else
+                if (IsExpired(this))
                 {
                     SkySwitchTokenRefresh();
                 }
@@ -70,6 +66,7 @@ namespace ThinkVoip
             }
         }
 
+        private bool IsExpired(SkySwitchToken token) => token.ExpirationTime > DateTime.Now ? true : false;
 
         public void SkySwitchTokenRefresh()
         {

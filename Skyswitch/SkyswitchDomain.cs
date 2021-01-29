@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ThinkVoipTool.Skyswitch
+﻿namespace ThinkVoipTool
 {
     class SkyswitchDomain
     {
@@ -19,6 +15,6 @@ namespace ThinkVoipTool.Skyswitch
         }
 
 
-      
+
     }
 }

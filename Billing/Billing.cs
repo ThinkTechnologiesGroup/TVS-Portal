@@ -1,0 +1,7 @@
+﻿namespace ThinkVoipTool
+{
+    class Billing
+    {
+
+    }
+}

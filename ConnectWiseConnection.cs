@@ -7,9 +7,8 @@ using Newtonsoft.Json;
 
 using RestSharp;
 
-using ThinkVoip.Models;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     public class ConnectWiseConnection : ConnectWiseModel
     {
@@ -71,16 +70,7 @@ namespace ThinkVoip
             var response = await restClient.ExecuteAsync(newRequest).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<CompanyModel.Agreement>>(response.Content);
         }
-        public async Task<List<CompanyModel.Agreement>> GetAllVoIpClients()
-        {
-            var tvs = await GetAllThinkVoIpClients();
-            var ttg = await GetAllThinkVoIpClients();
-            return new List<CompanyModel.Agreement>()
-            {
-                //tvs,
-                //ttg
-            };
-        }
+      
 
         public async Task<CompanyModel> GetCompany(int id)
         {

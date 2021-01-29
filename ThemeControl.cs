@@ -1,7 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
 
-using ThinkVoip;
-
 using ThinkVoipTool.Properties;
 
 namespace ThinkVoipTool

@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for PasswordResetWindow.xaml

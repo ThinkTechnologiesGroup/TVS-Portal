@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     public static class Logging
     {

@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 using RestSharp;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     internal class SkySwitchBilling
     {

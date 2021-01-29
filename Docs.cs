@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
-using DocSync;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -16,11 +15,10 @@ using RestSharp;
 
 using Serilog;
 
-using ThinkVoipTool;
 
 // ReSharper disable UnusedMember.Global
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     internal class Docs
     {
@@ -74,7 +72,14 @@ namespace ThinkVoip
         public string FindThreeCxPageIdByTitle(string spaceTitle, bool getUrl = false)
         {
             spaceTitle = spaceTitle.Replace("&", string.Empty);
+            spaceTitle = spaceTitle.Replace("!", string.Empty);
+
             spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
+
+            if (spaceTitle.ToLower() == "think")
+            {
+                return "115671322";
+            }
 
             _restClient = new RestClient(_baseUrl + $"content/search?cql=space.title ~ \"{spaceTitle}\" and label=\"3cxinfo\"");
             _restRequest = new RestRequest(Method.GET);
@@ -91,6 +96,7 @@ namespace ThinkVoip
                 {
                     return results.First()._links.tinyui;
                 }
+
                 return results.First().Id;
             }
             catch (Exception e)

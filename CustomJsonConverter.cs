@@ -3,9 +3,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using ThinkVoip;
-
-namespace DocSync
+namespace ThinkVoipTool
 {
     internal class MacroConverter : Newtonsoft.Json.Converters.CustomCreationConverter<ThreeCxPageMacrosBase>
     {

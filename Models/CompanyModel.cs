@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ThinkVoip.Models
+namespace ThinkVoipTool
 {
     public class CompanyModel
 

@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for ExtensionTypeSelectionWindow.xaml

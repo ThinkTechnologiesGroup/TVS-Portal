@@ -22,7 +22,7 @@ using Serilog;
 
 #pragma warning disable 618
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     public class ThreeCxClient
     {

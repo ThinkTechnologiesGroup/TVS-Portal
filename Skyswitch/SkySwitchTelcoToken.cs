@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 using RestSharp;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
 
     internal class SkySwitchTelcoToken

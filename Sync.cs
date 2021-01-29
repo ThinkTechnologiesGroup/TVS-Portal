@@ -6,7 +6,7 @@ using System.Linq;
 
 using Newtonsoft.Json.Linq;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class Sync

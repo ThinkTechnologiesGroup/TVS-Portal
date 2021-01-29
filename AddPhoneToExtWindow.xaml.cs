@@ -1,9 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
 
-using ThinkVoipTool;
-
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for AddPhoneToExtWindow.xaml

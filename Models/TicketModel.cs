@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming
 
-namespace ThinkVoip.Models
+namespace ThinkVoipTool
 {
     // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
 

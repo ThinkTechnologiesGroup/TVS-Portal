@@ -1,8 +1,8 @@
 ﻿using System.Windows;
 
-using static ThinkVoip.ExtensionTypeSelectionWindow;
+using static ThinkVoipTool.ExtensionTypeSelectionWindow;
 
-namespace ThinkVoip
+namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for UpdatesWindow.xaml

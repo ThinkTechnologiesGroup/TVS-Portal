@@ -6,8 +6,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 
-using ThinkVoip;
-
 using ThinkVoipTool.Properties;
 
 namespace ThinkVoipTool
