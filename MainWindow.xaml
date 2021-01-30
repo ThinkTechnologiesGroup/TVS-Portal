@@ -120,6 +120,8 @@
             <MenuItem x:Name="FileMenu" Header="_File"  >
                 <MenuItem Header="_Switch Theme" Click="OnThemeClick" />
                 <Separator />
+                <MenuItem Header="Log Out" Click="LogOff_OnClick" />
+
 
             </MenuItem>
             <MenuItem x:Name="AdminMenu" Header="_Admin"  Visibility="Hidden">

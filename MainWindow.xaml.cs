@@ -78,6 +78,13 @@ namespace ThinkVoipTool
             ShowMenu();
         }
 
+        public MainWindow(bool isAuthenticated)
+        {
+            IsAuthenticated = isAuthenticated;
+            InitializeComponent();
+            ShowMenu();
+        }
+
         public bool ShowTtg => Settings.Default.showTtgClients;
         public static string SavedUser => AdAuthClient.TryGetUser();
         public static string SavedPass => AdAuthClient.TryGetPassword();
@@ -90,6 +97,11 @@ namespace ThinkVoipTool
         }
 
         private async void Window_Initialized(object sender, EventArgs e)
+        {
+            await LoginProcess();
+        }
+
+        private async Task LoginProcess()
         {
             // Copy user settings from previous application version if necessary
             if(Settings.Default.UpdateSettings)
@@ -108,43 +120,49 @@ namespace ThinkVoipTool
 
             ThemeControl.SetTheme(this);
 
-            if(!IsAuthenticated)
+            if(IsAuthenticated)
             {
-                if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
+                return;
+            }
+
+            if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
+            {
+                if(Settings.Default.RememberMe)
                 {
-                    if(Settings.Default.RememberMe)
+                    if(LoginWindow.TryLogin(SavedUser, SavedPass))
                     {
-                        if(LoginWindow.TryLogin(SavedUser, SavedPass))
-                        {
-                            IsAuthenticated = true;
-                        }
+                        IsAuthenticated = true;
                     }
                 }
+            }
 
 
-                if(!IsAuthenticated)
-                {
-                    var window = new LoginWindow();
-                    window.ShowDialog();
-                }
+            if(!IsAuthenticated)
+            {
+                var window = new LoginWindow();
+                window.ShowDialog();
+            }
 
-                if(!IsAuthenticated)
-                {
-                    Close();
-                    return;
-                }
+            if(!IsAuthenticated)
+            {
+                Close();
+                return;
+            }
 
 
-                if(IsAdmin)
-                {
-                    AdminMenu.Visibility = Visibility.Visible;
-                    ExtensionRemoveButton.IsEnabled = true;
-                    ResetPasswordMenuItem.IsEnabled = true;
-                    MakeExtAdminMenuItem.IsEnabled = true;
-                }
+            if(IsAdmin)
+            {
+                AdminMenu.Visibility = Visibility.Visible;
+                ExtensionRemoveButton.IsEnabled = true;
+                ResetPasswordMenuItem.IsEnabled = true;
+                MakeExtAdminMenuItem.IsEnabled = true;
+            }
 
-                AuthU = await Secrets.GetSecretValue("AdAuthUser");
-                AuthP = await Secrets.GetSecretValue("AdAuthPass");
+            AuthU = await Secrets.GetSecretValue("AdAuthUser");
+            AuthP = await Secrets.GetSecretValue("AdAuthPass");
+            if(!IsVisible)
+            {
+                Show();
             }
         }
 
@@ -851,15 +869,13 @@ namespace ThinkVoipTool
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
         }
+
+        private async void LogOff_OnClick(object sender, RoutedEventArgs e)
+        {
+            IsAuthenticated = false;
+            IsAdmin = false;
+            Hide();
+            await LoginProcess();
+        }
     }
 }
-
-//  {"Path":{"ObjectId":"72","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
-//  {"Path":{"ObjectId":"72","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
-// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessRole"}]},"PropertyValue":"AccessRole.GlobalExtensionManager"}
-
-// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessAdmin"}]},"PropertyValue":true}
-
-// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporter"}]},"PropertyValue":true}
-
-// {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessReporterRecording"}]},"PropertyValue":true}
