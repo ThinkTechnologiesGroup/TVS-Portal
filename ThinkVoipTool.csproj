@@ -5,7 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Thinky.ico</ApplicationIcon>
-    <AssemblyName>TSVPortal</AssemblyName>
+    <AssemblyName>TVSPortal</AssemblyName>
     <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
     <Platforms>AnyCPU;x64</Platforms>
     <PackageId>ThinkVoipPortal</PackageId>

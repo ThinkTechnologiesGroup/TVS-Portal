@@ -874,6 +874,10 @@ namespace ThinkVoipTool
         {
             IsAuthenticated = false;
             IsAdmin = false;
+            AdminMenu.Visibility = Visibility.Hidden;
+            ExtensionRemoveButton.IsEnabled = false;
+            ResetPasswordMenuItem.IsEnabled = false;
+            MakeExtAdminMenuItem.IsEnabled = false;
             Hide();
             await LoginProcess();
         }
