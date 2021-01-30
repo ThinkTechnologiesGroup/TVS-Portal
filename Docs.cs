@@ -3,16 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using RestSharp;
-
 using Serilog;
 
 
@@ -22,8 +19,7 @@ namespace ThinkVoipTool
 {
     internal class Docs
     {
-
-        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", MainWindow.authU, MainWindow.authP);
+        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
         private readonly string _authKey;
         private readonly string _baseUrl;
 
@@ -37,13 +33,10 @@ namespace ThinkVoipTool
             _baseUrl = baseUrl;
             _scaffoldingUrl = baseUrl.Replace("api/", "");
             _restClient = new RestClient(_baseUrl);
-            _authKey = Convert.ToBase64String(System.Text.Encoding.ASCII.GetBytes($"{userName}:{password}"));
+            _authKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}"));
         }
 
-        public static async Task<string> getUserName()
-        {
-            return await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
-        }
+        public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
 
         public string FindThreeCxPageId(string spaceKey)
         {
@@ -76,7 +69,7 @@ namespace ThinkVoipTool
 
             spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
 
-            if (spaceTitle.ToLower() == "think")
+            if(spaceTitle.ToLower() == "think")
             {
                 return "115671322";
             }
@@ -92,9 +85,9 @@ namespace ThinkVoipTool
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
-                if (getUrl)
+                if(getUrl)
                 {
-                    return results.First()._links.tinyui;
+                    return results.First().links.tinyui;
                 }
 
                 return results.First().Id;
@@ -106,6 +99,7 @@ namespace ThinkVoipTool
                 throw;
             }
         }
+
         public string FindThreeCxPageUrlByTitle(string spaceTitle)
         {
             spaceTitle = spaceTitle.Replace("&", string.Empty);
@@ -122,8 +116,7 @@ namespace ThinkVoipTool
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
-                var link = results.First()._links.tinyui;
-                return results.First()._links.tinyui;
+                return results.First().links.tinyui;
             }
             catch (Exception e)
             {
@@ -173,20 +166,8 @@ namespace ThinkVoipTool
             macroList.Add(passwordMacro);
             var serializedInfo = JsonConvert.SerializeObject(macroList);
             _restRequest.AddJsonBody(serializedInfo);
-
-
-            try
-            {
-                var response = _restClient.Execute(_restRequest);
-                return response.ResponseStatus;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-
+            var response = _restClient.Execute(_restRequest);
+            return response.ResponseStatus;
         }
 
         public IEnumerable<ThreeCxPageMacrosBase> GetThreeCxDocumentPageTables(string pageId)
@@ -231,7 +212,11 @@ namespace ThinkVoipTool
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; set; }
-        public Links _links { get; set; }
+
+
+        [JsonProperty("_links")]
+        public Links links { get; set; }
+
         //public string type { get; set; }
         //public string status { get; set; }
         //public string Title { get; set; }
@@ -774,7 +759,7 @@ namespace ThinkVoipTool
             var foundPhones = new Dictionary<string, Phone>();
             foreach (var phone in server.Phones)
             {
-                if (foundPhones.ContainsKey(phone.Model))
+                if(foundPhones.ContainsKey(phone.Model))
                 {
                     continue;
                 }

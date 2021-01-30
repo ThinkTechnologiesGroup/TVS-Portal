@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ThinkVoipTool
+namespace ThinkVoipTool.Models
 {
     public class BaseModels
     {

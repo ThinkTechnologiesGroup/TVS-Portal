@@ -3,27 +3,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-
 using ThinkVoipTool.Properties;
-
 
 namespace ThinkVoipTool
 {
     /// <summary>
     /// Interaction logic for Login.xaml
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class LoginWindow
     {
-
         public LoginWindow()
         {
             InitializeComponent();
-
         }
+
         private void Window_Activated(object sender, System.EventArgs e)
         {
             UserNameEntry.Text = AdAuthClient.TryGetUser();
-            RemeberMeCheckBox.IsChecked = false;
+            RememberMeCheckBox.IsChecked = false;
             Settings.Default.RememberMe = false;
             Settings.Default.Save();
         }
@@ -34,11 +31,10 @@ namespace ThinkVoipTool
             ResultLabel.Visibility = Visibility.Visible;
 
 
-
             var username = UserNameEntry.Text.StripDomain();
             var password = PasswordEntry.Password;
 
-            if (!ValidateEntries(username, password))
+            if(!ValidateEntries(username, password))
             {
                 DisplayLoginResultInfo(Brushes.Red, "Please fill out all fields.");
                 return;
@@ -47,25 +43,23 @@ namespace ThinkVoipTool
             DisplayLoginResultInfo(Brushes.Green, "Attempting Login...");
 
 
-            if (await RunLogonProcess(username, password))
+            if(await RunLogonProcess(username, password))
             {
-
                 DisplayLoginResultInfo(Brushes.Green, "Success");
-                MainWindow.isAuthenticated = true;
+                MainWindow.IsAuthenticated = true;
                 SaveUsername();
 
-                if ((bool)RemeberMeCheckBox.IsChecked)
+                if(RememberMeCheckBox.IsChecked != null && (bool) RememberMeCheckBox.IsChecked)
                 {
                     SavePassword(password);
                 }
-                this.Close();
 
+                Close();
             }
             else
             {
                 DisplayLoginResultInfo(Brushes.Red, "Login Failed");
             }
-
         }
 
         private void DisplayLoginResultInfo(Brush brush, string result)
@@ -75,26 +69,12 @@ namespace ThinkVoipTool
             ResultLabel.Visibility = Visibility.Visible;
         }
 
-        private bool ValidateEntries(string userName, string passWord)
+        private static bool ValidateEntries(string userName, string passWord) => userName != "" && passWord != "";
+
+
+        private static async Task<bool> RunLogonProcess(string userName, string passWord)
         {
-            if (userName == "" || passWord == "")
-            {
-                return false;
-            }
-            else
-            {
-                return true;
-            }
-        }
-
-
-        private async Task<bool> RunLogonProcess(string userName, string passWord)
-        {
-            var result = Task.Run(() =>
-            {
-
-                return TryLogin(userName, passWord);
-            });
+            var result = Task.Run(() => TryLogin(userName, passWord));
 
             return await result;
         }
@@ -102,13 +82,14 @@ namespace ThinkVoipTool
 
         private static void SavePassword(string passWord)
         {
-            byte[] plaintext = Encoding.UTF8.GetBytes(passWord);
-            byte[] entropy = new byte[20];
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            var plaintext = Encoding.UTF8.GetBytes(passWord);
+            var entropy = new byte[20];
+            using (var rng = new RNGCryptoServiceProvider())
             {
                 rng.GetBytes(entropy);
             }
-            byte[] ciphertext = ProtectedData.Protect(plaintext, entropy, DataProtectionScope.CurrentUser);
+
+            var ciphertext = ProtectedData.Protect(plaintext, entropy, DataProtectionScope.CurrentUser);
 
 
             Settings.Default.passWord = ciphertext;
@@ -119,34 +100,32 @@ namespace ThinkVoipTool
 
         private void SaveUsername()
         {
-            byte[] plaintext = Encoding.UTF8.GetBytes(UserNameEntry.Text.StripDomain());
-            byte[] userentropy = new byte[20];
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            var plaintext = Encoding.UTF8.GetBytes(UserNameEntry.Text.StripDomain());
+            var userEntropy = new byte[20];
+            using (var rng = new RNGCryptoServiceProvider())
             {
-                rng.GetBytes(userentropy);
+                rng.GetBytes(userEntropy);
             }
-            byte[] ciphertext = ProtectedData.Protect(plaintext, userentropy, DataProtectionScope.CurrentUser);
+
+            var ciphertext = ProtectedData.Protect(plaintext, userEntropy, DataProtectionScope.CurrentUser);
 
 
             Settings.Default.userName = ciphertext;
-            Settings.Default.userEntropy = userentropy;
+            Settings.Default.userEntropy = userEntropy;
             Settings.Default.Save();
-
         }
 
         public static bool TryLogin(string userName, string pass1)
         {
             try
             {
-                return AdAuthClient.validateUserByBind(userName, pass1);
+                return AdAuthClient.ValidateUserByBind(userName, pass1);
             }
             catch
             {
                 MessageBox.Show("Unable to connect to domain for authentication", "Error");
                 return false;
             }
-
         }
-
     }
 }

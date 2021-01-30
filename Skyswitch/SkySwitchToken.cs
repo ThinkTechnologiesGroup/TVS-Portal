@@ -1,10 +1,8 @@
 ﻿using System;
-
 using Newtonsoft.Json;
-
 using RestSharp;
 
-namespace ThinkVoipTool
+namespace ThinkVoipTool.Skyswitch
 {
     public class SkySwitchToken
     {
@@ -57,7 +55,7 @@ namespace ThinkVoipTool
         {
             get
             {
-                if (IsExpired(this))
+                if(IsExpired(this))
                 {
                     SkySwitchTokenRefresh();
                 }
@@ -66,7 +64,7 @@ namespace ThinkVoipTool
             }
         }
 
-        private bool IsExpired(SkySwitchToken token) => token.ExpirationTime > DateTime.Now ? true : false;
+        private static bool IsExpired(SkySwitchToken token) => token.ExpirationTime > DateTime.Now;
 
         public void SkySwitchTokenRefresh()
         {
@@ -78,8 +76,6 @@ namespace ThinkVoipTool
             restRequest.AddParameter("client_id", clientId);
             restRequest.AddParameter("client_secret", clientSecret);
             restRequest.AddParameter("refresh_token", _refreshToken);
-            var testRequest = restRequest;
-            var test = restClient.Execute(restRequest);
             JsonConvert.PopulateObject(restClient.Execute(restRequest).Content, this);
             ExpirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-
 using Newtonsoft.Json.Linq;
 
 namespace ThinkVoipTool
@@ -11,30 +10,9 @@ namespace ThinkVoipTool
     [SuppressMessage("ReSharper", "UnusedMember.Global")]
     public static class Sync
     {
-        //private ThreeCxServer _server;
-        //private List<ThreeCxPageMacros> _page;
-
-        //public ThreeCxServer Server
-        //{
-        //    get => _server;
-        //    set => _server = value;
-        //}
-
-        //public List<ThreeCxPageMacros> Page { get; set; }
-
-        //public Sync(ThreeCxServer server, List<ThreeCxPageMacros> pageList)
-        //{
-        //    _server = server;
-        //    _page = pageList;
-        //}
-
-
         public static List<ThreeCxPageMacrosBase> NewUpdatedDocs(ThreeCxServer server, List<ThreeCxPageMacrosBase> pageList)
         {
             var updates = new List<ThreeCxPageMacrosBase>();
-            var sipTrunkName = server.SipTrunks[0].Name; //Should loop around the whole list and then just skip the WebClient one.
-            var gateway = server.SipTrunks[0].Type; //Same as above, these would just fall as steps to that method
-            var host = server.SipTrunks[0].Host; //Same as above, these would just fall as steps to that method
 
             foreach (var table in pageList.Where(a => a.ShouldSync))
             {
@@ -61,7 +39,7 @@ namespace ThinkVoipTool
                     case "List-LabelMaker2000":
                         foreach (var value in table.Value)
                         {
-                            if (value == "3cxazure")
+                            if(value == "3cxazure")
                             {
                                 azure = true;
                             }
@@ -75,7 +53,7 @@ namespace ThinkVoipTool
                     //    updates.Add(table);
                     //    break;
                     case "List-VOIPProviderSIPTrunk-Yes":
-                        if (gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider")
+                        if(gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider")
                         {
                             table.Value = new JArray("Yes");
                         }
@@ -83,7 +61,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunk-No":
-                        if (gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider")
+                        if(gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider")
                         {
                             table.Value = new JArray();
                         }
@@ -95,7 +73,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPGateway-Yes":
-                        if (gateway == "TypeOfGateway.Gateway" || gateway == "T1")
+                        if(gateway == "TypeOfGateway.Gateway" || gateway == "T1")
                         {
                             table.Value = new JArray("Yes");
                         }
@@ -103,7 +81,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPGateway-No":
-                        if (gateway == "TypeOfGateway.Gateway" || gateway == "T1")
+                        if(gateway == "TypeOfGateway.Gateway" || gateway == "T1")
                         {
                             table.Value = new JArray();
                         }
@@ -115,7 +93,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunk-SkySwitchBilling":
-                        if ((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host.Contains("22335.service"))
+                        if((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host.Contains("22335.service"))
                         {
                             table.Value = new JArray("SkySwitchBilling");
                             skySwitch = true;
@@ -128,10 +106,10 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunk-NexVortex":
-                        if ((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host == "nexvortex.com" && azure)
-                        ////
-                        ////this is gonna be wrong most of the time. Need to actually figure out what type it is somehow.
-                        ////
+                        if((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host == "nexvortex.com" && azure)
+                            ////
+                            ////this is gonna be wrong most of the time. Need to actually figure out what type it is somehow.
+                            ////
                         {
                             table.Value = new JArray("NexVortex - Wholesale");
                         }
@@ -144,7 +122,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunkProvider-NexVortex":
-                        if ((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host == "nexvortex.com")
+                        if((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host == "nexvortex.com")
                         {
                             table.Value = new JArray("NexVortex");
                         }
@@ -153,7 +131,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunkProvider":
-                        if (host == "nexvortex.com")
+                        if(host == "nexvortex.com")
                         {
                             table.Value = new JArray();
                         }
@@ -161,7 +139,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunk-Other":
-                        if (host == "nexvortex.com")
+                        if(host == "nexvortex.com")
                         {
                             table.Value = new JArray();
                         }
@@ -169,7 +147,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-SkySwitchBilling-SIPTrunkPurpose":
-                        if (skySwitch)
+                        if(skySwitch)
                         {
                             table.Value = new JArray("Local Calling (US & Canada)");
                         }
@@ -177,7 +155,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-SkySwitchBilling-CustomerDomainName":
-                        if (skySwitch)
+                        if(skySwitch)
                         {
                             table.Value = host;
                         }
@@ -185,7 +163,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-SkySwitchBilling-SIPTrunkName":
-                        if (skySwitch)
+                        if(skySwitch)
                         {
                             table.Value = sipTrunkName;
                         }
@@ -220,7 +198,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-providerIPHost":
-                        if (nexVortex)
+                        if(nexVortex)
                         {
                             table.Value = " ";
                         }
@@ -228,7 +206,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-providerinboundport":
-                        if (nexVortex)
+                        if(nexVortex)
                         {
                             table.Value = " ";
                         }
@@ -236,7 +214,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-provideroutboundport":
-                        if (nexVortex)
+                        if(nexVortex)
                         {
                             table.Value = " ";
                         }
@@ -315,14 +293,14 @@ namespace ThinkVoipTool
                         var phones = new Dictionary<string, Phone>();
                         foreach (var phone in server.Phones.Distinct())
                         {
-                            if (phones.ContainsKey(phone.Model))
+                            if(phones.ContainsKey(phone.Model))
                             {
                                 continue;
                             }
 
                             var tmpArray = new JArray();
-                            var phoneVendor = new ThreeCxPageMacros { Macro = "text-data", Name = "Text-VoipPhonesManucturer", Value = phone.Vendor };
-                            var phoneModel = new ThreeCxPageMacros { Macro = "text-data", Name = "Text-VoipPhonesModels", Value = phone.Model };
+                            var phoneVendor = new ThreeCxPageMacros {Macro = "text-data", Name = "Text-VoipPhonesManucturer", Value = phone.Vendor};
+                            var phoneModel = new ThreeCxPageMacros {Macro = "text-data", Name = "Text-VoipPhonesModels", Value = phone.Model};
                             tmpArray.Add(JObject.FromObject(phoneVendor));
                             tmpArray.Add(JObject.FromObject(phoneModel));
                             table.Value.Add(new JProperty(j.ToString(), tmpArray));
@@ -332,8 +310,6 @@ namespace ThinkVoipTool
 
                         updates.Add(table);
                         break;
-
-
                 }
             }
 

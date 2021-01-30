@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ThinkVoipTool
+namespace ThinkVoipTool.Models
 {
     public class ConnectWiseModel
     {

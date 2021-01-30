@@ -1,26 +1,19 @@
 ﻿using System;
 
-namespace ThinkVoipTool
+namespace ThinkVoipTool.Skyswitch
 {
-    class SkyswitchAccount
+    internal class SkyswitchAccount
     {
-        const string TvsAccoutnId = "c6cb9e70-42b9-11ea-b482-e365812db6e4";
-        static string url = $"https://telco-api.skyswitch.com/accounts/{TvsAccoutnId}";
+        private const string TvsAccountId = "c6cb9e70-42b9-11ea-b482-e365812db6e4";
+        private static string _url = $"https://telco-api.skyswitch.com/accounts/{TvsAccountId}";
+        private int _accountNumber;
+        private DateTime _createdAt;
+        private DateTime _deletedAt;
 
-        private string id;
-        private string parent_id;
-        private string name;
-        private int account_number;
-        private int orginizational;
-        private DateTime created_at;
-        private DateTime updated_at;
-        private DateTime deleted_at;
-
-
-        public SkyswitchAccount()
-        {
-
-        }
-
+        private string _id;
+        private string _name;
+        private int _orginizational;
+        private string _parentId;
+        private DateTime _updatedAt;
     }
 }

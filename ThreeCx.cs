@@ -7,18 +7,17 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
 using CsvHelper;
 using CsvHelper.Configuration;
-
 using MessagePack;
-
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using RestSharp;
-
 using Serilog;
+
+// ReSharper disable RedundantAssignment
+// ReSharper disable UnusedVariable
+// ReSharper disable NotAccessedVariable
 
 #pragma warning disable 618
 
@@ -78,23 +77,28 @@ namespace ThinkVoipTool
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
 
             var properties = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.Content,
-               new JsonSerializerSettings
-               {
-                   Formatting = Formatting.Indented,
-                   NullValueHandling = NullValueHandling.Ignore
-               });
+                new JsonSerializerSettings
+                {
+                    Formatting = Formatting.Indented,
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+            if(properties == null)
+            {
+                return "Failed";
+            }
+
             var activeObjectId = properties["Id"].ToString();
 
-            var originalPAsswordStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminPassword", adminPassword))
+            _ = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminPassword", adminPassword))
                 .ConfigureAwait(false);
-            var newPasswordStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminNewPassword", adminNewPassword))
+            _ = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminNewPassword", adminNewPassword))
                 .ConfigureAwait(false);
-            var confirmPasswordStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminConfirmNewPassword", adminConfirmNewPassword))
-               .ConfigureAwait(false);
+            _ = await SendUpdate(response,
+                    ExtensionPropertyModel.SerializeExtProperty(activeObjectId, "AdminConfirmNewPassword", adminConfirmNewPassword))
+                .ConfigureAwait(false);
 
             var saveResult = await SaveUpdate(response, activeObjectId);
             return saveResult;
-
         }
 
         public async Task<string> MakeExtensionAdmin(string extensionNumber)
@@ -120,7 +124,7 @@ namespace ThinkVoipTool
             });
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
-            if (response.StatusCode.ToString() != "OK")
+            if(response.StatusCode.ToString() != "OK")
             {
                 throw new Exception();
             }
@@ -131,7 +135,7 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
@@ -143,7 +147,6 @@ namespace ThinkVoipTool
             await UpdateExtensionAdminSettings(response, id);
             var saveResult = await SaveUpdate(response, id);
             return saveResult;
-
         }
 
         public async Task<string> GetExtensionPinNumber(string extension)
@@ -161,7 +164,7 @@ namespace ThinkVoipTool
             });
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
-            if (response.StatusCode.ToString() != "OK")
+            if(response.StatusCode.ToString() != "OK")
             {
                 throw new Exception();
             }
@@ -172,18 +175,22 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
 
-            var pinnumber = "-9999";
             var originalResponse = response;
             var extensionActiveObject = properties["ActiveObject"];
-            var extJobject = JObject.Parse(extensionActiveObject.ToString());
+            var extJobject = JObject.Parse(extensionActiveObject.ToString()!);
             var vmpin = extJobject.SelectToken("VMPin");
-            pinnumber = vmpin["_value"].ToString();
-            return pinnumber;
+            if(vmpin == null)
+            {
+                return "-9999";
+            }
+
+            var pinNumber = vmpin["_value"]?.ToString();
+            return pinNumber;
         }
 
         public static string StripHtml(string input) => Regex.Replace(input, "<.*?>", string.Empty);
@@ -224,19 +231,12 @@ namespace ThinkVoipTool
             try
             {
                 results = MessagePackSerializer.Deserialize<List<Phone>>(bytes);
-
             }
             catch (Exception)
             {
-                try
-                {
-                    results = JsonConvert.DeserializeObject<List<Phone>>(response.Content);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                results = JsonConvert.DeserializeObject<List<Phone>>(response.Content);
             }
+
             return results;
         }
 
@@ -418,7 +418,7 @@ namespace ThinkVoipTool
             });
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
-            if (response.StatusCode.ToString() != "OK")
+            if(response.StatusCode.ToString() != "OK")
             {
                 throw new Exception();
             }
@@ -429,7 +429,7 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
@@ -460,7 +460,7 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
@@ -486,8 +486,6 @@ namespace ThinkVoipTool
 
         public async Task<List<Phone>> GetListOfPhonesForExtension(string extensionNumber, string extensionId)
         {
-
-
             _apiEndPoint = "ExtensionList/set";
             _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
             _restRequest = new RestRequest(Method.POST);
@@ -500,7 +498,7 @@ namespace ThinkVoipTool
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
 
-            if (response.StatusCode.ToString() != "OK")
+            if(response.StatusCode.ToString() != "OK")
             {
                 throw new Exception();
             }
@@ -511,7 +509,7 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
@@ -524,9 +522,9 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties["PhoneDevices"].ToString());
+            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
             var phonesToEdit = new JArray();
-            var phones = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"].ToString());
+            var phones = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
             var phonesList = new List<Phone>();
 
 
@@ -539,17 +537,18 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-                var propId = props["Id"].ToString();
+                var propId = props?["Id"].ToString();
 
-                var mac = props["_str"].ToString();
-                var model = props["Model"].ToString();
-                var modelValue = (JObject)JsonConvert.DeserializeObject(model.ToString());
-                foundPhone.Model = modelValue["_value"].ToString();
+                var mac = props?["_str"].ToString();
+                var model = props?["Model"].ToString();
+                var modelValue = (JObject) JsonConvert.DeserializeObject(model!);
+                foundPhone.Model = modelValue?["_value"]?.ToString();
                 foundPhone.ExtensionNumber = extensionNumber;
                 foundPhone.MacAddress = mac;
 
                 phonesList.Add(foundPhone);
             }
+
             return phonesList;
         }
 
@@ -567,7 +566,7 @@ namespace ThinkVoipTool
             _restRequest.AddCookie(_cookie[0].Name, _cookie[0].Value);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
 
-            if (response.StatusCode.ToString() != "OK")
+            if(response.StatusCode.ToString() != "OK")
             {
                 throw new Exception();
             }
@@ -578,7 +577,7 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 throw new Exception();
             }
@@ -591,10 +590,10 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties["PhoneDevices"].ToString());
+            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
             var phonesToEdit = new JArray();
-            phonesToEdit = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"].ToString());
-            var IdInCollection = "";
+            phonesToEdit = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
+            var idInCollection = "";
             foreach (var phone in phonesToEdit)
             {
                 var props = JsonConvert.DeserializeObject<Dictionary<string, object>>(phone.ToString(), new JsonSerializerSettings
@@ -602,56 +601,55 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-                var propId = props["Id"].ToString();
-                var mac = props["_str"].ToString();
-                if (mac.ToUpper() != macAddress.ToUpper())
+                var propId = props?["Id"].ToString();
+                var mac = props?["_str"].ToString();
+                if(mac?.ToUpper() != macAddress.ToUpper())
                 {
                     continue;
                 }
 
-                IdInCollection = propId;
+                idInCollection = propId;
             }
 
             var update = "";
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "ScreensaverTimeout", "6 hours");
 
             var updateResponse = await SendUpdate(response, update);
 
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "BacklightTimeout", "Always On");
 
             updateResponse = await SendUpdate(response, update);
 
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "PowerLed", "Voicemails only");
             updateResponse = await SendUpdate(response, update);
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "TimeFormat", "12-hour clock (AM/PM)");
             updateResponse = await SendUpdate(response, update);
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "ProvisioningMethod", "PROVISIONING_METHOD_STUN");
             updateResponse = await SendUpdate(response, update);
 
             var extInt = int.Parse(extensionNumber);
             var localSipPort = 6000 + extInt;
 
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", IdInCollection,
+            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "LocalSipPort", localSipPort);
 
             try
             {
                 updateResponse = await SendUpdate(response, update);
-                if (updateResponse == "Failed")
+                if(updateResponse == "Failed")
                 {
-                    throw new Exception(); ;
+                    throw new Exception();
                 }
-
             }
             catch
             {
-                update = ExtensionExtendedPropertyModel.SerializeExtPropertyintId(extensionActiveObjectId, "PhoneDevices", IdInCollection,
-               "LocalSipPort", localSipPort);
+                update = ExtensionExtendedPropertyModel.SerializeExtPropertyintId(extensionActiveObjectId, "PhoneDevices", idInCollection,
+                    "LocalSipPort", localSipPort);
                 updateResponse = await SendUpdate(response, update);
             }
 
@@ -682,7 +680,7 @@ namespace ThinkVoipTool
             foreach (var importedExtension in records)
             {
                 var exists = await ExtensionExists(importedExtension.Extension);
-                if (!exists)
+                if(!exists)
                 {
                     _apiEndPoint = "ExtensionList/new";
                     _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
@@ -710,14 +708,14 @@ namespace ThinkVoipTool
                         Formatting = Formatting.Indented,
                         NullValueHandling = NullValueHandling.Ignore
                     });
-                if (properties == null)
+                if(properties == null)
                 {
                     return;
                 }
 
                 var id = properties["Id"].ToString();
                 var blfConfig = new JObject();
-                if (id != null)
+                if(id != null)
                 {
                     var cleanProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
                         new JsonSerializerSettings
@@ -730,7 +728,7 @@ namespace ThinkVoipTool
                 }
 
                 var blfOne = blfConfig["_value"];
-                if (blfOne == null)
+                if(blfOne == null)
                 {
                     return;
                 }
@@ -755,25 +753,25 @@ namespace ThinkVoipTool
 
                 //Mobile Number
                 //Check Connectwise for missing info???
-                if (importedExtension.MobileNumber != null)
+                if(importedExtension.MobileNumber != null)
                 {
                     await UpdateExtensionMobileNumber(response, id, importedExtension.MobileNumber).ConfigureAwait(false);
                 }
 
                 //Caller Id Number
-                if (importedExtension.CallerId != null)
+                if(importedExtension.CallerId != null)
                 {
                     await UpdateExtensionOutboundCallerId(response, id, importedExtension.CallerId).ConfigureAwait(false);
                 }
 
                 //voiceMail options
-                if (importedExtension.VoicemailOptions != null)
+                if(importedExtension.VoicemailOptions != null)
                 {
                     await UpdateExtensionVoiceMailOptions(response, id, importedExtension.VoicemailOptions).ConfigureAwait(false);
                 }
 
                 //VoiceMail PIN
-                if (importedExtension.Pin != null)
+                if(importedExtension.Pin != null)
                 {
                     await UpdateExtensionVoiceMailPin(response, id, importedExtension.Pin).ConfigureAwait(false);
                 }
@@ -804,14 +802,12 @@ namespace ThinkVoipTool
 
 
         public async Task CreateExtensionOnServer(string extensionNumber, string firstName, string lastName, string email,
-            string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false, bool VmOnly = false, bool fwdOnly = false)
+            string voiceMailOptions, string mobileNumber = "", string callerId = "", string pin = "1234", bool disAllowUseOffLan = false,
+            bool vmOnly = false, bool fwdOnly = false)
         {
-
-
             var exists = await ExtensionExists(extensionNumber).ConfigureAwait(false);
-            if (!exists)
+            if(!exists)
             {
-
                 _apiEndPoint = "ExtensionList/new";
                 _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
                 _restRequest = new RestRequest(Method.POST);
@@ -825,10 +821,11 @@ namespace ThinkVoipTool
             else
             {
                 var currentPin = await GetExtensionPinNumber(extensionNumber);
-                if (currentPin != "")
+                if(currentPin != "")
                 {
                     pin = currentPin;
                 }
+
                 var extId = await GetExtensionId(extensionNumber);
                 _apiEndPoint = "ExtensionList/set";
                 _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint);
@@ -851,14 +848,15 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            if (properties == null)
+            if(properties == null)
             {
                 return;
             }
 
             var id = properties["Id"].ToString();
 
-            await SendUpdates(extensionNumber, firstName, lastName, email, voiceMailOptions, mobileNumber, callerId, pin, disAllowUseOffLan, VmOnly, fwdOnly, response, id).ConfigureAwait(false);
+            await SendUpdates(extensionNumber, firstName, lastName, email, voiceMailOptions, mobileNumber, callerId, pin, disAllowUseOffLan, vmOnly,
+                fwdOnly, response, id).ConfigureAwait(false);
             await SendBlfUpdates(exists, response, properties, id).ConfigureAwait(false);
             await SaveExtensionUpdatesToServer(response, id).ConfigureAwait(false);
         }
@@ -866,7 +864,7 @@ namespace ThinkVoipTool
         private async Task SendBlfUpdates(bool exists, IRestResponse response, Dictionary<string, object> properties, string id)
         {
             var blfConfig = new JObject();
-            if (id != null)
+            if(id != null)
             {
                 var cleanProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
                     new JsonSerializerSettings
@@ -880,7 +878,7 @@ namespace ThinkVoipTool
 
             var blfOne = blfConfig["_value"];
 
-            if (blfOne != null && !exists)
+            if(blfOne != null && !exists)
             {
                 var blfId = JsonConvert.DeserializeObject<JArray>(blfOne.ToString());
                 var blfIdList = blfId.Values("Id").ToList();
@@ -896,8 +894,8 @@ namespace ThinkVoipTool
         }
 
 
-
-        private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions, string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool VmOnly, bool fwdOnly, IRestResponse response, string id)
+        private async Task SendUpdates(string extensionNumber, string firstName, string lastName, string email, string voiceMailOptions,
+            string mobileNumber, string callerId, string pin, bool disAllowUseOffLan, bool vmOnly, bool fwdOnly, IRestResponse response, string id)
         {
             //ext number
             await UpdateExtensionNumber(response, id, extensionNumber).ConfigureAwait(false);
@@ -914,7 +912,7 @@ namespace ThinkVoipTool
             //Caller Id Number
             await UpdateExtensionOutboundCallerId(response, id, callerId).ConfigureAwait(false);
 
-            if (email != string.Empty)
+            if(email != string.Empty)
             {
                 //Email address
                 await UpdateExtensionEmail(response, id, email).ConfigureAwait(false);
@@ -938,17 +936,16 @@ namespace ThinkVoipTool
             await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
 
             //voicemail Only Extension FOrwarding and restriction settings
-            if (VmOnly)
+            if(vmOnly)
             {
                 await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
                 await UpdateRestrictionsForVmOnly(response, id).ConfigureAwait(false);
-
             }
-            if (fwdOnly)
+
+            if(fwdOnly)
             {
                 await UpdateForwardingRulesForFwdOnly(response, id).ConfigureAwait(false);
                 await UpdateRestrictionsForFwdOnly(response, id).ConfigureAwait(false);
-
             }
             else
             {
@@ -959,7 +956,7 @@ namespace ThinkVoipTool
 
         private async Task SaveExtensionUpdatesToServer(IRestResponse response, string id)
         {
-            if (await SaveUpdate(response, id) != "OK")
+            if(await SaveUpdate(response, id) != "OK")
             {
                 Logging.Logger.Error($"Failed to save changes for extension Id: {id}  to the server");
                 Console.WriteLine(@"Failed to save changes.");
@@ -975,81 +972,71 @@ namespace ThinkVoipTool
         private async Task UndoRestrictionsForVmOnly(IRestResponse response, string id)
         {
             var updateResponse = await SendUpdate(response,
-               ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", value: false))
-               .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", false))
+                .ConfigureAwait(false);
 
             var updateResponse2 = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", value: true))
-              .ConfigureAwait(false);
-
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", true))
+                .ConfigureAwait(false);
         }
+
         private async Task UndoForwardingRulesForVmOnly(IRestResponse response, string id)
         {
             var updateResponse = await SendUpdate(response,
-                ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", propertyValue: "20"))
+                    ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "20"))
                 .ConfigureAwait(false);
-
-
         }
+
         private async Task UpdateRestrictionsForVmOnly(IRestResponse response, string id)
         {
-
-
             var updateResponse = await SendUpdate(response,
-               ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", value: true))
-               .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", true))
+                .ConfigureAwait(false);
 
             var updateResponse2 = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", value: false))
-              .ConfigureAwait(false);
-
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", false))
+                .ConfigureAwait(false);
         }
+
         private async Task UpdateRestrictionsForFwdOnly(IRestResponse response, string id)
         {
             var updateResponse = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", value: true))
-              .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", true))
+                .ConfigureAwait(false);
 
             updateResponse = await SendUpdate(response,
-             ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", value: false))
-             .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", false))
+                .ConfigureAwait(false);
         }
+
         private async Task UpdateForwardingRulesForVmOnly(IRestResponse response, string id)
         {
             var updateResponse = await SendUpdate(response,
-                ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", propertyValue: "1"))
+                    ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "1"))
                 .ConfigureAwait(false);
-
-
         }
+
         private async Task UpdateForwardingRulesForFwdOnly(IRestResponse response, string id)
         {
-
-
-
             var updateResponse = await SendUpdate(response,
-                ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", propertyValue: "1"))
+                    ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "1"))
                 .ConfigureAwait(false);
-
-
-
         }
-
 
 
         private async Task UpdateExtensionSharedParks(IRestResponse response, string id, List<JToken> blfIdList, int lineKeys, int sharedParksCount)
         {
-            if (response == null)
+            if(response == null)
             {
                 throw new ArgumentNullException(nameof(response));
             }
 
-            if (id == null)
+            if(id == null)
             {
                 throw new ArgumentNullException(nameof(id));
             }
 
-            if (blfIdList == null)
+            if(blfIdList == null)
             {
                 throw new ArgumentNullException(nameof(blfIdList));
             }
@@ -1069,7 +1056,7 @@ namespace ThinkVoipTool
                 blfResponse = await SendBlfUpdate(response,
                     ExtensionExtendedPropertyModel.SerializeExtProperty(id, "BLFConfiguration", blfIdList[i].ToString(), "BlfType",
                         "BlfType.SharedParking")).ConfigureAwait(false);
-                if (blfResponse.StatusCode.ToString() != "OK")
+                if(blfResponse.StatusCode.ToString() != "OK")
                 {
                     Console.WriteLine(@"Failed to Update Blf Options.");
                     throw new Exception();
@@ -1085,14 +1072,14 @@ namespace ThinkVoipTool
             var sharedParkExtensions = JsonConvert.DeserializeObject<JArray>(blfResponse.Content);
             for (var i = 0; i < sharedParksCount; i++)
             {
-                if (sharedParkExtensions.Count <= 0)
+                if(sharedParkExtensions.Count <= 0)
                 {
                     continue;
                 }
 
                 var testvalue = sharedParkExtensions[0];
                 var values = testvalue["Item"]?["SPExtension"]?["possibleValues"];
-                if (values == null)
+                if(values == null)
                 {
                     continue;
                 }
@@ -1106,17 +1093,17 @@ namespace ThinkVoipTool
 
         private async Task UpdateExtensionLineKeys(int lineKeys, IRestResponse response, string id, List<JToken> blfIdList)
         {
-            if (response == null)
+            if(response == null)
             {
                 throw new ArgumentNullException(nameof(response));
             }
 
-            if (id == null)
+            if(id == null)
             {
                 throw new ArgumentNullException(nameof(id));
             }
 
-            if (blfIdList == null)
+            if(blfIdList == null)
             {
                 throw new ArgumentNullException(nameof(blfIdList));
             }
@@ -1127,7 +1114,7 @@ namespace ThinkVoipTool
                         ExtensionExtendedPropertyModel.SerializeExtProperty(id, "BLFConfiguration", blfIdList[i].ToString(), "BlfType",
                             "BlfType.Line"))
                     .ConfigureAwait(false);
-                if (responseStatus != "OK")
+                if(responseStatus != "OK")
                 {
                     Console.WriteLine(@"Failed to Update Blf Options.");
                     throw new Exception();
@@ -1145,7 +1132,7 @@ namespace ThinkVoipTool
         {
             var updateResponse = await SendUpdate(response,
                 ExtensionPropertyModel.SerializeExtProperty(id, "ForwardingAvailable", "AcceptMultipleCalls", true)).ConfigureAwait(false);
-            if (updateResponse != "OK")
+            if(updateResponse != "OK")
             {
                 Console.WriteLine(@"Failed to Update Accept Multiple Calls option.");
                 throw new Exception();
@@ -1162,7 +1149,7 @@ namespace ThinkVoipTool
         {
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "CapabilityReInvite", false))
                 .ConfigureAwait(false);
-            if (responseStatus != "OK")
+            if(responseStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update ReInvite option.");
                 throw new Exception();
@@ -1179,7 +1166,7 @@ namespace ThinkVoipTool
         {
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "AllowLanOnly", false))
                 .ConfigureAwait(false);
-            if (responseStatus != "OK")
+            if(responseStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update use off of LAN option.");
                 throw new Exception();
@@ -1191,11 +1178,12 @@ namespace ThinkVoipTool
                 Console.ResetColor();
             }
         }
+
         private async Task UpdateExtensionAllowedUSeOffLan(IRestResponse response, string id, bool enable)
         {
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "AllowLanOnly", enable))
                 .ConfigureAwait(false);
-            if (responseStatus != "OK")
+            if(responseStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update use off of LAN option.");
                 throw new Exception();
@@ -1212,7 +1200,7 @@ namespace ThinkVoipTool
         {
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "CapabilityPBXDeliversAudio", true))
                 .ConfigureAwait(false);
-            if (responseStatus != "OK")
+            if(responseStatus != "OK")
             {
                 Console.WriteLine(@"PBX delivers audio options.");
                 throw new Exception();
@@ -1227,12 +1215,12 @@ namespace ThinkVoipTool
 
         private async Task UpdateExtensionVoiceMailPin(IRestResponse response, string id, string pin)
         {
-
-            var enabledResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
+            var enabledResponse =
+                await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
 
 
             var updateResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMPin", pin)).ConfigureAwait(false);
-            if (updateResponse != "OK")
+            if(updateResponse != "OK")
             {
                 Console.WriteLine(@"Failed to Update VoiceMail PIN.");
                 throw new Exception();
@@ -1247,15 +1235,13 @@ namespace ThinkVoipTool
 
         private async Task UpdateExtensionVoiceMailOptions(IRestResponse response, string id, string voiceMailOptions)
         {
-
-
-
-            var enabledResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
+            var enabledResponse =
+                await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
 
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEmailOptions", voiceMailOptions))
                 .ConfigureAwait(false);
 
-            if (responseStatus != "OK")
+            if(responseStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update VoiceMail Email Options.");
                 throw new Exception();
@@ -1273,7 +1259,7 @@ namespace ThinkVoipTool
             var updateStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "OutboundCallerId", callerId))
                 .ConfigureAwait(false);
 
-            if (updateStatus != "OK")
+            if(updateStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update caller Id property.");
                 throw new Exception();
@@ -1290,7 +1276,7 @@ namespace ThinkVoipTool
         {
             var updateStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "MobileNumber", mobileNumber))
                 .ConfigureAwait(false);
-            if (updateStatus != "OK")
+            if(updateStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update mobile phone number property.");
                 throw new Exception();
@@ -1306,7 +1292,7 @@ namespace ThinkVoipTool
         private async Task UpdateExtensionEmail(IRestResponse response, string id, string email)
         {
             var updateStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "Email", email)).ConfigureAwait(false);
-            if (updateStatus != "OK")
+            if(updateStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update Email property.");
                 throw new Exception();
@@ -1324,7 +1310,7 @@ namespace ThinkVoipTool
             var updateStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "LastName", lastName))
                 .ConfigureAwait(false);
 
-            if (updateStatus != "OK")
+            if(updateStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update LastName property.");
                 throw new Exception();
@@ -1341,7 +1327,7 @@ namespace ThinkVoipTool
         {
             var updateStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "FirstName", firstName))
                 .ConfigureAwait(false);
-            if (updateStatus != "OK")
+            if(updateStatus != "OK")
             {
                 Console.WriteLine(@"Failed to Update FirstName property.");
                 throw new Exception();
@@ -1357,11 +1343,11 @@ namespace ThinkVoipTool
         private async Task UpdateExtensionNumber(IRestResponse response, string id, string extensionNumber)
         {
             var exists = await ExtensionExists(extensionNumber);
-            if (!exists)
+            if(!exists)
             {
                 var updateResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "Number", extensionNumber))
                     .ConfigureAwait(false);
-                if (updateResponse != "OK")
+                if(updateResponse != "OK")
                 {
                     Console.WriteLine(@"Failed to Update Extension Number property.");
                     throw new Exception();
@@ -1378,33 +1364,31 @@ namespace ThinkVoipTool
         private async Task UpdateExtensionAdminSettings(IRestResponse response, string id)
         {
             var updateResponse = await SendUpdate(response,
-               ExtensionPropertyModel.SerializeExtProperty(id, "AccessEnabled", value: true))
-               .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AccessEnabled", true))
+                .ConfigureAwait(false);
 
             updateResponse = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "AccessRole", "AccessRole.GlobalExtensionManager"))
-              .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AccessRole", "AccessRole.GlobalExtensionManager"))
+                .ConfigureAwait(false);
 
             updateResponse = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "AccessAdmin", value: true))
-              .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AccessAdmin", true))
+                .ConfigureAwait(false);
 
 
             updateResponse = await SendUpdate(response,
-              ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporter", value: true))
-              .ConfigureAwait(false);
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporter", true))
+                .ConfigureAwait(false);
 
             updateResponse = await SendUpdate(response,
-             ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporterRecording", value: true))
-             .ConfigureAwait(false);
-
-
+                    ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporterRecording", true))
+                .ConfigureAwait(false);
         }
 
         private async Task<string> SendUpdate(IRestResponse originalResponse, string update)
         {
             _apiEndPoint = "edit/update";
-            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) { Timeout = -1 };
+            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) {Timeout = -1};
             _restRequest = new RestRequest(Method.POST);
             _restRequest.AddHeader("Content-Type", "application/json;charset=UTF-8");
             _restRequest.AddCookie("CmmSession", originalResponse.Cookies[0].Value);
@@ -1427,7 +1411,7 @@ namespace ThinkVoipTool
         {
             var iD = await GetExtensionId(extensionNumber).ConfigureAwait(false);
             _apiEndPoint = "ExtensionList/delete";
-            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) { Timeout = -1 };
+            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) {Timeout = -1};
             _restRequest = new RestRequest(Method.POST);
             _restRequest.AddHeader("Content-Type", "application/json;charset=UTF-8");
             //_restRequest.AddCookie("CmmSession", originalResponse.Cookies[0].Value);
@@ -1442,7 +1426,7 @@ namespace ThinkVoipTool
         private async Task<IRestResponse> SendBlfUpdate(IRestResponse originalResponse, string update)
         {
             _apiEndPoint = "edit/update";
-            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) { Timeout = -1 };
+            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) {Timeout = -1};
             _restRequest = new RestRequest(Method.POST);
             _restRequest.AddHeader("Content-Type", "application/json;charset=UTF-8");
             _restRequest.AddCookie("CmmSession", originalResponse.Cookies[0].Value);
@@ -1458,7 +1442,7 @@ namespace ThinkVoipTool
         private async Task<string> SaveUpdate(IRestResponse originalResponse, string update)
         {
             _apiEndPoint = "edit/save";
-            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) { Timeout = -1 };
+            _restClient = new RestClient(StripHtml(_baseUrl) + _apiEndPoint) {Timeout = -1};
             _restRequest = new RestRequest(Method.POST);
             _restRequest.AddHeader("Content-Type", "application/json;charset=UTF-8");
             _restRequest.AddCookie("CmmSession", originalResponse.Cookies[0].Value);
@@ -1468,7 +1452,7 @@ namespace ThinkVoipTool
             _restRequest.AddHeader("Connection", "keep-alive");
             _restRequest.AddParameter("application/json", update, "application/json", ParameterType.RequestBody);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
-            if (response.StatusCode != HttpStatusCode.OK)
+            if(response.StatusCode != HttpStatusCode.OK)
             {
                 return "Failed";
             }
@@ -1497,7 +1481,6 @@ namespace ThinkVoipTool
 
     public class ExtensionPropertyModel
     {
-
         public static string SerializePhoneProperty(string objectId, string propertyPath) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"Param\":\"{{}}\"}}";
 
@@ -1509,14 +1492,10 @@ namespace ThinkVoipTool
 
         public static string SerializeExtProperty(string objectId, string propertyPath, bool value) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"PropertyValue\":{value.ToString().ToLower()}}}";
-
-
-
     }
 
     public class ExtensionExtendedPropertyModel
     {
-
         public static string SerializeExtProperty(string objectId, string propertyPath, string idInCollection, string name, string propertyValue) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\",\"IdInCollection\":\"{idInCollection}\"}},{{\"Name\":\"{name}\"}}]}},\"PropertyValue\":\"{propertyValue}\"}}";
 
@@ -1524,13 +1503,11 @@ namespace ThinkVoipTool
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\",\"IdInCollection\":\"{idInCollection}\"}},{{\"Name\":\"{name}\"}}]}},\"PropertyValue\":{propertyValue}}}";
 
         public static string SerializeExtPropertyintId(string objectId, string propertyPath, string idInCollection, string name, int propertyValue) =>
-           $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\",\"IdInCollection\":{idInCollection}}},{{\"Name\":\"{name}\"}}]}},\"PropertyValue\":{propertyValue}}}";
+            $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\",\"IdInCollection\":{idInCollection}}},{{\"Name\":\"{name}\"}}]}},\"PropertyValue\":{propertyValue}}}";
 
 
         public static string SerializeExtFwdProperty(string objectId, string propertyPath, string propertyPath2, string propertyValue) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}},{{\"name\":\"{propertyPath2}\"}}]}},\"PropertyValue\":{propertyValue}}}";
-
-
     }
 
     public class ImportedExtension
@@ -1567,6 +1544,7 @@ namespace ThinkVoipTool
         //}
 
         public string Id { get; set; }
+
         //public bool IsOperator { get; set; }
         public bool IsRegistered { get; set; }
 
@@ -1600,18 +1578,6 @@ namespace ThinkVoipTool
 
     public class ThreeCxServer
     {
-        public ThreeCxServer(ThreeCxClient client)
-        {
-            //Phones = client.GetPhonesList();
-            //Extensions = client.GetExtensionsList();
-            //ThreeCxLicense = client.GetThreeCxLicense();
-            //InboundRulesList = client.GetThreeCxInboundRules();
-            //SipTrunks = client.GetThreeCxSipTrunks();
-            //UpdateDay = client.GetUpdatesDay().ActiveObject.ScheduleDay.Selected.Replace("DayOfWeek.", string.Empty);
-            //SystemStatus = client.GetSystemStatus();
-            //SipTrunkSettings = client.GetSipTrunkSettings(SipTrunks[0].Id);
-        }
-
         public ThreeCxLicense ThreeCxLicense { get; set; }
         public List<Phone> Phones { get; set; }
 
@@ -1625,7 +1591,7 @@ namespace ThinkVoipTool
 
         public async Task<ThreeCxServer> Create(ThreeCxClient client)
         {
-            var server = new ThreeCxServer(client);
+            var server = new ThreeCxServer();
             await server.ThreeCxServerInitialize(client);
             return server;
         }
@@ -1664,6 +1630,8 @@ namespace ThinkVoipTool
         public int ChatMessagesCount { get; set; }
         public int ExtensionsRegistered { get; set; }
         public bool OwnPush { get; set; }
+
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
         public string Ip { get; }
         public bool LocalIpValid { get; set; }
         public string CurrentLocalIp { get; set; }
@@ -1842,17 +1810,15 @@ namespace ThinkVoipTool
 
         [Key(6)]
         public string Model { get; set; }
+
         [IgnoreMember]
-        public string ModelShortName
-        {
-            get;
-            set;
-        }
+        public string ModelShortName { get; set; }
+
         [IgnoreMember]
         public string ModelDisplayName
         {
             get => _modelShortName ?? Model;
-            set { _modelShortName = value; }
+            set => _modelShortName = value;
         }
 
         [Key(7)]
@@ -2003,7 +1969,7 @@ namespace ThinkVoipTool
         public string Value { get; set; }
     }
 
-    public partial class ActiveObject
+    public class ActiveObject
     {
         public ActiveObject(ScheduleDay scheduleDay)
         {

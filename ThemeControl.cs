@@ -1,39 +1,23 @@
 ﻿using MaterialDesignThemes.Wpf;
-
 using ThinkVoipTool.Properties;
 
 namespace ThinkVoipTool
 {
-    class ThemeControl
+    internal class ThemeControl
     {
-
-        public ThemeControl()
-        {
-
-
-        }
-
         public static void SetTheme(MainWindow window)
         {
-
             var paletteHelper = new PaletteHelper();
-            ITheme theme = paletteHelper.GetTheme();
+            var theme = paletteHelper.GetTheme();
 
-            IBaseTheme baseTheme = window.isDark ? new MaterialDesignDarkTheme() : (IBaseTheme)new MaterialDesignLightTheme();
+            var baseTheme = window.IsDark ? new MaterialDesignDarkTheme() : (IBaseTheme) new MaterialDesignLightTheme();
             theme.SetBaseTheme(baseTheme);
-
-            var test = theme.PrimaryMid;
 
             paletteHelper.SetTheme(theme);
 
 
-
-            Settings.Default.isDark = window.isDark;
+            Settings.Default.isDark = window.IsDark;
             Settings.Default.Save();
-
-
-
-
         }
     }
 }

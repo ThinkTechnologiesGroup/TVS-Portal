@@ -1,13 +1,11 @@
-﻿using System;
-
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 
 namespace ThinkVoipTool
 {
-    class ReadRegistry
+    internal class ReadRegistry
     {
-        const string KEY_NAME = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
-        const string VALUE = "AppsUseLightTheme";
+        private const string KeyName = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
+        private const string Value = "AppsUseLightTheme";
 
         public static bool isDarkEnabled => IsDarkEnabled();
 
@@ -15,24 +13,19 @@ namespace ThinkVoipTool
         private static bool IsDarkEnabled()
         {
             var isDark = false;
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(KEY_NAME))
+            using var key = Registry.CurrentUser.OpenSubKey(KeyName);
+            var o = key?.GetValue(Value);
+            if(o == null)
             {
-
-                if (key != null)
-                {
-                    Object o = key.GetValue(VALUE);
-                    if (o != null)
-                    {
-                        if (o.ToString() == "0")
-                        {
-                            isDark = true;
-                        }
-                    }
-                }
-                return isDark;
+                return false;
             }
+
+            if(o.ToString() == "0")
+            {
+                isDark = true;
+            }
+
+            return isDark;
         }
     }
-
-
 }

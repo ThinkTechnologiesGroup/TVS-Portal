@@ -1,7 +1,6 @@
-﻿namespace ThinkVoipTool
+﻿namespace ThinkVoipTool.Billing
 {
-    class Billing
+    internal class Billing
     {
-
     }
 }

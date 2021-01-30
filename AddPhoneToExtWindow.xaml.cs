@@ -6,28 +6,28 @@ namespace ThinkVoipTool
     /// <summary>
     /// Interaction logic for AddPhoneToExtWindow.xaml
     /// </summary>
-    public partial class AddPhoneToExtWindow : Window
+    public partial class AddPhoneToExtWindow
     {
-        private string extension;
-
         public AddPhoneToExtWindow(string extensionNumber)
         {
-
             InitializeComponent();
-            this.extension = extensionNumber;
-            var extensionDisplayString = "Selected Extension: " + extension;
+            extension = extensionNumber;
+            var extensionDisplayString = "Selected Extension: " + extensionNumber;
             ExtTextBlock.Text = extensionDisplayString;
             ExtTextBlock.Visibility = Visibility.Visible;
         }
 
+        public string extension { get; }
+
         private async void AddPhoneToExtension_Click(object sender, RoutedEventArgs e)
         {
-
-
             var extensionNumber = MainWindow.CurrentExtension;
-            var selectedPhone = PhonesDropDownList.SelectedItem as Phone;
-            var phoneType = selectedPhone.Model;
-            await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber);
+            if(PhonesDropDownList.SelectedItem is Phone selectedPhone)
+            {
+                var phoneType = selectedPhone.Model;
+                await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber);
+            }
+
             Close();
         }
 
@@ -37,7 +37,7 @@ namespace ThinkVoipTool
 
             var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
 
-            if (result == "OK")
+            if(result == "OK")
             {
                 MessageBox.Show($"Ext: {extensionNUmber} \n Pin: {pin}", "Success! :) ");
             }
@@ -46,8 +46,5 @@ namespace ThinkVoipTool
                 MessageBox.Show("Failed :( ");
             }
         }
-
-
-
     }
 }

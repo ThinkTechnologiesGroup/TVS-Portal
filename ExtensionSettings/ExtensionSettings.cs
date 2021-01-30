@@ -1,43 +1,34 @@
-﻿namespace ThinkVoipTool
+﻿namespace ThinkVoipTool.ExtensionSettings
 {
     public class ExtensionSettings
     {
+        public bool DisAllowUseOffLan = false;
+        public string EmailAddress = "";
+        public bool FwdOnly;
+        public string MobileNumber = "";
+        public bool VmOnly;
 
-        public string vmPin = "1234";
-        public bool dissallowUseOffLan = false;
-        public bool vmOnly = false;
-        public bool fwdOnly = false;
-        public string emailAddress = "";
-        public string mobileNumber = "";
+        public string VmPin = "1234";
 
         public ExtensionSettings(bool vmOnly = false, bool fwdOnly = false)
         {
-            this.vmOnly = vmOnly;
-            this.fwdOnly = fwdOnly;
+            VmOnly = vmOnly;
+            FwdOnly = fwdOnly;
         }
+
         public ExtensionSettings(string voicemailPin, bool vmOnly = false, bool fwdOnly = false)
         {
-            this.vmPin = voicemailPin;
-            this.vmOnly = vmOnly;
-            this.fwdOnly = fwdOnly;
-
+            VmPin = voicemailPin;
+            VmOnly = vmOnly;
+            FwdOnly = fwdOnly;
         }
+
         public ExtensionSettings(string voicemailPin, string emailAddress, bool vmOnly = false, bool fwdOnly = false)
         {
-            this.vmPin = voicemailPin;
-            this.emailAddress = emailAddress;
-            this.vmOnly = vmOnly;
-            this.fwdOnly = fwdOnly;
-
-
-
-
+            VmPin = voicemailPin;
+            EmailAddress = emailAddress;
+            VmOnly = vmOnly;
+            FwdOnly = fwdOnly;
         }
-
-
-
-
-
-
     }
 }

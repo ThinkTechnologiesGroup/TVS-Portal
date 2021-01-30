@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -15,37 +14,55 @@ namespace ThinkVoipTool
     /// Interaction logic for ExtensionTypeSelectionWindow.xaml
     /// </summary>
     /// 
-
-
-
-    public partial class ExtensionTypeSelectionWindow : Window
+    public partial class ExtensionTypeSelectionWindow
     {
-
         public enum ExtensionTypes
         {
             StandardUser,
             VoiceMailOnly,
             ForwardingOnly
-
         }
-        private ThreeCxClient threeCxClient;
+
+        private readonly CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+        private readonly MainWindow mainWindow;
+        private readonly ThreeCxClient threeCxClient;
+        private readonly bool update;
+        private HashSet<string> availableExtensionNumbers = new HashSet<string>();
+        private AvailableExtensionNumbers availableExtensionsObj;
+        private string currentExtension;
+        private string emailAddress;
+        private string extNumber;
         private string firstName;
         private string lastName;
-        private string extNumber;
-        private string emailAdddress;
-        private MainWindow mainWindow;
-        private int companyId;
         private string mobileNumber;
-        private AvailableExtensionNumbers availableExtensionsObj;
-        private HashSet<string> availableExtensionNumbers = new HashSet<string>();
-        private bool update;
-        private string currentExtension;
-        private CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
-        private IList extensionsToBeUpdated;
 
-        private string voiceMailOptions => emailAdddress != "" ? "EmailNotificationType.SendVMailAsAttachmentAndDelete" : "EmailNotificationType.DoNotSend";
+        public ExtensionTypeSelectionWindow(ThreeCxClient threeCxClient, MainWindow mainWindow, bool update = false)
+        {
+            this.update = update;
+            this.mainWindow = mainWindow;
+            this.threeCxClient = threeCxClient;
+            currentExtension = MainWindow.CurrentExtension;
 
-        bool IsValidEmail(string email)
+            if(update)
+            {
+                firstName = MainWindow.CurrentExtensionClass.FirstName;
+                firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
+                lastName = MainWindow.CurrentExtensionClass.LastName;
+                lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
+                emailAddress = MainWindow.CurrentExtensionClass.Email;
+                mobileNumber = MainWindow.CurrentExtensionClass.MobileNumber;
+            }
+
+            InitializeComponent();
+
+            ExtensionTypeDropDownList.ItemsSource = Enum.GetValues(typeof(ExtensionTypes));
+            ExtensionTypeDropDownList.SelectedIndex = 0;
+        }
+
+        private string voiceMailOptions =>
+            emailAddress != "" ? "EmailNotificationType.SendVMailAsAttachmentAndDelete" : "EmailNotificationType.DoNotSend";
+
+        private static bool IsValidEmail(string email)
         {
             try
             {
@@ -58,47 +75,20 @@ namespace ThinkVoipTool
             }
         }
 
-        public ExtensionTypeSelectionWindow(ThreeCxClient threeCxClient, MainWindow mainWindow, bool update = false)
-        {
-            this.update = update;
-            this.mainWindow = mainWindow;
-            this.threeCxClient = threeCxClient;
-            this.companyId = MainWindow.CompanyId;
-            this.currentExtension = MainWindow.CurrentExtension;
-
-            if (update)
-            {
-                this.extensionsToBeUpdated = MainWindow.ToBeUpdated;
-                this.firstName = MainWindow.CurrentExtensionClass.FirstName;
-                firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
-                this.lastName = MainWindow.CurrentExtensionClass.LastName;
-                lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
-                this.emailAdddress = MainWindow.CurrentExtensionClass.Email;
-                this.mobileNumber = MainWindow.CurrentExtensionClass.MobileNumber;
-
-            }
-
-            InitializeComponent();
-
-            this.ExtensionTypeDropDownList.ItemsSource = Enum.GetValues(typeof(ExtensionTypes));
-            this.ExtensionTypeDropDownList.SelectedIndex = 0;
-        }
-
         private async void SetExtensionType_Click(object sender, RoutedEventArgs e)
         {
             var extType = ExtensionTypeDropDownList.SelectedItem;
-            this.ExtensionDropDownTitle.Text = "";
+            ExtensionDropDownTitle.Text = "";
 
 
-
-            if (update)
+            if(update)
             {
-                this.PleaseWaitTextBlock.Visibility = Visibility.Visible;
+                PleaseWaitTextBlock.Visibility = Visibility.Visible;
 
                 foreach (Extension ext in MainWindow.ToBeUpdated)
                 {
                     currentExtension = ext.Number;
-                    emailAdddress = ext.Email;
+                    emailAddress = ext.Email;
                     firstName = ext.FirstName;
                     firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
                     lastName = ext.LastName;
@@ -108,122 +98,121 @@ namespace ThinkVoipTool
                     var extensionId = await threeCxClient.GetExtensionId(currentExtension);
                     var phonesList = await threeCxClient.GetListOfPhonesForExtension(currentExtension, extensionId);
                     var vmPin = await threeCxClient.GetExtensionPinNumber(currentExtension);
-                    if (vmPin == null)
+                    if(vmPin == null)
                     {
                         vmPin = "1234";
                     }
-                    if (phonesList.Count > 1)
+
+                    if(phonesList.Count > 1)
                     {
                         //pop up new window to pick from or choose all and return new list to loop around of whats to update
 
                         //var phoneToUpdate = DoACoolThingHere();
-
                     }
+
                     switch (extType)
                     {
                         case ExtensionTypes.StandardUser:
 
-                            this.firstName = firstName
+                            firstName = firstName
                                 .Replace("- Voicemail Only", "")
                                 .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
-                            await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
-                            disAllowUseOffLan: false, pin: vmPin);
+                            await threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAddress, voiceMailOptions,
+                                disAllowUseOffLan: false, pin: vmPin);
 
                             foreach (var phone in phonesList)
                             {
-                                await this.threeCxClient.UpdatePhoneSettingsOnExtension(extensionId, phone.MacAddress, currentExtension);
+                                await threeCxClient.UpdatePhoneSettingsOnExtension(extensionId, phone.MacAddress, currentExtension);
                             }
 
                             break;
 
                         case ExtensionTypes.VoiceMailOnly:
 
-                            this.firstName = firstName
+                            firstName = firstName
                                 .Replace("- Voicemail Only", "")
                                 .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
                             firstName = firstName.Trim() + " - Voicemail Only";
 
-                            await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
-                                disAllowUseOffLan: true, VmOnly: true, pin: vmPin);
+                            await threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAddress, voiceMailOptions,
+                                disAllowUseOffLan: true, vmOnly: true, pin: vmPin);
 
                             break;
 
                         case ExtensionTypes.ForwardingOnly:
 
-                            this.firstName = firstName
+                            firstName = firstName
                                 .Replace("- Voicemail Only", "")
                                 .Replace("Voicemail Only", "")
                                 .Replace("- Forward Only", "");
 
                             firstName = firstName.Trim() + " - Forward Only";
 
-                            await this.threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAdddress, voiceMailOptions,
-                                mobileNumber: this.mobileNumber, disAllowUseOffLan: true);
+                            await threeCxClient.CreateExtensionOnServer(currentExtension, firstName, lastName, emailAddress, voiceMailOptions,
+                                mobileNumber, disAllowUseOffLan: true);
 
                             break;
                     }
-
                 }
+
                 await mainWindow.UpdateDisplay();
-                this.Close();
+                Close();
                 return;
             }
 
-            this.SetExtensionBack.Visibility = Visibility.Visible;
-            this.ExtensionTypeDropDownList.Visibility = Visibility.Hidden;
-            this.SetExtensionType.Visibility = Visibility.Hidden;
-            this.AvailableExtensionsDropDownList.Visibility = Visibility.Visible;
+            SetExtensionBack.Visibility = Visibility.Visible;
+            ExtensionTypeDropDownList.Visibility = Visibility.Hidden;
+            SetExtensionType.Visibility = Visibility.Hidden;
+            AvailableExtensionsDropDownList.Visibility = Visibility.Visible;
 
             switch (extType)
             {
                 case ExtensionTypes.StandardUser:
                     //this.FirstName.Text = "First Name";
                     //this.Email.SetValue(Grid.ColumnProperty, 4);
-                    this.EmailEntry.SetValue(Grid.ColumnProperty, 4);
+                    EmailEntry.SetValue(Grid.ColumnProperty, 4);
                     // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
-                    this.ExtNumberEntry.Visibility = Visibility.Hidden;
+                    ExtNumberEntry.Visibility = Visibility.Hidden;
                     //this.FirstName.Visibility = Visibility.Visible;
-                    this.FirstNameEntry.Visibility = Visibility.Visible;
+                    FirstNameEntry.Visibility = Visibility.Visible;
                     //this.LastName.Visibility = Visibility.Visible;
-                    this.LastNameEntry.Visibility = Visibility.Visible;
+                    LastNameEntry.Visibility = Visibility.Visible;
                     //this.Email.Visibility = Visibility.Visible;
-                    this.EmailEntry.Visibility = Visibility.Visible;
-                    this.AddExtentionButton.Visibility = Visibility.Visible;
+                    EmailEntry.Visibility = Visibility.Visible;
+                    AddExtentionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.VoiceMailOnly:
                     // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
-                    this.ExtNumberEntry.Visibility = Visibility.Hidden;
+                    ExtNumberEntry.Visibility = Visibility.Hidden;
                     // this.FirstName.Text = "Display Name";
                     // this.FirstName.Visibility = Visibility.Visible;
-                    this.FirstNameEntry.Visibility = Visibility.Visible;
+                    FirstNameEntry.Visibility = Visibility.Visible;
                     // this.Email.SetValue(Grid.ColumnProperty, 3);
-                    this.EmailEntry.SetValue(Grid.ColumnProperty, 3);
+                    EmailEntry.SetValue(Grid.ColumnProperty, 3);
                     // this.Email.Visibility = Visibility.Visible;
-                    this.EmailEntry.Visibility = Visibility.Visible;
-                    this.AddExtentionButton.Visibility = Visibility.Visible;
+                    EmailEntry.Visibility = Visibility.Visible;
+                    AddExtentionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.ForwardingOnly:
                     // this.ExtNumber.Visibility = Visibility.Visible;
                     //this.ExtNumberEntry.Visibility = Visibility.Visible;
-                    this.ExtNumberEntry.Visibility = Visibility.Hidden;
+                    ExtNumberEntry.Visibility = Visibility.Hidden;
                     // this.FirstName.Text = "Display Name";
                     // this.FirstName.Visibility = Visibility.Visible;
-                    this.FirstNameEntry.Visibility = Visibility.Visible;
+                    FirstNameEntry.Visibility = Visibility.Visible;
                     // this.MobileNumber.Visibility = Visibility.Visible;
-                    this.MobileNumberEntry.Visibility = Visibility.Visible;
-                    this.AddExtentionButton.Visibility = Visibility.Visible;
+                    MobileNumberEntry.Visibility = Visibility.Visible;
+                    AddExtentionButton.Visibility = Visibility.Visible;
                     break;
-
             }
-
         }
 
         private async void AddExtention_Click(object sender, RoutedEventArgs e)
@@ -233,26 +222,27 @@ namespace ThinkVoipTool
 
         private async Task AddExtension()
         {
-            this.PleaseWaitTextBlock.Visibility = Visibility.Visible;
+            PleaseWaitTextBlock.Visibility = Visibility.Visible;
             var extType = ExtensionTypeDropDownList.SelectedItem;
 
-            this.firstName = this.FirstNameEntry.Text;
-            this.firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
+            firstName = FirstNameEntry.Text;
+            firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
 
-            this.lastName = this.LastNameEntry.Text;
-            this.lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
+            lastName = LastNameEntry.Text;
+            lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
 
-            this.extNumber = this.AvailableExtensionsDropDownList.Text;
+            extNumber = AvailableExtensionsDropDownList.Text;
 
-            if (IsValidEmail(this.EmailEntry.Text))
+            if(IsValidEmail(EmailEntry.Text))
             {
-                this.emailAdddress = this.EmailEntry.Text;
+                emailAddress = EmailEntry.Text;
             }
             else
             {
-                this.emailAdddress = "";
+                emailAddress = "";
             }
-            this.mobileNumber = this.MobileNumberEntry.Text
+
+            mobileNumber = MobileNumberEntry.Text
                 .Replace("-", "")
                 .Replace("(", "")
                 .Replace(")", "")
@@ -261,38 +251,38 @@ namespace ThinkVoipTool
             switch (extType)
             {
                 case ExtensionTypes.StandardUser:
-                    await this.threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAdddress, voiceMailOptions,
+                    await threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAddress, voiceMailOptions,
                         disAllowUseOffLan: false);
 
                     break;
 
                 case ExtensionTypes.VoiceMailOnly:
                     firstName = firstName.Trim() + " - Voicemail Only";
-                    await this.threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAdddress, voiceMailOptions,
-                        disAllowUseOffLan: true, VmOnly: true);
+                    await threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAddress, voiceMailOptions,
+                        disAllowUseOffLan: true, vmOnly: true);
 
                     break;
 
                 case ExtensionTypes.ForwardingOnly:
                     firstName = firstName.Trim() + " - Forward Only";
-                    await this.threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAdddress, voiceMailOptions,
-                        mobileNumber: this.mobileNumber, disAllowUseOffLan: true);
+                    await threeCxClient.CreateExtensionOnServer(extNumber, firstName, lastName, emailAddress, voiceMailOptions,
+                        mobileNumber, disAllowUseOffLan: true);
 
                     break;
             }
 
             await mainWindow.UpdateDisplay();
-            this.Close();
+            Close();
         }
+
         private void Window_Closed(object sender, EventArgs e)
         {
-
         }
 
 
         private async void FirstName_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
                 await AddExtension();
             }
@@ -300,7 +290,7 @@ namespace ThinkVoipTool
 
         private async void LastName_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
                 await AddExtension();
             }
@@ -308,7 +298,7 @@ namespace ThinkVoipTool
 
         private async void Email_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if(e.Key == Key.Enter)
             {
                 await AddExtension();
             }
@@ -317,55 +307,58 @@ namespace ThinkVoipTool
         private void SetExtensionBack_Click(object sender, RoutedEventArgs e)
         {
             //this.MobileNumber.Visibility = Visibility.Hidden;
-            this.MobileNumberEntry.Visibility = Visibility.Hidden;
-            this.AddExtentionButton.Visibility = Visibility.Hidden;
-            this.SetExtensionBack.Visibility = Visibility.Hidden;
+            MobileNumberEntry.Visibility = Visibility.Hidden;
+            AddExtentionButton.Visibility = Visibility.Hidden;
+            SetExtensionBack.Visibility = Visibility.Hidden;
             //this.ExtNumber.Visibility = Visibility.Hidden;
-            this.ExtNumberEntry.Visibility = Visibility.Hidden;
-            this.AvailableExtensionsDropDownList.Visibility = Visibility.Hidden;
+            ExtNumberEntry.Visibility = Visibility.Hidden;
+            AvailableExtensionsDropDownList.Visibility = Visibility.Hidden;
             //this.FirstName.Visibility = Visibility.Hidden;
-            this.FirstNameEntry.Visibility = Visibility.Hidden;
+            FirstNameEntry.Visibility = Visibility.Hidden;
             //this.LastName.Visibility = Visibility.Hidden;
-            this.LastNameEntry.Visibility = Visibility.Hidden;
+            LastNameEntry.Visibility = Visibility.Hidden;
             //this.Email.Visibility = Visibility.Hidden;
-            this.EmailEntry.Visibility = Visibility.Hidden;
-            this.AddExtentionButton.Visibility = Visibility.Hidden;
-            this.ExtensionDropDownTitle.Text = "Choose Extension Type";
-            this.ExtensionTypeDropDownList.Visibility = Visibility.Visible;
-            this.SetExtensionType.Visibility = Visibility.Visible;
-
-
+            EmailEntry.Visibility = Visibility.Hidden;
+            AddExtentionButton.Visibility = Visibility.Hidden;
+            ExtensionDropDownTitle.Text = "Choose Extension Type";
+            ExtensionTypeDropDownList.Visibility = Visibility.Visible;
+            SetExtensionType.Visibility = Visibility.Visible;
         }
-
 
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            availableExtensionsObj = new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
-            availableExtensionNumbers = availableExtensionsObj.possibleExtensions;
+            availableExtensionsObj =
+                new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
+            availableExtensionNumbers = availableExtensionsObj.PossibleExtensions;
             AvailableExtensionsDropDownList.ItemsSource = availableExtensionNumbers;
         }
     }
 
     public class AvailableExtensionNumbers
     {
-        private List<string> userExtensions;
-        public HashSet<string> usedExtensions;
-        public HashSet<string> possibleExtensions = new HashSet<string>();
-        private List<string> systemExtensions;
-        private int extensionDigitCount;
-        private string startingExtensionNumber;
-        private string finalExtensionNumber;
-        private HashSet<string> extensionsToFiler = new HashSet<string>();
+        private readonly int extensionDigitCount;
+        private readonly HashSet<string> extensionsToFiler = new HashSet<string>();
+        private readonly string finalExtensionNumber;
+        private readonly string startingExtensionNumber;
+        private readonly List<string> systemExtensions;
+        private readonly List<string> userExtensions;
+        public HashSet<string> PossibleExtensions = new HashSet<string>();
+        public HashSet<string> UsedExtensions;
 
-        public AvailableExtensionNumbers(List<Extension> extensions, List<Extension> SystemExtensions)
+        public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension> systemExtensions)
         {
+            userExtensions = extensions.Select(a => a.Number).ToList();
+            this.systemExtensions = systemExtensions.Select(a => a.Number).ToList();
+            var first = userExtensions.FirstOrDefault();
 
-            this.userExtensions = extensions.Select(a => a.Number).ToList();
-            this.systemExtensions = SystemExtensions.Select(a => a.Number).ToList();
-            this.extensionDigitCount = userExtensions.FirstOrDefault().Length;
-            this.extensionsToFiler.UnionWith(userExtensions);
-            this.extensionsToFiler.UnionWith(systemExtensions);
+            if(first != null)
+            {
+                extensionDigitCount = first.Length;
+            }
+
+            extensionsToFiler.UnionWith(userExtensions);
+            extensionsToFiler.UnionWith(this.systemExtensions);
 
             var startNumber = new StringBuilder();
             var endNumber = new StringBuilder();
@@ -376,25 +369,22 @@ namespace ThinkVoipTool
                 endNumber.Append("9");
             }
 
-            this.startingExtensionNumber = startNumber.ToString();
-            this.finalExtensionNumber = endNumber.ToString();
+            startingExtensionNumber = startNumber.ToString();
+            finalExtensionNumber = endNumber.ToString();
 
-            usedExtensions = new HashSet<string>();
-            usedExtensions.UnionWith(userExtensions);
-            usedExtensions.UnionWith(systemExtensions);
+            UsedExtensions = new HashSet<string>();
+            UsedExtensions.UnionWith(userExtensions);
+            UsedExtensions.UnionWith(this.systemExtensions);
 
             //wtf man.
             var range = Enumerable.Range(int.Parse(startingExtensionNumber), int.Parse(finalExtensionNumber));
             foreach (var i in range)
             {
-                possibleExtensions.Add(i.ToString());
+                PossibleExtensions.Add(i.ToString());
             }
 
-            possibleExtensions.RemoveWhere(a => a.Length < extensionDigitCount);
-            possibleExtensions.RemoveWhere(a => usedExtensions.Contains(a));
-
+            PossibleExtensions.RemoveWhere(a => a.Length < extensionDigitCount);
+            PossibleExtensions.RemoveWhere(a => UsedExtensions.Contains(a));
         }
-
     }
-
 }

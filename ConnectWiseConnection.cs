@@ -2,34 +2,30 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
 using Newtonsoft.Json;
-
 using RestSharp;
-
+using ThinkVoipTool.Models;
 
 namespace ThinkVoipTool
 {
     public class ConnectWiseConnection : ConnectWiseModel
     {
-
         private const string InitialUrl = "https://cw.think-team.com/login/companyinfo/think";
 
 
-        public ConnectWiseConnection(string User, string Pass)
+        public ConnectWiseConnection(string user, string pass)
         {
             var restClient = new RestClient(InitialUrl);
             var restRequest = new RestRequest(Method.GET);
             var restResponse = restClient.Execute(restRequest);
             JsonConvert.PopulateObject(restResponse.Content, this);
             ApiUrl = "https://" + SiteUrl + "/" + Codebase + "apis/3.0/";
-            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{User}:{Pass}"));
+            AuthKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{CompanyName}+{user}:{pass}"));
         }
 
 
         private string AuthKey { get; }
         private string ApiUrl { get; }
-
 
 
         public async Task<string> GetRestResponse(Method method, string query)
@@ -70,7 +66,7 @@ namespace ThinkVoipTool
             var response = await restClient.ExecuteAsync(newRequest).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<List<CompanyModel.Agreement>>(response.Content);
         }
-      
+
 
         public async Task<CompanyModel> GetCompany(int id)
         {

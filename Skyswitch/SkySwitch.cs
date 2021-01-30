@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using RestSharp;
 
-namespace ThinkVoipTool
+namespace ThinkVoipTool.Skyswitch
 {
     internal class SkySwitchBilling
     {
@@ -36,7 +35,7 @@ namespace ThinkVoipTool
             restRequest.AddParameter("domain", domainNameString);
             var response = restClient.Execute(restRequest).Content;
             var deserializedResponse = JsonConvert.DeserializeObject<JArray>(response);
-            if (deserializedResponse == null)
+            if(deserializedResponse == null)
             {
                 return;
             }

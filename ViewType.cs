@@ -1,16 +1,14 @@
-﻿public enum Views
+﻿namespace ThinkVoipTool
 {
-
-    none,
-    valid,
-    invalid,
-    total,
-    phones,
-    VoicemailOnly,
-    ForwardingOnly,
-    BilledToClient
-
+    public enum Views
+    {
+        None,
+        Valid,
+        Invalid,
+        Total,
+        Phones,
+        VoicemailOnly,
+        ForwardingOnly,
+        BilledToClient
+    }
 }
-
-
-

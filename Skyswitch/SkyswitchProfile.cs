@@ -1,22 +1,18 @@
-﻿namespace ThinkVoipTool
+﻿namespace ThinkVoipTool.Skyswitch
 {
-    class SkyswitchProfile
+    internal class SkyswitchProfile
     {
+        private const string Url = "https://telco-api.skyswitch.com/profile";
+        private string _accountId;
+        private string _accountName;
+        private string _email;
 
-        const string url = "https://telco-api.skyswitch.com/profile";
-
-        private string id;
-        private string name;
-        private string email;
-        private string account_id;
-        private string account_name;
-
+        private string _id;
+        private string _name;
 
 
         public SkyswitchProfile()
         {
-
         }
-
     }
 }
