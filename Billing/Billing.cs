@@ -38,10 +38,12 @@ namespace ThinkVoipTool.Billing
                 today.Month,
                 DateTime.DaysInMonth(today.Year,
                     today.Month));
+            return 1;
         }
 
         //public int MinutesUsedCurrentMonth()
         //{
+            //Test Change.
 
 
         //}
