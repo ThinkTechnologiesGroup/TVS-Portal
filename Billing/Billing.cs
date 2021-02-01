@@ -41,11 +41,6 @@ namespace ThinkVoipTool.Billing
             return 1;
         }
 
-        //public int MinutesUsedCurrentMonth()
-        //{
-            //Test Change.
-
-
-        //}
+       
     }
 }
