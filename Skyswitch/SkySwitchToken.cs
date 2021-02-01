@@ -66,6 +66,7 @@ namespace ThinkVoipTool.Skyswitch
 
         private static bool IsExpired(SkySwitchToken token) => token.ExpirationTime > DateTime.Now;
 
+
         public void SkySwitchTokenRefresh()
         {
             var restClient = new RestClient("https://pbx.skyswitch.com/ns-api/oauth2/token/");

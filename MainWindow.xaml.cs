@@ -61,7 +61,7 @@ namespace ThinkVoipTool
         public static string AuthP = string.Empty;
         public static string CwApiUser = string.Empty;
         public static string CwApiKey = string.Empty;
-        public static bool IsAdmin = false;
+        public static bool IsAdmin;
 
         private static ConnectWiseConnection _cwClient;
         //private static SkySwitchTelcoToken _skySwitchTelcoToken = new SkySwitchTelcoToken();
@@ -156,6 +156,7 @@ namespace ThinkVoipTool
                 ExtensionRemoveButton.IsEnabled = true;
                 ResetPasswordMenuItem.IsEnabled = true;
                 MakeExtAdminMenuItem.IsEnabled = true;
+                BillingButton.IsEnabled = true;
             }
 
             AuthU = await Secrets.GetSecretValue("AdAuthUser");
@@ -880,6 +881,14 @@ namespace ThinkVoipTool
             MakeExtAdminMenuItem.IsEnabled = false;
             Hide();
             await LoginProcess();
+        }
+
+        private void Billing_OnClick(object sender, RoutedEventArgs e)
+        {
+            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Hidden;
+
+            var billing = new Billing.Billing("AdmiralsCove.22335.service");
         }
     }
 }
