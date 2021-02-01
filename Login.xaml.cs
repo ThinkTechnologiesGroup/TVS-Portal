@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -8,7 +9,7 @@ using ThinkVoipTool.Properties;
 namespace ThinkVoipTool
 {
     /// <summary>
-    /// Interaction logic for Login.xaml
+    ///     Interaction logic for Login.xaml
     /// </summary>
     public partial class LoginWindow
     {
@@ -20,7 +21,7 @@ namespace ThinkVoipTool
         }
 
 
-        private void Window_Activated(object sender, System.EventArgs e)
+        private void Window_Activated(object sender, EventArgs e)
         {
             UserNameEntry.Text = AdAuthClient.TryGetUser();
             RememberMeCheckBox.IsChecked = false;

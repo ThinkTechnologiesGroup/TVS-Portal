@@ -1,10 +1,11 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 
 namespace ThinkVoipTool
 {
-    internal class MacroConverter : Newtonsoft.Json.Converters.CustomCreationConverter<ThreeCxPageMacrosBase>
+    internal class MacroConverter : CustomCreationConverter<ThreeCxPageMacrosBase>
     {
         public override ThreeCxPageMacrosBase Create(Type objectType) => throw new NotImplementedException();
 
@@ -13,18 +14,18 @@ namespace ThinkVoipTool
             var type = (string) jObject.Property("name");
             return type switch
             {
-                "List-LabelMaker2000" => new LabelMaker2000() {Required = true},
+                "List-LabelMaker2000" => new LabelMaker2000 {Required = true},
                 "List-3CXInstalledOn" => new ThreeCxInstalledOn(),
                 "List-3CXServerLocationOnWan" => new ThreeCxLocationOnWan(),
                 "List-3CXServerLocationOnWAN" => new ThreeCxLocationOnWan(),
-                "Text-3CXAzureVMPublicIP" => new ThreeCxAzureVmPublicIp() {ShouldSync = true},
+                "Text-3CXAzureVMPublicIP" => new ThreeCxAzureVmPublicIp {ShouldSync = true},
                 "Text-3cxManagementAdminURL" => new ThreeCxManagementAdminUrl(),
                 "Text-3cxManagementAdminUsername" => new ThreeCxManagementAdminUserName(),
                 "Text-3cxManagementAdminPassword" => new ThreeCxManagementAdminPassWord(),
                 "Table-SharedAdmin" => new ThreeCxManagementSharedAdminTableRow(),
-                "Text-3cxlicensekey" => new ThreeCxLicenseKey() {ShouldSync = true},
-                "Text-3cxlicenseconcurrentcalls" => new ThreeCxConcurrentCalls() {ShouldSync = true},
-                "Date-Expiration" => new ThreeCxExpirationDate() {ShouldSync = true},
+                "Text-3cxlicensekey" => new ThreeCxLicenseKey {ShouldSync = true},
+                "Text-3cxlicenseconcurrentcalls" => new ThreeCxConcurrentCalls {ShouldSync = true},
+                "Date-Expiration" => new ThreeCxExpirationDate {ShouldSync = true},
                 "Text-AzureVMAdmin-Username" => new ThreeCxAzureVmAdminUserName(),
                 "Text-AzureVMAdmin-Password" => new ThreeCxAzureVmAdminPassWord(),
                 "Text-AzureVMAdmin-AddtlNotes" => new ThreeCxAzureVmAdditionalNotes(),
@@ -42,11 +43,11 @@ namespace ThinkVoipTool
                 "Text-SkySwitchBilling-SIPTrunkUsername" => new VoipProviderSkySwitchSwitchUserName(),
                 "Text-SkySwitchBilling-SIPTrunkPassword" => new VoipProviderSkySwitchSwitchPassWord(),
                 "Text-SkySwitchBilling-SIPTrunkName" => new VoipProviderSkySwitchSwitchTrunkName(),
-                "Text-providerPrimaryNumber" => new SipTrunkProviderPrimaryNumber() {ShouldSync = true},
-                "Text-providerAuthenticationID" => new SipTrunkProviderAuthenticationId() {ShouldSync = true},
-                "Text-ProviderAuthenticationPass" => new SipTrunkProviderAuthenticationPassWord() {ShouldSync = true},
-                "List-AutoUpdateDay" => new ThreeCxServerUpdateDay() {ShouldSync = true},
-                "Table-DID" => new ThreeCxDidList() {ShouldSync = true},
+                "Text-providerPrimaryNumber" => new SipTrunkProviderPrimaryNumber {ShouldSync = true},
+                "Text-providerAuthenticationID" => new SipTrunkProviderAuthenticationId {ShouldSync = true},
+                "Text-ProviderAuthenticationPass" => new SipTrunkProviderAuthenticationPassWord {ShouldSync = true},
+                "List-AutoUpdateDay" => new ThreeCxServerUpdateDay {ShouldSync = true},
+                "Table-DID" => new ThreeCxDidList {ShouldSync = true},
                 "List-efax-ThroughThink-Yes" => new EfaxThroughThinkYes(),
                 "List-efax-ThroughThink-No" => new EfaxThroughThinkNo(),
                 "list-international" => new ListInternational(),
@@ -65,7 +66,7 @@ namespace ThinkVoipTool
                 "List-VoIPGatewayDevice" => new VoipGatewayDevice(),
                 "Text-VoIPRouterConfig" => new VoipProviderRouterConfig(),
                 "List-VOIPGatewayType" => new VoipGatewayType(),
-                "Table-VoIPPhones" => new VoipPhonesTable() {ShouldSync = true},
+                "Table-VoIPPhones" => new VoipPhonesTable {ShouldSync = true},
                 "Text-VoicemailPin" => new TextVoicemailPin(),
                 "List-VoicemailtoEmailEnabled" => new TextVoicemailPToEmailEnabled(),
                 _ => throw new ApplicationException($"The macro type {type} is not yet supported.")

@@ -71,7 +71,7 @@ namespace ThinkVoipTool
         public async Task<CompanyModel> GetCompany(int id)
         {
             var newRequest = new RestRequest(Method.GET);
-            var restClient = new RestClient(ApiUrl + "company/companies/" + id.ToString());
+            var restClient = new RestClient(ApiUrl + "company/companies/" + id);
             newRequest.AddHeader("Content-Type", "application/json");
             newRequest.AddHeader("Authorization", "Basic " + AuthKey);
             newRequest.AddHeader("Accept", "application/json");

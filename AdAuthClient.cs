@@ -40,7 +40,7 @@ namespace ThinkVoipTool
                     var groupsList = new HashSet<string>();
                     foreach (byte[] group in memberships)
                     {
-                        var textGroup = Encoding.UTF8.GetString(@group);
+                        var textGroup = Encoding.UTF8.GetString(group);
                         groupsList.Add(textGroup);
                     }
 

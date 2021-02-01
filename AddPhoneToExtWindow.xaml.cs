@@ -4,7 +4,7 @@ using System.Windows;
 namespace ThinkVoipTool
 {
     /// <summary>
-    /// Interaction logic for AddPhoneToExtWindow.xaml
+    ///     Interaction logic for AddPhoneToExtWindow.xaml
     /// </summary>
     public partial class AddPhoneToExtWindow
     {

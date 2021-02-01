@@ -1061,12 +1061,10 @@ namespace ThinkVoipTool
                     Console.WriteLine(@"Failed to Update Blf Options.");
                     throw new Exception();
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine($@"Blf {i + 1}: ""Blf""  status: OK");
-                    Console.ResetColor();
-                }
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine($@"Blf {i + 1}: ""Blf""  status: OK");
+                Console.ResetColor();
             }
 
             var sharedParkExtensions = JsonConvert.DeserializeObject<JArray>(blfResponse.Content);
@@ -1119,12 +1117,10 @@ namespace ThinkVoipTool
                     Console.WriteLine(@"Failed to Update Blf Options.");
                     throw new Exception();
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine($@"Blf {i + 1}: ""Line"" status: OK");
-                    Console.ResetColor();
-                }
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine($@"Blf {i + 1}: ""Line"" status: OK");
+                Console.ResetColor();
             }
         }
 
@@ -1137,12 +1133,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update Accept Multiple Calls option.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Accept multiple calls status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Accept multiple calls status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionDisableReInvites(IRestResponse response, string id)
@@ -1154,12 +1148,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update ReInvite option.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"ReInvite options status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"ReInvite options status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionAllowedUSeOffLan(IRestResponse response, string id)
@@ -1171,12 +1163,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update use off of LAN option.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Use extension off LAN options status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Use extension off LAN options status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionAllowedUSeOffLan(IRestResponse response, string id, bool enable)
@@ -1188,12 +1178,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update use off of LAN option.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Use extension off LAN options status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Use extension off LAN options status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionPbxDeliversAudioOption(IRestResponse response, string id)
@@ -1205,12 +1193,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"PBX delivers audio options.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"PBX delivers audio status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"PBX delivers audio status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionVoiceMailPin(IRestResponse response, string id, string pin)
@@ -1225,12 +1211,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update VoiceMail PIN.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"VoiceMail PIN status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"VoiceMail PIN status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionVoiceMailOptions(IRestResponse response, string id, string voiceMailOptions)
@@ -1246,12 +1230,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update VoiceMail Email Options.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"VoiceMail email options status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"VoiceMail email options status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionOutboundCallerId(IRestResponse response, string id, string callerId)
@@ -1264,12 +1246,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update caller Id property.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Caller Id status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Caller Id status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionMobileNumber(IRestResponse response, string id, string mobileNumber)
@@ -1281,12 +1261,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update mobile phone number property.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Mobile phone status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Mobile phone status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionEmail(IRestResponse response, string id, string email)
@@ -1297,12 +1275,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update Email property.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"Email status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"Email status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionLastName(IRestResponse response, string id, string lastName)
@@ -1315,12 +1291,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update LastName property.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"LastName status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"LastName status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionFirstName(IRestResponse response, string id, string firstName)
@@ -1332,12 +1306,10 @@ namespace ThinkVoipTool
                 Console.WriteLine(@"Failed to Update FirstName property.");
                 throw new Exception();
             }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Gray;
-                Console.WriteLine(@"FirstName status: OK");
-                Console.ResetColor();
-            }
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(@"FirstName status: OK");
+            Console.ResetColor();
         }
 
         private async Task UpdateExtensionNumber(IRestResponse response, string id, string extensionNumber)
@@ -1352,12 +1324,10 @@ namespace ThinkVoipTool
                     Console.WriteLine(@"Failed to Update Extension Number property.");
                     throw new Exception();
                 }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine(@"Extension number status: OK");
-                    Console.ResetColor();
-                }
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine(@"Extension number status: OK");
+                Console.ResetColor();
             }
         }
 

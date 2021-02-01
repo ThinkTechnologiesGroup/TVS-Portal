@@ -1,9 +1,10 @@
 ﻿using System.Windows;
+using RestSharp;
 
 namespace ThinkVoipTool
 {
     /// <summary>
-    /// Interaction logic for PasswordResetWindow.xaml
+    ///     Interaction logic for PasswordResetWindow.xaml
     /// </summary>
     public partial class PasswordResetWindow
     {
@@ -37,7 +38,7 @@ namespace ThinkVoipTool
 
             var confUpdateResponse = Docs.ConfClient.UpdateThreeCxPassword(pageId, password1);
 
-            if(confUpdateResponse == RestSharp.ResponseStatus.Error)
+            if(confUpdateResponse == ResponseStatus.Error)
             {
                 MessageBox.Show("Failed to update confluence - aborting.", "Failed");
             }
@@ -59,10 +60,10 @@ namespace ThinkVoipTool
                 //Meh...
                 var revertConfluenceUpdateStatus = Docs.ConfClient.UpdateThreeCxPassword(pageId, originalPassword);
 
-                if(revertConfluenceUpdateStatus == RestSharp.ResponseStatus.Error)
+                if(revertConfluenceUpdateStatus == ResponseStatus.Error)
                 {
                     //Fuck, did the internet die?
-                    MessageBox.Show(this, $"Failed to update 3cx and was unable to revert changes to confluence \n" +
+                    MessageBox.Show(this, "Failed to update 3cx and was unable to revert changes to confluence \n" +
                                           $"Please check page ID:{pageId} and update the password back to \"{originalPassword}\"", "Failed");
                 }
 

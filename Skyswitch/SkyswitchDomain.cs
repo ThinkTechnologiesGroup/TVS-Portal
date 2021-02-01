@@ -8,9 +8,5 @@
 
         private string _domain;
         private string _reseller;
-
-        public SkyswitchDomain()
-        {
-        }
     }
 }

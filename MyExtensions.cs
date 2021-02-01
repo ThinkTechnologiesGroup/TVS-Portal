@@ -24,10 +24,8 @@ namespace ThinkVoipTool
             {
                 return History[n];
             }
-            else
-            {
-                History.Add(n, FibOfRecursvive(n - 1) + FibOfRecursvive(n - 2));
-            }
+
+            History.Add(n, FibOfRecursvive(n - 1) + FibOfRecursvive(n - 2));
 
             return History[n];
         }

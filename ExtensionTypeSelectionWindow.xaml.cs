@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -11,9 +13,8 @@ using System.Windows.Input;
 namespace ThinkVoipTool
 {
     /// <summary>
-    /// Interaction logic for ExtensionTypeSelectionWindow.xaml
+    ///     Interaction logic for ExtensionTypeSelectionWindow.xaml
     /// </summary>
-    /// 
     public partial class ExtensionTypeSelectionWindow
     {
         public enum ExtensionTypes
@@ -23,7 +24,7 @@ namespace ThinkVoipTool
             ForwardingOnly
         }
 
-        private readonly CultureInfo cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+        private readonly CultureInfo cultureInfo = Thread.CurrentThread.CurrentCulture;
         private readonly MainWindow mainWindow;
         private readonly ThreeCxClient threeCxClient;
         private readonly bool update;
@@ -66,7 +67,7 @@ namespace ThinkVoipTool
         {
             try
             {
-                var addr = new System.Net.Mail.MailAddress(email);
+                var addr = new MailAddress(email);
                 return addr.Address == email;
             }
             catch

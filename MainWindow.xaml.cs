@@ -17,7 +17,7 @@ using ThinkVoipTool.Properties;
 namespace ThinkVoipTool
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    ///     Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
@@ -32,7 +32,7 @@ namespace ThinkVoipTool
         public const string FanvilH5 = "Fanvil H5";
 
 
-        public static List<Phone> PhoneModels = new List<Phone>()
+        public static List<Phone> PhoneModels = new List<Phone>
         {
             new Phone {Model = TvsT46S, ModelDisplayName = "TVS - Yealink T46S"},
             new Phone {Model = TvsT48S, ModelDisplayName = "TVS - Yealink T48S"},
@@ -200,8 +200,8 @@ namespace ThinkVoipTool
 
             if(IsAdmin)
             {
-                var ttgCompany = new BaseModels.Company() {name = "!Think", id = 250};
-                var ttgAgreement = new CompanyModel.Agreement() {company = ttgCompany};
+                var ttgCompany = new BaseModels.Company {name = "!Think", id = 250};
+                var ttgAgreement = new CompanyModel.Agreement {company = ttgCompany};
                 allVoipClients.Add(ttgAgreement);
             }
 

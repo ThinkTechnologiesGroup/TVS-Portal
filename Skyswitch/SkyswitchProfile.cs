@@ -9,10 +9,5 @@
 
         private string _id;
         private string _name;
-
-
-        public SkyswitchProfile()
-        {
-        }
     }
 }
