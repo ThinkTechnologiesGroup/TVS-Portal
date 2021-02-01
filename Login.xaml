@@ -7,57 +7,63 @@
         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="12"
-        TextOptions.TextFormattingMode="Ideal" 
-        TextOptions.TextRenderingMode="Auto"        
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
         Background="{DynamicResource MaterialDesignPaper}"
         FontFamily="{DynamicResource MaterialDesignFont}"
-        mc:Ignorable="d" FontSize ="13"
+        mc:Ignorable="d" FontSize="13"
         Title="Login" Height="375" Width="250" WindowStartupLocation="CenterScreen" Activated="Window_Activated">
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="35"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="35"/>
+            <ColumnDefinition Width="35" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="35" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
 
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="20"/>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="20" />
         </Grid.RowDefinitions>
 
 
-
-        <Image x:Name="Thinky" Source="/Resources/Thinky.png" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform"/>
+        <Image x:Name="Thinky" Source="/Resources/Thinky.png" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center"
+               VerticalAlignment="Center" Stretch="Uniform" />
 
 
         <!--<TextBlock x:Name="UserName" Margin="5,5,5,5" Text="Username"  Grid.Column="1" Grid.Row="2"  HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Left" FontWeight="Bold"/>-->
-        <TextBox x:Name="UserNameEntry" Margin="5,25,10,5" Visibility="Visible" MinWidth="150" Grid.Row="3" Grid.Column="1"  VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Left" materialDesign:HintAssist.Hint="Username"/>
+        <TextBox x:Name="UserNameEntry" Margin="5,25,10,5" Visibility="Visible" MinWidth="150" Grid.Row="3"
+                 Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Left"
+                 materialDesign:HintAssist.Hint="Username" />
 
         <!--<TextBlock x:Name="Password" Margin="5,5,5,5" Text="Password" Grid.Column="1" Grid.Row="4"  HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Left" FontWeight="Bold"/>-->
 
-        <PasswordBox x:Name="PasswordEntry" Margin="5,5,10,5" Visibility="Visible" MinWidth="150" Grid.Row="5" Grid.Column="1"   VerticalAlignment="Center" HorizontalAlignment="Center" materialDesign:HintAssist.Hint="Password"/>
-        <CheckBox x:Name="RememberMeCheckBox" Content="Remember Me" Grid.Row="6" Grid.Column="1" Margin="5,10,10,5"/>
+        <PasswordBox x:Name="PasswordEntry" Margin="5,5,10,5" Visibility="Visible" MinWidth="150" Grid.Row="5"
+                     Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"
+                     materialDesign:HintAssist.Hint="Password" />
+        <CheckBox x:Name="RememberMeCheckBox" Content="Remember Me" Grid.Row="6" Grid.Column="1" Margin="5,10,10,5" />
 
-        <Button x:Name="LoginButton" Content="Login" Grid.Column="1" Grid.Row="8" Click="OnLoginClick" HorizontalAlignment="Center" IsDefault="True" Margin="0,10,0,0" />
+        <Button x:Name="LoginButton" Content="Login" Grid.Column="1" Grid.Row="8" Click="OnLoginClick"
+                HorizontalAlignment="Center" IsDefault="True" Margin="0,10,0,0" />
 
-        <TextBlock x:Name="ResultLabel" Text="" Visibility="Hidden" Foreground="Red" Grid.Column="1" Grid.Row="9" Margin="0,10,0,0" HorizontalAlignment="Center" />
+        <TextBlock x:Name="ResultLabel" Text="" Visibility="Hidden" Foreground="Red" Grid.Column="1" Grid.Row="9"
+                   Margin="0,10,0,0" HorizontalAlignment="Center" />
 
 
     </Grid>

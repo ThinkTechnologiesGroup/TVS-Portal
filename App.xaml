@@ -6,8 +6,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <materialDesign:BundledTheme x:Name="Theme" BaseTheme="Light"  PrimaryColor="LightGreen" SecondaryColor="LightBlue" />
-                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+                <materialDesign:BundledTheme x:Name="Theme" BaseTheme="Light" PrimaryColor="LightGreen"
+                                             SecondaryColor="LightBlue" />
+                <ResourceDictionary
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--<FontFamily x:Key="JetBrainsMono-Regular">pack://application:,,,/Fonts/#Jetbrains Mono</FontFamily>-->
             <!--<FontFamily x:Key="JetBrainsMono-Bold">pack://application:,,,/Fonts/#Jetbrains Mono-Bold</FontFamily>-->
