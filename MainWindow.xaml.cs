@@ -888,7 +888,7 @@ namespace ThinkVoipTool
             PhoneListViewGrid.Visibility = Visibility.Hidden;
             ListViewGrid.Visibility = Visibility.Hidden;
 
-            _ = new Billing.Billing("LostTreeClub.22335.service");
+            var test = new Billing.Billing("LostTreeClub.22335.service");
         }
     }
 }

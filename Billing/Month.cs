@@ -20,13 +20,12 @@ namespace ThinkVoipTool.Billing
 
     public class Month
     {
-        private readonly string _startDay = "1";
-        private string _monthNumber;
-        private string _lastDay;
+        private readonly string _monthNumber;
         private readonly string _name;
+        private readonly string _startDay = "1";
         private readonly string _year;
-        private BillingResponse _consumed;
-       
+        private string _lastDay;
+
 
         public Month(int monthNumber)
         {
@@ -34,7 +33,6 @@ namespace ThinkVoipTool.Billing
             _name = ((Months) monthNumber).ToString();
             _lastDay = DateTime.DaysInMonth(DateTime.Today.Year, monthNumber).ToString();
             _year = DateTime.Now.AddMonths(-monthNumber + 1).Year.ToString();
-
         }
 
 
@@ -48,14 +46,5 @@ namespace ThinkVoipTool.Billing
         public string Year => _year;
         public string StartDay => _startDay;
         public string MonthNumber => _monthNumber;
-        
-        public BillingResponse Consumed
-        {
-            get => _consumed;
-            set => _consumed = value;
-        }
-
-
-
     }
 }

@@ -15,6 +15,8 @@ namespace ThinkVoipTool.Skyswitch
         [JsonProperty("domain")]
         private string _domain;
 
+        private DateTime _expirationTime;
+
         [JsonProperty("expires_in")]
         private int _expiresIn;
 
@@ -29,8 +31,6 @@ namespace ThinkVoipTool.Skyswitch
 
         [JsonProperty("token_type")]
         private string _tokenType;
-
-        private DateTime _expirationTime;
 
         public SkySwitchToken()
         {
