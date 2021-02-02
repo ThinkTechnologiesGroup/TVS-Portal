@@ -893,12 +893,10 @@ namespace ThinkVoipTool
 
         private void Billing_OnClick(object sender, RoutedEventArgs e)
         {
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Hidden;
-
-            //var test = new Billing.Billing("LostTreeClub.22335.service");
-
+            //PhoneListViewGrid.Visibility = Visibility.Hidden;
+            //ListViewGrid.Visibility = Visibility.Hidden;
             HideExtensionUiElements();
+            var _ = new Billing.Billing("LostTreeClub.22335.service");
         }
 
         private void HideExtensionUiElements()
