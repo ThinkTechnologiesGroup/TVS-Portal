@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using RestSharp;
 using ThinkVoipTool.Skyswitch;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace ThinkVoipTool.Billing
 {
