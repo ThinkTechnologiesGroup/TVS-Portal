@@ -9,6 +9,7 @@ namespace ThinkVoipTool.Billing
     {
         private BillingResponse _monthly;
 
+
         public Usage(Month month, string clientUrl)
         {
             if(int.Parse(month.MonthNumber) == DateTime.Today.Month)
@@ -29,6 +30,7 @@ namespace ThinkVoipTool.Billing
             var response = client.Execute(request);
             _monthly = JsonConvert.DeserializeObject<BillingResponse>(response.Content);
         }
+
 
         public BillingResponse Monthly
         {
