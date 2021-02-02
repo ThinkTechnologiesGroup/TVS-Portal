@@ -875,6 +875,12 @@ namespace ThinkVoipTool
 
         private async void LogOff_OnClick(object sender, RoutedEventArgs e)
         {
+            if(Settings.Default.RememberMe)
+            {
+                Settings.Default.RememberMe = false;
+                Settings.Default.Save();
+            }
+
             IsAuthenticated = false;
             IsAdmin = false;
             AdminMenu.Visibility = Visibility.Hidden;
