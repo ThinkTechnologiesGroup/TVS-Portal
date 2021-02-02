@@ -883,13 +883,12 @@ namespace ThinkVoipTool
             await LoginProcess();
         }
 
-        private void Billing_OnClick(object sender, RoutedEventArgs e)
+        private async void Billing_OnClick(object sender, RoutedEventArgs e)
         {
             PhoneListViewGrid.Visibility = Visibility.Hidden;
             ListViewGrid.Visibility = Visibility.Hidden;
 
-            var billing = new Billing.Billing("AdmiralsCove.22335.service");
-            var test = billing.LastSixMonths;
+            var billing = new Billing.Billing("LostTreeClub.22335.service");
         }
     }
 }
