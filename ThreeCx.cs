@@ -675,7 +675,7 @@ namespace ThinkVoipTool
             const int sharedParksCount = 3;
             using var reader = new StreamReader(path);
             using var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            csv.Configuration.RegisterClassMap<ExtensionMap>();
+            csv.Context.RegisterClassMap<ExtensionMap>();
             var records = csv.GetRecords<ImportedExtension>();
             foreach (var importedExtension in records)
             {
