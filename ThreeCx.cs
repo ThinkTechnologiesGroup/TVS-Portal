@@ -57,9 +57,9 @@ namespace ThinkVoipTool
                 var restResponse = _restClient.Execute(_restRequest);
                 _cookie = restResponse.Cookies as List<RestResponseCookie>;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Logging.Logger.Error($"Failed to connect to 3cx server with the provided info: {_baseUrl}, {_userName}, {_passWord} : " + e.Message);
+                Logging.Logger.Error($"Failed to connect to 3cx server with the provided info: {_baseUrl}, {_userName}, {_passWord} : e.Message");
                 throw;
             }
         }
@@ -193,7 +193,7 @@ namespace ThinkVoipTool
             return pinNumber;
         }
 
-        public static string StripHtml(string input) => Regex.Replace(input, "<.*?>", string.Empty);
+        private static string StripHtml(string input) => Regex.Replace(input, "<.*?>", string.Empty);
 
 
         public async Task<List<Extension>> GetExtensionsList()
@@ -1430,14 +1430,14 @@ namespace ThinkVoipTool
             return response.StatusCode.ToString();
         }
 
-        public async Task<bool> ExtensionExists(string extensionNumber)
+        private async Task<bool> ExtensionExists(string extensionNumber)
         {
             var extensionsList = await GetExtensionsList().ConfigureAwait(false);
 
             return extensionsList.Count(ext => ext.Number == extensionNumber) > 0;
         }
 
-        public sealed class ExtensionMap : ClassMap<ImportedExtension>
+        private sealed class ExtensionMap : ClassMap<ImportedExtension>
         {
             private ExtensionMap()
             {
@@ -1507,19 +1507,10 @@ namespace ThinkVoipTool
 
     public class Extension
     {
-        //public Extension(string id, string number)
-        //{
-        //    Id = id;
-        //    Number = number;
-        //}
-
         public string Id { get; set; }
 
         //public bool IsOperator { get; set; }
         public bool IsRegistered { get; set; }
-
-        //[JsonProperty("Str")]
-        // public string Str { get; set; }
 
 
         public string Number { get; set; }
@@ -1548,16 +1539,17 @@ namespace ThinkVoipTool
 
     public class ThreeCxServer
     {
-        public ThreeCxLicense ThreeCxLicense { get; set; }
-        public List<Phone> Phones { get; set; }
+        public ThreeCxLicense ThreeCxLicense { get; private set; }
+        public List<Phone> Phones { get; private set; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public List<Extension> Extensions { get; set; }
-        public List<InboundRules> InboundRulesList { get; set; }
-        public List<SipTrunk> SipTrunks { get; set; }
-        public string UpdateDay { get; set; }
-        public ThreeCxSystemStatus SystemStatus { get; set; }
-        public JObject SipTrunkSettings { get; set; }
+        // ReSharper disable once UnusedAutoPropertyAccessor.Local
+        private List<Extension> Extensions { get; set; }
+        public List<InboundRules> InboundRulesList { get; private set; }
+        public List<SipTrunk> SipTrunks { get; private set; }
+        public string UpdateDay { get; private set; }
+        public ThreeCxSystemStatus SystemStatus { get; private set; }
+        public JObject SipTrunkSettings { get; private set; }
 
         public async Task<ThreeCxServer> Create(ThreeCxClient client)
         {
@@ -1566,7 +1558,7 @@ namespace ThinkVoipTool
             return server;
         }
 
-        public async Task ThreeCxServerInitialize(ThreeCxClient client)
+        private async Task ThreeCxServerInitialize(ThreeCxClient client)
         {
             Phones = await client.GetPhonesList();
             Extensions = await client.GetExtensionsList();
