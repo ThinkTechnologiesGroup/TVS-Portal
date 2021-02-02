@@ -17,7 +17,8 @@
         BorderBrush="{DynamicResource MaterialDesignShadowBrush}" d:DataContext="{d:DesignInstance }">
 
 
-    <Grid ContextMenuClosing="Grid_ContextMenuClosing" VerticalAlignment="Top" Grid.IsSharedSizeScope="True">
+    <Grid x:Name="MainWindowGrid" ContextMenuClosing="Grid_ContextMenuClosing" VerticalAlignment="Top"
+          Grid.IsSharedSizeScope="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
             <ColumnDefinition Width="Auto" SharedSizeGroup="CustomerList" />
