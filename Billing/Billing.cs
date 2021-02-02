@@ -33,7 +33,9 @@ namespace ThinkVoipTool.Billing
             {
                 var authToken = "Bearer " + _token.Token;
                 var url = 
-                    $"https://pbx.skyswitch.com/ns-api/?type=Off-net&object=cdr2&action=count&format=json&domain={clientUrl}&range_interval=5%20HOUR&end_date={month.Year}-{month.MonthNumber}-{month.LastDay}%2023:59:59&start_date={month.Year}-{month.StartDay}-{month.MonthNumber}%000:00:00";
+                    $"https://pbx.skyswitch.com/ns-api/?type=Off-net&object=cdr2&action=count&format=json&domain=" +
+                    $"{clientUrl}&range_interval=5%20HOUR&end_date={month.Year}-{month.MonthNumber}-{month.LastDay}" +
+                    $"%2023:59:59&start_date={month.Year}-{month.StartDay}-{month.MonthNumber}%000:00:00";
                 var client = new RestClient(url);
                 var request = new RestRequest(Method.POST);
                 request.AddHeader("Authorization", authToken);
