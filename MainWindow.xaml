@@ -14,7 +14,7 @@
         Title="Th!nk" Height="750" Width="1375" Loaded="Window_Loaded" Icon="/Resources/Thinky.png"
         SizeToContent="Width" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow"
         Initialized="Window_Initialized" ContentRendered="OnContentRendered" KeyDown="Window_KeyDown"
-        BorderBrush="{DynamicResource MaterialDesignShadowBrush}">
+        BorderBrush="{DynamicResource MaterialDesignShadowBrush}" d:DataContext="{d:DesignInstance }">
 
 
     <Grid ContextMenuClosing="Grid_ContextMenuClosing" VerticalAlignment="Top" Grid.IsSharedSizeScope="True">
@@ -317,7 +317,8 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Number}" TextAlignment="Center" Width="Auto"
-                                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" />
+                                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
+                                           d:DataContext="{d:DesignInstance }" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
 
@@ -336,7 +337,8 @@
                                           BorderBrush="Black" BorderThickness="1"
                                           Style="{DynamicResource MaterialDesignFilterChipCheckBox}" IsEnabled="False"
                                           Background="{DynamicResource AttentionToActionBrush}"
-                                          OverridesDefaultStyle="False" ForceCursor="False" />
+                                          OverridesDefaultStyle="False" ForceCursor="False"
+                                          d:DataContext="{d:DesignInstance }" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -369,7 +371,7 @@
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=ExtensionNumber}"
                                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                           TextAlignment="Center" Width="Auto" />
+                                           TextAlignment="Center" Width="Auto" d:DataContext="{d:DesignInstance }" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -384,7 +386,8 @@
                     <GridViewColumn Header="Mac Address" Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=MacAddress}" TextAlignment="Center" MaxWidth="200" />
+                                <TextBlock Text="{Binding Path=MacAddress}" TextAlignment="Center" MaxWidth="200"
+                                           d:DataContext="{d:DesignInstance }" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
