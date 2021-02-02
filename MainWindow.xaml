@@ -139,7 +139,7 @@
                     </MenuItem.Icon>
                 </MenuItem>
                 <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
-                          IsEnabled="False" />
+                          IsEnabled="False" IsCheckable="True" />
 
             </MenuItem>
 

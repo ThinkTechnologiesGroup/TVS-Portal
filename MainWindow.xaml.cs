@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using ThinkVoipTool.Models;
 using ThinkVoipTool.Properties;
+using ThinkVoipTool.Skyswitch;
 
 //using ThinkVoipTool.Skyswitch;
 
@@ -68,8 +69,8 @@ namespace ThinkVoipTool
         private Views _lastView;
 
         private ThreeCxLoginInfo _loginInfo;
-        //private static SkySwitchTelcoToken _skySwitchTelcoToken = new SkySwitchTelcoToken();
 
+        private List<SkySwitchDomains> _skySwitchDomainsList;
         public bool IsDark = Settings.Default.isDark;
 
 
@@ -207,6 +208,7 @@ namespace ThinkVoipTool
             }
 
             CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
+            CustomersList.DisplayMemberPath = "company.name";
             CustomersList.Visibility = Visibility.Visible;
         }
 
@@ -217,18 +219,16 @@ namespace ThinkVoipTool
                 return;
             }
 
-            if(Mouse.RightButton == MouseButtonState.Pressed)
+            if(CustomersList.SelectedItems[0] is CompanyModel.Agreement)
             {
-                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-                if(selectedCompany != null)
-                {
-                    _companyId = selectedCompany.company.id;
-                }
+                ShowExtensionUiElements();
+                await UpdateSelectedCompanyInfo();
             }
 
-            ShowExtensionUiElements();
-
-            await UpdateSelectedCompanyInfo();
+            if(CustomersList.SelectedItems[0] is SkySwitchDomains)
+            {
+                //HideExtensionUiElements();
+            }
         }
 
 
@@ -875,6 +875,12 @@ namespace ThinkVoipTool
 
         private async void LogOff_OnClick(object sender, RoutedEventArgs e)
         {
+            if(Settings.Default.RememberMe)
+            {
+                Settings.Default.RememberMe = false;
+                Settings.Default.Save();
+            }
+
             IsAuthenticated = false;
             IsAdmin = false;
             AdminMenu.Visibility = Visibility.Hidden;
@@ -885,24 +891,38 @@ namespace ThinkVoipTool
             await LoginProcess();
         }
 
-        private void Billing_OnClick(object sender, RoutedEventArgs e)
+        private async void Billing_OnClick(object sender, RoutedEventArgs e)
         {
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Hidden;
-
-            //var test = new Billing.Billing("LostTreeClub.22335.service");
-
-            HideExtensionUiElements();
+            if(BillingButton.IsChecked)
+            {
+                HideExtensionUiElements();
+                var billing = new Billing.Billing();
+                _skySwitchDomainsList = await billing.SkySwitchDomains();
+                CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
+                CustomersList.DisplayMemberPath = "Domain";
+            }
+            else
+            {
+                await UpdateCustomerList();
+            }
         }
 
         private void HideExtensionUiElements()
         {
             var children = MainWindowGrid.Children;
+
             foreach (UIElement child in children)
             {
-                if(child is ListBox)
+                if(child is ListBox listBox)
                 {
-                    continue;
+                    if(listBox.Name == ListViewGrid.Name || listBox.Name == PhoneListViewGrid.Name)
+                    {
+                        child.Visibility = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
                 if(child is Menu)
@@ -920,6 +940,10 @@ namespace ThinkVoipTool
 
                 child.Visibility = Visibility.Hidden;
             }
+
+
+            // ListViewGrid.Visibility = Visibility.Hidden;
+            // PhoneListViewGrid.Visibility = Visibility.Hidden;
         }
 
         private void ShowExtensionUiElements()
@@ -931,6 +955,15 @@ namespace ThinkVoipTool
                 {
                     continue;
                 }
+
+                if(child is TextBlock textBlock)
+                {
+                    if(textBlock.Name == "PleaseWaitTextBlock")
+                    {
+                        continue;
+                    }
+                }
+
 
                 if(child is Menu)
                 {
