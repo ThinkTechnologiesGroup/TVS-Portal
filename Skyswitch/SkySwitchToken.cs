@@ -30,7 +30,7 @@ namespace ThinkVoipTool.Skyswitch
         [JsonProperty("token_type")]
         private string _tokenType;
 
-        public DateTime ExpirationTime;
+        private DateTime _expirationTime;
 
         public SkySwitchToken()
         {
@@ -48,7 +48,7 @@ namespace ThinkVoipTool.Skyswitch
             restRequest.AddParameter("client_id", clientId);
             restRequest.AddParameter("client_secret", clientSecret);
             JsonConvert.PopulateObject(restClient.Execute(restRequest).Content, this);
-            ExpirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
+            _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }
 
         public string Token
@@ -64,10 +64,10 @@ namespace ThinkVoipTool.Skyswitch
             }
         }
 
-        private static bool IsExpired(SkySwitchToken token) => token.ExpirationTime > DateTime.Now;
+        private static bool IsExpired(SkySwitchToken token) => token._expirationTime > DateTime.Now;
 
 
-        public void SkySwitchTokenRefresh()
+        private void SkySwitchTokenRefresh()
         {
             var restClient = new RestClient("https://pbx.skyswitch.com/ns-api/oauth2/token/");
             var restRequest = new RestRequest(Method.POST);
@@ -78,7 +78,7 @@ namespace ThinkVoipTool.Skyswitch
             restRequest.AddParameter("client_secret", clientSecret);
             restRequest.AddParameter("refresh_token", _refreshToken);
             JsonConvert.PopulateObject(restClient.Execute(restRequest).Content, this);
-            ExpirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
+            _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }
     }
 }

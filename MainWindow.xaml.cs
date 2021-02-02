@@ -888,7 +888,7 @@ namespace ThinkVoipTool
             PhoneListViewGrid.Visibility = Visibility.Hidden;
             ListViewGrid.Visibility = Visibility.Hidden;
 
-            var billing = new Billing.Billing();
+            var billing = new Billing.Billing("AdmiralsCove.22335.service");
             var test = billing.LastSixMonths;
         }
     }
