@@ -225,16 +225,31 @@ namespace ThinkVoipTool
                     break;
                 case SkySwitchDomains _:
                 {
+                    BillingMonthsLabel.Visibility = Visibility.Visible;
+                    BillingMinutesLabel.Visibility = Visibility.Visible;
                     MonthsPanel.Visibility = Visibility.Visible;
+                    MinutesPanel.Visibility = Visibility.Visible;
                     var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
                     var billing = new Billing.Billing();
+                    MonthsPanel.Children.Clear();
+                    MinutesPanel.Children.Clear();
                     foreach (var m in billing.LastSixMonths)
                     {
                         var used = new Usage(m, client?.Domain);
                         m.MinutesUsed = await used.Monthly();
-                        MonthsPanel.Children.Add(new TextBlock()
+
+                        MonthsPanel.Children.Add(new TextBlock
                         {
                             Text = m.Name,
+                            Visibility = Visibility.Visible,
+                            Margin = new Thickness(5, 5, 5, 5),
+                            FontSize = 18
+                        });
+
+
+                        MinutesPanel.Children.Add(new TextBlock
+                        {
+                            Text = m.MinutesUsed,
                             Visibility = Visibility.Visible,
                             Margin = new Thickness(5, 5, 5, 5),
                             FontSize = 18

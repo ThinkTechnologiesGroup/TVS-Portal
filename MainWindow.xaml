@@ -393,7 +393,15 @@
             </ListView.View>
         </ListView>
 
-        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="3" HorizontalAlignment="Center"  VerticalAlignment="Top" Grid.RowSpan="6" Grid.Column="2" Visibility="Visible"></VirtualizingStackPanel>
+        <TextBlock x:Name="BillingMonthsLabel" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center"
+                   Visibility="Hidden" Text="Month" FontSize="20" />
+        <TextBlock x:Name="BillingMinutesLabel" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center"
+                   Visibility="Hidden" Text="Minutes Used" FontSize="20" />
+
+        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                Grid.RowSpan="6" Grid.Column="2" Visibility="Collapsed" />
+        <VirtualizingStackPanel x:Name="MinutesPanel" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                Grid.RowSpan="6" Grid.Column="3" Visibility="Collapsed" />
 
 
     </Grid>
