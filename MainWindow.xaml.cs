@@ -900,6 +900,7 @@ namespace ThinkVoipTool
                 HideExtensionUiElements();
                 var billing = new Billing.Billing();
                 _skySwitchDomainsList = await billing.SkySwitchDomains();
+                _skySwitchDomainsList.RemoveAll(a => a.Description.Contains("Think Technologies Group") || a.Description.Contains("DemoTrunk"));
                 CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
                 CustomersList.DisplayMemberPath = "Description";
             }
