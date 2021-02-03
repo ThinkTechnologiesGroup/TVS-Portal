@@ -393,15 +393,27 @@
             </ListView.View>
         </ListView>
 
-        <TextBlock x:Name="BillingMonthsLabel" Grid.Row="3" Grid.Column="2" HorizontalAlignment="Center"
-                   Visibility="Hidden" Text="Month" FontSize="20" />
-        <TextBlock x:Name="BillingMinutesLabel" Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center"
-                   Visibility="Hidden" Text="Minutes Used" FontSize="20" />
+       
+        <!--<TextBlock x:Name="BillingMinutesLabel" Margin="0,0,0,5"  Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center"
+                   Visibility="Hidden" Text="Minutes Used" FontSize="20" >
+            <TextBlock.TextDecorations>
+                <TextDecoration/>
+            </TextBlock.TextDecorations>
+        </TextBlock>
+        <TextBlock x:Name="BillingTotalCallsLabel" Margin="40,0,0,5" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center"
+                   Visibility="Hidden" Text="Calls Made" FontSize="20" >
+            <TextBlock.TextDecorations>
+                <TextDecoration/>
+            </TextBlock.TextDecorations>
+        </TextBlock>-->
 
-        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
+        
+        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="3"  HorizontalAlignment="Center" VerticalAlignment="Top"
                                 Grid.RowSpan="6" Grid.Column="2" Visibility="Collapsed" />
-        <VirtualizingStackPanel x:Name="MinutesPanel" Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <VirtualizingStackPanel x:Name="MinutesPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
                                 Grid.RowSpan="6" Grid.Column="3" Visibility="Collapsed" />
+        <VirtualizingStackPanel x:Name="CallsPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+                                Grid.RowSpan="6" Grid.Column="4" Visibility="Collapsed" />
 
 
     </Grid>

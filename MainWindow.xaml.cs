@@ -225,25 +225,55 @@ namespace ThinkVoipTool
                     break;
                 case SkySwitchDomains _:
                 {
-                    BillingMonthsLabel.Visibility = Visibility.Visible;
-                    BillingMinutesLabel.Visibility = Visibility.Visible;
+                    //BillingMinutesLabel.Visibility = Visibility.Visible;
+                    //BillingTotalCallsLabel.Visibility = Visibility.Visible;
                     MonthsPanel.Visibility = Visibility.Visible;
                     MinutesPanel.Visibility = Visibility.Visible;
+                    CallsPanel.Visibility = Visibility.Visible;
                     var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
                     var billing = new Billing.Billing();
                     MonthsPanel.Children.Clear();
                     MinutesPanel.Children.Clear();
+                    CallsPanel.Children.Clear();
+                    MonthsPanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Month",
+                        FontSize = 20,
+                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 0, 0, 5)
+                    });
+                    MinutesPanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Minutes Used",
+                        FontSize = 20,
+                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 0, 0, 5)
+                    });
+                    CallsPanel.Children.Add(new TextBlock()
+                    {
+                        Text = "Total Calls",
+                        FontSize = 20,
+                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(40, 0, 0, 5)
+                    });
+
+
                     foreach (var m in billing.LastSixMonths)
                     {
                         var used = new Usage(m, client?.Domain);
-                        m.MinutesUsed = await used.Monthly();
+                        m.MinutesUsed = await used.MonthlyMinutes();
+                        m.CallsMade = await used.MonthlyCalls();
 
                         MonthsPanel.Children.Add(new TextBlock
                         {
                             Text = m.Name,
                             Visibility = Visibility.Visible,
                             Margin = new Thickness(5, 5, 5, 5),
-                            FontSize = 18
+                            FontSize = 18,
+                            HorizontalAlignment = HorizontalAlignment.Center
                         });
 
 
@@ -252,7 +282,16 @@ namespace ThinkVoipTool
                             Text = m.MinutesUsed,
                             Visibility = Visibility.Visible,
                             Margin = new Thickness(5, 5, 5, 5),
-                            FontSize = 18
+                            FontSize = 18,
+                            HorizontalAlignment = HorizontalAlignment.Center
+                        });
+                        CallsPanel.Children.Add(new TextBlock
+                        {
+                            Text = m.CallsMade,
+                            Visibility = Visibility.Visible,
+                            Margin = new Thickness(20, 5, 5, 5),
+                            FontSize = 18,
+                            HorizontalAlignment = HorizontalAlignment.Center
                         });
                     }
 
