@@ -225,8 +225,7 @@ namespace ThinkVoipTool
                     break;
                 case SkySwitchDomains _:
                 {
-                    //BillingMinutesLabel.Visibility = Visibility.Visible;
-                    //BillingTotalCallsLabel.Visibility = Visibility.Visible;
+                    SizeToContent = SizeToContent;
                     MonthsPanel.Visibility = Visibility.Visible;
                     MinutesPanel.Visibility = Visibility.Visible;
                     CallsPanel.Visibility = Visibility.Visible;
@@ -235,69 +234,76 @@ namespace ThinkVoipTool
                     MonthsPanel.Children.Clear();
                     MinutesPanel.Children.Clear();
                     CallsPanel.Children.Clear();
-                    MonthsPanel.Children.Add(new TextBlock()
-                    {
-                        Text = "Month",
-                        FontSize = 20,
-                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(0, 0, 0, 5)
-                    });
-                    MinutesPanel.Children.Add(new TextBlock()
-                    {
-                        Text = "Minutes Used",
-                        FontSize = 20,
-                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(0, 0, 0, 5)
-                    });
-                    CallsPanel.Children.Add(new TextBlock()
-                    {
-                        Text = "Total Calls",
-                        FontSize = 20,
-                        TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
-                        HorizontalAlignment = HorizontalAlignment.Center,
-                        Margin = new Thickness(40, 0, 0, 5)
-                    });
-
-
-                    foreach (var m in billing.LastSixMonths)
-                    {
-                        var used = new Usage(m, client?.Domain);
-                        m.MinutesUsed = await used.MonthlyMinutes();
-                        m.CallsMade = await used.MonthlyCalls();
-
-                        MonthsPanel.Children.Add(new TextBlock
-                        {
-                            Text = m.Name,
-                            Visibility = Visibility.Visible,
-                            Margin = new Thickness(5, 5, 5, 5),
-                            FontSize = 18,
-                            HorizontalAlignment = HorizontalAlignment.Center
-                        });
-
-
-                        MinutesPanel.Children.Add(new TextBlock
-                        {
-                            Text = m.MinutesUsed,
-                            Visibility = Visibility.Visible,
-                            Margin = new Thickness(5, 5, 5, 5),
-                            FontSize = 18,
-                            HorizontalAlignment = HorizontalAlignment.Center
-                        });
-                        CallsPanel.Children.Add(new TextBlock
-                        {
-                            Text = m.CallsMade,
-                            Visibility = Visibility.Visible,
-                            Margin = new Thickness(20, 5, 5, 5),
-                            FontSize = 18,
-                            HorizontalAlignment = HorizontalAlignment.Center
-                        });
-                    }
-
+                    GenerateBillingHeaders();
+                    await PopulateBillingDta(billing, client);
                     break;
                 }
             }
+        }
+
+        private async Task PopulateBillingDta(Billing.Billing billing, SkySwitchDomains client)
+        {
+            foreach (var m in billing.LastSixMonths)
+            {
+                var used = new Usage(m, client?.Domain);
+                m.MinutesUsed = await used.MonthlyMinutes();
+                m.CallsMade = await used.MonthlyCalls();
+
+                MonthsPanel.Children.Add(new TextBlock
+                {
+                    Text = m.Name,
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(5, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+
+
+                MinutesPanel.Children.Add(new TextBlock
+                {
+                    Text = m.MinutesUsed,
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(5, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+                CallsPanel.Children.Add(new TextBlock
+                {
+                    Text = m.CallsMade,
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(20, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                });
+            }
+        }
+
+        private void GenerateBillingHeaders()
+        {
+            MonthsPanel.Children.Add(new TextBlock
+            {
+                Text = "Month",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            MinutesPanel.Children.Add(new TextBlock
+            {
+                Text = "Minutes Used",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            CallsPanel.Children.Add(new TextBlock
+            {
+                Text = "Total Calls",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(40, 0, 0, 5)
+            });
         }
 
 

@@ -26,12 +26,12 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
+            <!-- <ColumnDefinition Width="*" /> -->
             <ColumnDefinition Width="20" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <!--row 0 //file menu-->
-            <RowDefinition Height="45" />
+            <RowDefinition Height="45" SharedSizeGroup="Menu" />
             <!--row 1 // TVS Title Text-->
             <RowDefinition Height="105" />
             <!--row 2 //begin data grids and such -->
@@ -111,11 +111,11 @@
 
 
         </Grid.Resources>
-        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="1" Grid.RowSpan="19" Grid.ColumnSpan="6"
+        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="2" Grid.RowSpan="19" Grid.ColumnSpan="5"
                HorizontalAlignment="Center" Source="/Resources/Think-VoIP-Thinky.png" Stretch="Uniform" />
 
         <!--Main Menu-->
-        <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="8"
+        <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="7"
               Visibility="Hidden" Padding="0" Height="Auto" Effect="{DynamicResource MaterialDesignShadowDepth1}">
 
             <MenuItem x:Name="FileMenu" Header="_File">
@@ -148,7 +148,7 @@
 
         <Image x:Name="ThinkyTitleImage" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0"
                Visibility="Visible" Grid.Row="1" Grid.Column="1"
-               Grid.ColumnSpan="7" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
+               Grid.ColumnSpan="6" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
 
 
         <!--PLease wait label-->
@@ -393,22 +393,7 @@
             </ListView.View>
         </ListView>
 
-       
-        <!--<TextBlock x:Name="BillingMinutesLabel" Margin="0,0,0,5"  Grid.Row="3" Grid.Column="3" HorizontalAlignment="Center"
-                   Visibility="Hidden" Text="Minutes Used" FontSize="20" >
-            <TextBlock.TextDecorations>
-                <TextDecoration/>
-            </TextBlock.TextDecorations>
-        </TextBlock>
-        <TextBlock x:Name="BillingTotalCallsLabel" Margin="40,0,0,5" Grid.Row="3" Grid.Column="4" HorizontalAlignment="Center"
-                   Visibility="Hidden" Text="Calls Made" FontSize="20" >
-            <TextBlock.TextDecorations>
-                <TextDecoration/>
-            </TextBlock.TextDecorations>
-        </TextBlock>-->
-
-        
-        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="3"  HorizontalAlignment="Center" VerticalAlignment="Top"
+        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
                                 Grid.RowSpan="6" Grid.Column="2" Visibility="Collapsed" />
         <VirtualizingStackPanel x:Name="MinutesPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
                                 Grid.RowSpan="6" Grid.Column="3" Visibility="Collapsed" />
