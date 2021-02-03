@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using ThinkVoipTool.Billing;
 using ThinkVoipTool.Models;
 using ThinkVoipTool.Properties;
 using ThinkVoipTool.Skyswitch;
@@ -227,7 +228,13 @@ namespace ThinkVoipTool
 
             if(CustomersList.SelectedItems[0] is SkySwitchDomains)
             {
-                //HideExtensionUiElements();
+                var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
+                var billing = new Billing.Billing();
+                foreach (var m in billing.LastSixMonths)
+                {
+                    var used = new Usage(m, client?.Domain);
+                    m.MinutesUsed = await used.Monthly();
+                }
             }
         }
 
@@ -899,7 +906,7 @@ namespace ThinkVoipTool
                 var billing = new Billing.Billing();
                 _skySwitchDomainsList = await billing.SkySwitchDomains();
                 CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
-                CustomersList.DisplayMemberPath = "Domain";
+                CustomersList.DisplayMemberPath = "Description";
             }
             else
             {
