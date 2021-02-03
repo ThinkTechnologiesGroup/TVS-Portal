@@ -217,20 +217,31 @@ namespace ThinkVoipTool
                 return;
             }
 
-            if(CustomersList.SelectedItems[0] is CompanyModel.Agreement)
+            switch (CustomersList.SelectedItems[0])
             {
-                ShowExtensionUiElements();
-                await UpdateSelectedCompanyInfo();
-            }
-
-            if(CustomersList.SelectedItems[0] is SkySwitchDomains)
-            {
-                var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
-                var billing = new Billing.Billing();
-                foreach (var m in billing.LastSixMonths)
+                case CompanyModel.Agreement _:
+                    ShowExtensionUiElements();
+                    await UpdateSelectedCompanyInfo();
+                    break;
+                case SkySwitchDomains _:
                 {
-                    var used = new Usage(m, client?.Domain);
-                    m.MinutesUsed = await used.Monthly();
+                    MonthsPanel.Visibility = Visibility.Visible;
+                    var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
+                    var billing = new Billing.Billing();
+                    foreach (var m in billing.LastSixMonths)
+                    {
+                        var used = new Usage(m, client?.Domain);
+                        m.MinutesUsed = await used.Monthly();
+                        MonthsPanel.Children.Add(new TextBlock()
+                        {
+                            Text = m.Name,
+                            Visibility = Visibility.Visible,
+                            Margin = new Thickness(5, 5, 5, 5),
+                            FontSize = 18
+                        });
+                    }
+
+                    break;
                 }
             }
         }
