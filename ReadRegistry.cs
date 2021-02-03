@@ -7,10 +7,10 @@ namespace ThinkVoipTool
         private const string KeyName = "Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize";
         private const string Value = "AppsUseLightTheme";
 
-        public static bool isDarkEnabled => IsDarkEnabled();
+        //private static bool _isDarkEnabled => IsDarkEnabled();
 
 
-        private static bool IsDarkEnabled()
+        public static bool IsDarkEnabled()
         {
             var isDark = false;
             using var key = Registry.CurrentUser.OpenSubKey(KeyName);

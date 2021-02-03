@@ -47,26 +47,4 @@ namespace ThinkVoipTool.Skyswitch
             _domain = deserializedResponse[0]["domain"]?.ToString();
         }
     }
-
-    internal class SkySwitchSProviders
-    {
-        private string _aor;
-        private string _domain;
-
-
-        public SkySwitchSProviders(SkySwitchToken token, string domainNameString)
-        {
-            const string baseUrl = "https://pbx.skyswitch.com/ns-api/";
-
-            var restClient = new RestClient(baseUrl);
-            var restRequest = new RestRequest(Method.POST);
-            restRequest.AddHeader("Authorization", "Bearer " + token.Token);
-            restRequest.AddParameter("object", "subscriber");
-            restRequest.AddParameter("action", "list");
-            restRequest.AddParameter("domain", domainNameString);
-            //restRequest.AddParameter("aor", "sip*@" + domainNameString);
-
-            var response = restClient.Execute(restRequest).Content;
-        }
-    }
 }

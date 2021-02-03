@@ -3,6 +3,8 @@
 using System.ComponentModel;
 using System.Configuration;
 
+// ReSharper disable UnusedMember.Local
+
 namespace ThinkVoipTool.Properties
 {
     // This class allows you to handle specific events on the settings class:

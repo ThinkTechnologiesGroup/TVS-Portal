@@ -11,13 +11,10 @@ namespace ThinkVoipTool
         public AddPhoneToExtWindow(string extensionNumber)
         {
             InitializeComponent();
-            extension = extensionNumber;
             var extensionDisplayString = "Selected Extension: " + extensionNumber;
             ExtTextBlock.Text = extensionDisplayString;
             ExtTextBlock.Visibility = Visibility.Visible;
         }
-
-        public string extension { get; }
 
         private async void AddPhoneToExtension_Click(object sender, RoutedEventArgs e)
         {

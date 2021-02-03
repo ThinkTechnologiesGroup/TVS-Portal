@@ -12,6 +12,8 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Serilog;
 
+// ReSharper disable InconsistentNaming
+
 
 // ReSharper disable UnusedMember.Global
 
@@ -87,7 +89,7 @@ namespace ThinkVoipTool
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
                 if(getUrl)
                 {
-                    return results.First().links.tinyui;
+                    return results.First().Links.tinyui;
                 }
 
                 return results.First().Id;
@@ -116,7 +118,7 @@ namespace ThinkVoipTool
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
-                return results.First().links.tinyui;
+                return results.First().Links.tinyui;
             }
             catch (Exception e)
             {
@@ -215,7 +217,7 @@ namespace ThinkVoipTool
 
 
         [JsonProperty("_links")]
-        public Links links { get; set; }
+        public Links Links { get; set; }
 
         //public string type { get; set; }
         //public string status { get; set; }

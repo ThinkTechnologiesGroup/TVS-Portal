@@ -104,44 +104,53 @@ namespace ThinkVoipTool
         private async Task LoginProcess()
         {
             // Copy user settings from previous application version if necessary
-            if (Settings.Default.UpdateSettings)
+            if(Settings.Default.UpdateSettings)
             {
                 Settings.Default.Upgrade();
                 Settings.Default.UpdateSettings = false;
                 Settings.Default.Save();
             }
 
-            if (_isFirstLaunch)
+            if(_isFirstLaunch)
             {
-                IsDark = ReadRegistry.isDarkEnabled;
+                IsDark = ReadRegistry.IsDarkEnabled();
                 Settings.Default.firstLaunch = false;
                 Settings.Default.Save();
             }
 
             ThemeControl.SetTheme(this);
 
-            if (IsAuthenticated) return;
+            if(IsAuthenticated)
+            {
+                return;
+            }
 
-            if (!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
-                if (Settings.Default.RememberMe)
-                    if (LoginWindow.TryLogin(SavedUser, SavedPass))
+            if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
+            {
+                if(Settings.Default.RememberMe)
+                {
+                    if(LoginWindow.TryLogin(SavedUser, SavedPass))
+                    {
                         IsAuthenticated = true;
+                    }
+                }
+            }
 
 
-            if (!IsAuthenticated)
+            if(!IsAuthenticated)
             {
                 var window = new LoginWindow();
                 window.ShowDialog();
             }
 
-            if (!IsAuthenticated)
+            if(!IsAuthenticated)
             {
                 Close();
                 return;
             }
 
 
-            if (IsAdmin)
+            if(IsAdmin)
             {
                 AdminMenu.Visibility = Visibility.Visible;
                 ExtensionRemoveButton.IsEnabled = true;
@@ -152,15 +161,24 @@ namespace ThinkVoipTool
 
             AuthU = await Secrets.GetSecretValue("AdAuthUser");
             AuthP = await Secrets.GetSecretValue("AdAuthPass");
-            if (!IsVisible) Show();
+            if(!IsVisible)
+            {
+                Show();
+            }
         }
 
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if (CwApiUser == "") CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+            if(CwApiUser == "")
+            {
+                CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+            }
 
-            if (CwApiKey == "") CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+            if(CwApiKey == "")
+            {
+                CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+            }
 
             _cwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
             await UpdateCustomerList();
@@ -175,9 +193,12 @@ namespace ThinkVoipTool
         {
             var allVoipClients = await _cwClient.GetAllTvsVoIpClients();
 
-            if (ShowTtg) allVoipClients.AddRange(await _cwClient.GetAllThinkVoIpClients());
+            if(ShowTtg)
+            {
+                allVoipClients.AddRange(await _cwClient.GetAllThinkVoIpClients());
+            }
 
-            if (IsAdmin)
+            if(IsAdmin)
             {
                 var ttgCompany = new BaseModels.Company {name = "!Think", id = 250};
                 var ttgAgreement = new CompanyModel.Agreement {company = ttgCompany};
@@ -191,15 +212,18 @@ namespace ThinkVoipTool
 
         private async void CustomersList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (sender is ListBox listBoxSender && listBoxSender.SelectedItems.Count == 0) return;
+            if(sender is ListBox listBoxSender && listBoxSender.SelectedItems.Count == 0)
+            {
+                return;
+            }
 
-            if (CustomersList.SelectedItems[0] is CompanyModel.Agreement)
+            if(CustomersList.SelectedItems[0] is CompanyModel.Agreement)
             {
                 ShowExtensionUiElements();
                 await UpdateSelectedCompanyInfo();
             }
 
-            if (CustomersList.SelectedItems[0] is SkySwitchDomains)
+            if(CustomersList.SelectedItems[0] is SkySwitchDomains)
             {
                 var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
                 var billing = new Billing.Billing();
@@ -220,7 +244,10 @@ namespace ThinkVoipTool
             PleaseWaitTextBlock.Visibility = Visibility.Visible;
             ThreeCxClient = null;
             var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if (selectedCompany != null) _companyId = selectedCompany.company.id;
+            if(selectedCompany != null)
+            {
+                _companyId = selectedCompany.company.id;
+            }
 
             try
             {
@@ -291,7 +318,7 @@ namespace ThinkVoipTool
             ThreeCxPassword = loginInfo.Password;
             ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
 
-            if (ThreeCxClient != null)
+            if(ThreeCxClient != null)
             {
                 _extensionList = await ThreeCxClient.GetExtensionsList();
                 await UpdateDisplay();
@@ -374,7 +401,7 @@ namespace ThinkVoipTool
         {
             _extensionList = await ThreeCxClient.GetExtensionsList();
 
-            if (_companyId == 19532)
+            if(_companyId == 19532)
             {
                 ExtensionsTotalDisplay.Content = "No valid Info";
                 return;
@@ -431,7 +458,7 @@ namespace ThinkVoipTool
                     ext.FirstName.ToLower().Equals("operator") ||
                     ext.FirstName.ToLower().Contains("template") ||
                     ext.LastName.ToLower().Contains("template")).ToList();
-            if (!cleanedExtensions.Any())
+            if(!cleanedExtensions.Any())
             {
                 ListViewGrid.Visibility = Visibility.Hidden;
             }
@@ -485,7 +512,10 @@ namespace ThinkVoipTool
                 .Where(phone => !phone.Model.ToLower().Contains("app"))
                 .Where(phone => !phone.Model.ToLower().Contains("web client"));
             // ReSharper disable once PossibleMultipleEnumeration
-            if (!cleanedPhones.Any()) cleanedPhones = new List<Phone>();
+            if(!cleanedPhones.Any())
+            {
+                cleanedPhones = new List<Phone>();
+            }
 
 
             ListViewGrid.Visibility = Visibility.Hidden;
@@ -498,7 +528,7 @@ namespace ThinkVoipTool
 
         private async void MenuItem_Add_New_Phone_Click(object sender, RoutedEventArgs e)
         {
-            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            if(ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
 
@@ -527,7 +557,10 @@ namespace ThinkVoipTool
 
         private async void OnRemoveClick(object sender, RoutedEventArgs e)
         {
-            if (ListViewGrid.SelectedItem == null) return;
+            if(ListViewGrid.SelectedItem == null)
+            {
+                return;
+            }
 
             switch (ListViewGrid.SelectedItem.GetType().Name)
             {
@@ -535,28 +568,38 @@ namespace ThinkVoipTool
                 {
                     var extensions = ListViewGrid.SelectedItems.Cast<Extension>().ToList();
                     var extensionListString = "";
-                    if (extensions.Count == 1)
+                    if(extensions.Count == 1)
+                    {
                         extensionListString = extensions[0].Number;
+                    }
                     else
+                    {
                         for (var i = 0; i < extensions.Count; i++)
-                            if (i != extensions.Count - 1)
+                            if(i != extensions.Count - 1)
                             {
                                 extensionListString += extensions[i].Number + ", ";
                             }
                             else
                             {
-                                if (extensions.Count == 2) extensionListString = extensionListString.Replace(",", "");
+                                if(extensions.Count == 2)
+                                {
+                                    extensionListString = extensionListString.Replace(",", "");
+                                }
 
                                 extensionListString += "and " + extensions[i].Number;
                             }
+                    }
 
                     var result = MessageBox.Show($"Are you sure you want to remove extension(s) {extensionListString}?",
                         "Are you sure?",
                         MessageBoxButton.YesNo);
 
-                    if (result == MessageBoxResult.Yes)
+                    if(result == MessageBoxResult.Yes)
                     {
-                        foreach (var extension in extensions) await ThreeCxClient.DeleteExtension(extension.Number);
+                        foreach (var extension in extensions)
+                        {
+                            await ThreeCxClient.DeleteExtension(extension.Number);
+                        }
 
                         UpdateExtensionDataGrid();
                         await UpdateView();
@@ -570,7 +613,7 @@ namespace ThinkVoipTool
 
         private void Menu_Item_ResetPassword(object sender, RoutedEventArgs e)
         {
-            if (CustomersList.SelectedItem != null)
+            if(CustomersList.SelectedItem != null)
             {
                 var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
                 Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
@@ -591,7 +634,7 @@ namespace ThinkVoipTool
         private void AddExtension_Click(object sender, RoutedEventArgs e)
         {
             var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if (selectedCompany != null)
+            if(selectedCompany != null)
             {
                 var companyId = selectedCompany.company.id;
                 _companyId = companyId;
@@ -659,7 +702,7 @@ namespace ThinkVoipTool
         {
             var extensionsToEditList = ListViewGrid.SelectedItems;
 
-            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            if(ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
                 return;
@@ -741,16 +784,16 @@ namespace ThinkVoipTool
             catch
             {
                 // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     url = url.Replace("&", "^&");
                     Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
                     Process.Start("xdg-open", url);
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
                 {
                     Process.Start("open", url);
                 }
@@ -765,7 +808,10 @@ namespace ThinkVoipTool
         private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
         {
             var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if (selectedCompany != null) _companyId = selectedCompany.company.id;
+            if(selectedCompany != null)
+            {
+                _companyId = selectedCompany.company.id;
+            }
 
             var company = await _cwClient.GetCompany(_companyId);
             var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
@@ -802,7 +848,7 @@ namespace ThinkVoipTool
         {
             var extensionsToEditList = ListViewGrid.SelectedItems;
 
-            if (ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
+            if(ListViewGrid.SelectedItem == null || ListViewGrid.SelectedItem.ToString() == "{NewItemPlaceholder}")
             {
                 MessageBox.Show("Please select an extension first.", "Error :(");
                 return;
@@ -815,10 +861,14 @@ namespace ThinkVoipTool
             CurrentExtensionClass = selectedItem;
 
             var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
-            if (result == "Failed")
+            if(result == "Failed")
+            {
                 MessageBox.Show("Failed to set as admin", "Error");
+            }
             else
+            {
                 MessageBox.Show("Success");
+            }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -827,7 +877,7 @@ namespace ThinkVoipTool
 
         private async void LogOff_OnClick(object sender, RoutedEventArgs e)
         {
-            if (Settings.Default.RememberMe)
+            if(Settings.Default.RememberMe)
             {
                 Settings.Default.RememberMe = false;
                 Settings.Default.Save();
@@ -845,7 +895,7 @@ namespace ThinkVoipTool
 
         private async void Billing_OnClick(object sender, RoutedEventArgs e)
         {
-            if (BillingButton.IsChecked)
+            if(BillingButton.IsChecked)
             {
                 HideExtensionUiElements();
                 var billing = new Billing.Billing();
@@ -864,6 +914,7 @@ namespace ThinkVoipTool
             var children = MainWindowGrid.Children;
 
             foreach (UIElement child in children)
+            {
                 switch (child)
                 {
                     case ListView _:
@@ -877,12 +928,14 @@ namespace ThinkVoipTool
                         child.Visibility = Visibility.Hidden;
                         break;
                 }
+            }
         }
 
         private void ShowExtensionUiElements()
         {
             var children = MainWindowGrid.Children;
             foreach (UIElement child in children)
+            {
                 switch (child)
                 {
                     case ListBox _:
@@ -894,6 +947,7 @@ namespace ThinkVoipTool
                         child.Visibility = Visibility.Visible;
                         break;
                 }
+            }
         }
     }
 }

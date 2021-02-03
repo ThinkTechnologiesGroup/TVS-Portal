@@ -1,5 +1,7 @@
 ﻿using System;
 
+// ReSharper disable UnusedMember.Local
+
 namespace ThinkVoipTool.Skyswitch
 {
     internal class SkyswitchAccount
@@ -12,7 +14,7 @@ namespace ThinkVoipTool.Skyswitch
 
         private string _id;
         private string _name;
-        private int _orginizational;
+        private int _organizational;
         private string _parentId;
         private DateTime _updatedAt;
     }

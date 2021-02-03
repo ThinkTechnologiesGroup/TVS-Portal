@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+// ReSharper disable InconsistentNaming
+
 namespace ThinkVoipTool.Models
 {
     public class CompanyModel
