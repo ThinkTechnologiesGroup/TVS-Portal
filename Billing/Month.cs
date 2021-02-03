@@ -25,6 +25,7 @@ namespace ThinkVoipTool.Billing
         private readonly string _startDay = "1";
         private readonly string _year;
         private string _lastDay;
+        private string _minutesUsed;
 
 
         public Month(int monthNumber)
@@ -46,5 +47,11 @@ namespace ThinkVoipTool.Billing
         public string Year => _year;
         public string StartDay => _startDay;
         public string MonthNumber => _monthNumber;
+
+        public string MinutesUsed
+        {
+            get => _minutesUsed;
+            set => _minutesUsed = value;
+        }
     }
 }
