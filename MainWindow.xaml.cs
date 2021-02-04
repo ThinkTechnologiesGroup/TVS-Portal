@@ -63,9 +63,12 @@ namespace ThinkVoipTool
         public static string CwApiUser = string.Empty;
         public static string CwApiKey = string.Empty;
         public static bool IsAdmin;
+        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new SkySwitchTelcoToken();
+        public static readonly SkySwitchToken SkySwitchToken = new SkySwitchToken();
 
         private static ConnectWiseConnection _cwClient;
         private readonly bool _isFirstLaunch = Settings.Default.firstLaunch;
+        private bool _isBilling;
         private Views _lastView;
 
         private List<SkySwitchDomains> _skySwitchDomainsList;
@@ -76,6 +79,7 @@ namespace ThinkVoipTool
         {
             InitializeComponent();
             ShowMenu();
+            _isBilling = BillingButton.IsChecked;
         }
 
         public MainWindow(bool isAuthenticated)
@@ -83,6 +87,7 @@ namespace ThinkVoipTool
             IsAuthenticated = isAuthenticated;
             InitializeComponent();
             ShowMenu();
+            _isBilling = BillingButton.IsChecked;
         }
 
         private bool ShowTtg => Settings.Default.showTtgClients;
@@ -235,25 +240,25 @@ namespace ThinkVoipTool
                     BillingMinutesPanel.Children.Clear();
                     BillingCallsPanel.Children.Clear();
                     GenerateBillingHeaders();
-                    await PopulateBillingDta(billing, client);
+                    await PopulateBillingData(billing, client);
                     break;
                 }
             }
         }
 
-        private async Task PopulateBillingDta(Billing.Billing billing, SkySwitchDomains client)
+        private async Task PopulateBillingData(Billing.Billing billing, SkySwitchDomains client)
         {
             foreach (var m in billing.LastSixMonths)
             {
                 var used = new Usage(m, client?.Domain);
-                m.MinutesUsed = await used.MonthlyMinutes();
-                m.CallsMade = await used.MonthlyCalls();
+                m.MinutesUsed = await Task.Run(() => used.MonthlyMinutes());
+                m.CallsMade = await Task.Run(() => used.MonthlyCalls());
 
                 BillingMonthsPanel.Children.Add(new TextBlock
                 {
                     Text = m.Name,
                     Visibility = Visibility.Visible,
-                    Margin = new Thickness(5, 5, 5, 5),
+                    Margin = new Thickness(10, 5, 5, 5),
                     FontSize = 18,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
@@ -263,7 +268,7 @@ namespace ThinkVoipTool
                 {
                     Text = m.MinutesUsed,
                     Visibility = Visibility.Visible,
-                    Margin = new Thickness(5, 5, 5, 5),
+                    Margin = new Thickness(40, 5, 5, 5),
                     FontSize = 18,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
@@ -271,7 +276,7 @@ namespace ThinkVoipTool
                 {
                     Text = m.CallsMade,
                     Visibility = Visibility.Visible,
-                    Margin = new Thickness(20, 5, 5, 5),
+                    Margin = new Thickness(40, 5, 5, 5),
                     FontSize = 18,
                     HorizontalAlignment = HorizontalAlignment.Center
                 });
@@ -286,7 +291,7 @@ namespace ThinkVoipTool
                 FontSize = 20,
                 TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(10, 0, 0, 5)
             });
             BillingMinutesPanel.Children.Add(new TextBlock
             {
@@ -294,7 +299,7 @@ namespace ThinkVoipTool
                 FontSize = 20,
                 TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 0, 0, 5)
+                Margin = new Thickness(40, 0, 0, 5)
             });
             BillingCallsPanel.Children.Add(new TextBlock
             {
@@ -966,7 +971,9 @@ namespace ThinkVoipTool
 
         private async void Billing_OnClick(object sender, RoutedEventArgs e)
         {
-            if(BillingButton.IsChecked)
+            _isBilling = !_isBilling;
+
+            if(_isBilling)
             {
                 HideExtensionUiElements();
                 var billing = new Billing.Billing();
@@ -977,19 +984,28 @@ namespace ThinkVoipTool
             }
             else
             {
-                HideBillingUiElements();
+                HideBillingUiElementsVisibility();
                 await UpdateCustomerList();
             }
         }
 
-        private void HideBillingUiElements()
+        private void HideBillingUiElementsVisibility()
         {
             var children = MainWindowGrid.Children;
             foreach (UIElement child in children)
             {
-                if(child is VirtualizingStackPanel)
+                if(child is Image {Name: "ThinkyMainImage"})
                 {
                     child.Visibility = Visibility.Hidden;
+                }
+
+                if(child is VirtualizingStackPanel childStack)
+                {
+                    if(child.IsVisible)
+                    {
+                        childStack.Children.Clear();
+                        child.Visibility = Visibility.Collapsed;
+                    }
                 }
             }
         }
@@ -1003,14 +1019,17 @@ namespace ThinkVoipTool
                 switch (child)
                 {
                     case ListView _:
-                        child.Visibility = Visibility.Hidden;
+                        child.Visibility = Visibility.Collapsed;
                         break;
                     case ListBox _:
                     case Menu _:
                     case Image {Name: "ThinkyTitleImage"}:
                         break;
-                    default:
+                    case Image {Name: "ThinkyMainImage"}:
                         child.Visibility = Visibility.Hidden;
+                        break;
+                    default:
+                        child.Visibility = Visibility.Collapsed;
                         break;
                 }
             }

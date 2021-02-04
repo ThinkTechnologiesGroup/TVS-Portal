@@ -125,7 +125,7 @@
 
 
             </MenuItem>
-            <MenuItem x:Name="AdminMenu" Header="_Admin" Visibility="Hidden">
+            <MenuItem x:Name="AdminMenu" Header="_Admin" Visibility="Collapsed">
 
                 <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Right"
                           IsCheckable="True" Click="OnShowTtgClientsClick" />
@@ -290,7 +290,8 @@
 
 
         <!--Extensions and phones datagrid-->
-        <ListView x:Name="ListViewGrid" Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0"
+        <ListView x:Name="ListViewGrid" Visibility="Collapsed" FontSize="14" Grid.Row="3" Grid.Column="5"
+                  Margin="5,0,0,0"
                   Grid.RowSpan="18" SelectionMode="Single" HorizontalContentAlignment="Stretch"
                   HorizontalAlignment="Center"
                   MinWidth="600" MinHeight="525" IsSynchronizedWithCurrentItem="False"
@@ -348,7 +349,7 @@
             </ListView.View>
         </ListView>
 
-        <ListView x:Name="PhoneListViewGrid" Visibility="Hidden" Margin="5,0,0,0" FontSize="14" Grid.Row="3"
+        <ListView x:Name="PhoneListViewGrid" Visibility="Collapsed" Margin="5,0,0,0" FontSize="14" Grid.Row="3"
                   Grid.Column="5" Grid.RowSpan="18" SelectionMode="Single" HorizontalContentAlignment="Stretch"
                   HorizontalAlignment="Center"
                   MinWidth="600" MinHeight="600" IsSynchronizedWithCurrentItem="False"

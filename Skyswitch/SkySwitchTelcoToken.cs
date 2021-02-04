@@ -5,7 +5,7 @@ using RestSharp;
 
 namespace ThinkVoipTool.Skyswitch
 {
-    internal class SkySwitchTelcoToken
+    public class SkySwitchTelcoToken
     {
         private const string UserName = "sky-api@thinkvoipservices.com";
         private const string PassWord = "cqb7sn48q7bnj";

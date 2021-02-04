@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RestSharp;
-using ThinkVoipTool.Skyswitch;
 
 namespace ThinkVoipTool.Billing
 {
@@ -20,8 +19,8 @@ namespace ThinkVoipTool.Billing
                 month.LastDay = DateTime.Today.Day.ToString();
             }
 
-            var token = new SkySwitchToken();
-            var authToken = "Bearer " + token.Token;
+            //var token = new SkySwitchToken();
+            var authToken = "Bearer " + MainWindow.SkySwitchToken.Token;
             var url = "https://pbx.skyswitch.com/ns-api/?type=Off-net&object=cdr2&action=count&format=json&domain=" +
                       $"{clientUrl}&range_interval=5%20HOUR&end_date={month.Year}-{month.MonthNumber}-{month.LastDay}" +
                       $"%2023:59:59&start_date={month.Year}-{month.MonthNumber}-{month.StartDay}%2000:00:00";
@@ -31,7 +30,7 @@ namespace ThinkVoipTool.Billing
             _request.AlwaysMultipartFormData = true;
         }
 
-        public async Task Monthly()
+        private async Task Monthly()
         {
             var response = await _client.ExecutePostAsync(_request).ConfigureAwait(false);
             _monthly = JsonConvert.DeserializeObject<BillingResponse>(response.Content);
