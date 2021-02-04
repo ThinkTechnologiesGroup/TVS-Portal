@@ -230,7 +230,7 @@ namespace ThinkVoipTool
                     break;
                 case SkySwitchDomains _:
                 {
-                    SizeToContent = SizeToContent;
+                    //SizeToContent = SizeToContent;
                     BillingMonthsPanel.Visibility = Visibility.Visible;
                     BillingMinutesPanel.Visibility = Visibility.Visible;
                     BillingCallsPanel.Visibility = Visibility.Visible;
@@ -239,6 +239,7 @@ namespace ThinkVoipTool
                     BillingMonthsPanel.Children.Clear();
                     BillingMinutesPanel.Children.Clear();
                     BillingCallsPanel.Children.Clear();
+                    ThinkyMainImage.Opacity = .05;
                     GenerateBillingHeaders();
                     await PopulateBillingData(billing, client);
                     break;
@@ -996,7 +997,8 @@ namespace ThinkVoipTool
             {
                 if(child is Image {Name: "ThinkyMainImage"})
                 {
-                    child.Visibility = Visibility.Hidden;
+                    child.Opacity = 100;
+                    child.Visibility = Visibility.Visible;
                 }
 
                 if(child is VirtualizingStackPanel childStack)
@@ -1026,7 +1028,7 @@ namespace ThinkVoipTool
                     case Image {Name: "ThinkyTitleImage"}:
                         break;
                     case Image {Name: "ThinkyMainImage"}:
-                        child.Visibility = Visibility.Hidden;
+                        child.Visibility = Visibility.Visible;
                         break;
                     default:
                         child.Visibility = Visibility.Collapsed;

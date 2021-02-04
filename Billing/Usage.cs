@@ -19,7 +19,6 @@ namespace ThinkVoipTool.Billing
                 month.LastDay = DateTime.Today.Day.ToString();
             }
 
-            //var token = new SkySwitchToken();
             var authToken = "Bearer " + MainWindow.SkySwitchToken.Token;
             var url = "https://pbx.skyswitch.com/ns-api/?type=Off-net&object=cdr2&action=count&format=json&domain=" +
                       $"{clientUrl}&range_interval=5%20HOUR&end_date={month.Year}-{month.MonthNumber}-{month.LastDay}" +
@@ -55,11 +54,5 @@ namespace ThinkVoipTool.Billing
 
             return _monthly.TotalCalls;
         }
-
-        // public BillingResponse Monthly
-        // {
-        //     get => _monthly;
-        //     set => _monthly = value;
-        // }
     }
 }
