@@ -339,31 +339,32 @@ namespace ThinkVoipTool
 
         private void CleanExtensionDataGrid()
         {
-            ThinkyMainImage.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Hidden;
+            ThinkyMainImage.Opacity = .05;
+            ThinkyMainImage.Visibility = Visibility.Visible;
+            ListViewGrid.Visibility = Visibility.Collapsed;
 
-            AddExt.Visibility = Visibility.Hidden;
-            AddPhoneButton.Visibility = Visibility.Hidden;
-            ExtensionsHeader.Visibility = Visibility.Hidden;
-            ExtSeperator.Visibility = Visibility.Hidden;
-            PhoneSeperator.Visibility = Visibility.Hidden;
-            ExtSeperatorOperators.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            RefreshButton.Visibility = Visibility.Hidden;
-            RefreshSeperator.Visibility = Visibility.Hidden;
-            Open3CxButton.Visibility = Visibility.Hidden;
-            OpenConfluenceButton.Visibility = Visibility.Hidden;
+            AddExt.Visibility = Visibility.Collapsed;
+            AddPhoneButton.Visibility = Visibility.Collapsed;
+            ExtensionsHeader.Visibility = Visibility.Collapsed;
+            ExtSeperator.Visibility = Visibility.Collapsed;
+            PhoneSeperator.Visibility = Visibility.Collapsed;
+            ExtSeperatorOperators.Visibility = Visibility.Collapsed;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
+            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
+            RefreshButton.Visibility = Visibility.Collapsed;
+            RefreshSeperator.Visibility = Visibility.Collapsed;
+            Open3CxButton.Visibility = Visibility.Collapsed;
+            OpenConfluenceButton.Visibility = Visibility.Collapsed;
 
             ForwardingOnlyExtensionsCount.Text = "";
-            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
+            BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
             BilledUserExtensionsCount.Text = "";
-            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
-            ExtensionsTotalValid.Visibility = Visibility.Hidden;
-            PhonesTotalDisplay.Visibility = Visibility.Hidden;
+            ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
+            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
+            ExtensionsTotalInvalid.Visibility = Visibility.Collapsed;
+            ExtensionsTotalValid.Visibility = Visibility.Collapsed;
+            PhonesTotalDisplay.Visibility = Visibility.Collapsed;
             ExtensionsTotal.Text = "";
             InValidExtensions.Text = "";
             TotalValidExtensions.Text = "";
@@ -388,7 +389,7 @@ namespace ThinkVoipTool
             //var pass = await Secrets.GetSecretValue("AdAuthPass");
 
             _lastView = Views.Valid;
-            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
+            ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
             var company = await _cwClient.GetCompany(companyId);
             var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
             var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
@@ -486,10 +487,11 @@ namespace ThinkVoipTool
 
 
             await UpdateExtensionsCountDisplay();
+            ThinkyMainImage.Visibility = Visibility.Collapsed;
             ExtSeperator.Visibility = Visibility.Visible;
             ExtSeperatorOperators.Visibility = Visibility.Visible;
             PhoneSeperator.Visibility = Visibility.Visible;
-            PleaseWaitTextBlock.Visibility = Visibility.Hidden;
+            PleaseWaitTextBlock.Visibility = Visibility.Collapsed;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
@@ -512,7 +514,7 @@ namespace ThinkVoipTool
             _extensionList = await ThreeCxClient.GetExtensionsList();
             _extensionList = _extensionList.OrderBy(a => a.Number).ToList();
             ListViewGrid.ItemsSource = _extensionList;
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.Visibility = Visibility.Visible;
         }
 
@@ -537,12 +539,12 @@ namespace ThinkVoipTool
                     ext.LastName.ToLower().Contains("template")).ToList();
             if(!cleanedExtensions.Any())
             {
-                ListViewGrid.Visibility = Visibility.Hidden;
+                ListViewGrid.Visibility = Visibility.Collapsed;
             }
             else
             {
                 ListViewGrid.ItemsSource = cleanedExtensions;
-                PhoneListViewGrid.Visibility = Visibility.Hidden;
+                PhoneListViewGrid.Visibility = Visibility.Collapsed;
 
                 ListViewGrid.Visibility = Visibility.Visible;
             }
@@ -569,7 +571,7 @@ namespace ThinkVoipTool
                 .Where(ext => !ext.LastName.ToLower().Contains("template")));
 
             ListViewGrid.ItemsSource = cleanedExtensions;
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.Visibility = Visibility.Visible;
         }
 
@@ -595,7 +597,7 @@ namespace ThinkVoipTool
             }
 
 
-            ListViewGrid.Visibility = Visibility.Hidden;
+            ListViewGrid.Visibility = Visibility.Collapsed;
             // ReSharper disable once PossibleMultipleEnumeration
             cleanedPhones = cleanedPhones.ToList().OrderBy(a => a.ExtensionNumber);
             PhoneListViewGrid.ItemsSource = cleanedPhones;
@@ -806,7 +808,7 @@ namespace ThinkVoipTool
             _lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(_extensionList);
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.ItemsSource = vmOnlyList.OrderBy(a => a.Number).ToList();
             ListViewGrid.Visibility = Visibility.Visible;
         }
@@ -818,7 +820,7 @@ namespace ThinkVoipTool
             var fwdOnlyList = GetForwardingOnlyExtensions(_extensionList);
 
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.ItemsSource = fwdOnlyList.OrderBy(a => a.Number).ToList();
             ListViewGrid.Visibility = Visibility.Visible;
         }
@@ -838,7 +840,7 @@ namespace ThinkVoipTool
             _lastView = Views.BilledToClient;
             var billedToClient = GetBilledUserExtensions(_extensionList);
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.ItemsSource = billedToClient.OrderBy(a => a.Number).ToList();
             ListViewGrid.Visibility = Visibility.Visible;
         }
@@ -962,7 +964,7 @@ namespace ThinkVoipTool
 
             IsAuthenticated = false;
             IsAdmin = false;
-            AdminMenu.Visibility = Visibility.Hidden;
+            AdminMenu.Visibility = Visibility.Collapsed;
             ExtensionRemoveButton.IsEnabled = false;
             ResetPasswordMenuItem.IsEnabled = false;
             MakeExtAdminMenuItem.IsEnabled = false;
@@ -1010,6 +1012,8 @@ namespace ThinkVoipTool
                     }
                 }
             }
+
+            SizeToContent = SizeToContent.Width;
         }
 
         private void HideExtensionUiElements()
@@ -1028,6 +1032,7 @@ namespace ThinkVoipTool
                     case Image {Name: "ThinkyTitleImage"}:
                         break;
                     case Image {Name: "ThinkyMainImage"}:
+                        child.Opacity = 1;
                         child.Visibility = Visibility.Visible;
                         break;
                     default:
@@ -1035,6 +1040,8 @@ namespace ThinkVoipTool
                         break;
                 }
             }
+
+            SizeToContent = SizeToContent.Width;
         }
 
         private void ShowExtensionUiElements()
@@ -1054,6 +1061,8 @@ namespace ThinkVoipTool
                         break;
                 }
             }
+
+            SizeToContent = SizeToContent.Width;
         }
     }
 }
