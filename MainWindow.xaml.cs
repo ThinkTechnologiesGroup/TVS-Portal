@@ -230,7 +230,6 @@ namespace ThinkVoipTool
                     break;
                 case SkySwitchDomains _:
                 {
-                    //SizeToContent = SizeToContent;
                     BillingMonthsPanel.Visibility = Visibility.Visible;
                     BillingMinutesPanel.Visibility = Visibility.Visible;
                     BillingCallsPanel.Visibility = Visibility.Visible;
@@ -346,14 +345,14 @@ namespace ThinkVoipTool
             AddExt.Visibility = Visibility.Collapsed;
             AddPhoneButton.Visibility = Visibility.Collapsed;
             ExtensionsHeader.Visibility = Visibility.Collapsed;
-            ExtSeperator.Visibility = Visibility.Collapsed;
-            PhoneSeperator.Visibility = Visibility.Collapsed;
-            ExtSeperatorOperators.Visibility = Visibility.Collapsed;
+            ExtSeparator.Visibility = Visibility.Collapsed;
+            PhoneSeparator.Visibility = Visibility.Collapsed;
+            ExtSeparatorOperators.Visibility = Visibility.Collapsed;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
             BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
             RefreshButton.Visibility = Visibility.Collapsed;
-            RefreshSeperator.Visibility = Visibility.Collapsed;
+            RefreshSeparator.Visibility = Visibility.Collapsed;
             Open3CxButton.Visibility = Visibility.Collapsed;
             OpenConfluenceButton.Visibility = Visibility.Collapsed;
 
@@ -361,7 +360,7 @@ namespace ThinkVoipTool
             BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
             BilledUserExtensionsCount.Text = "";
             ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
+            VoicemailOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
             ExtensionsTotalInvalid.Visibility = Visibility.Collapsed;
             ExtensionsTotalValid.Visibility = Visibility.Collapsed;
             PhonesTotalDisplay.Visibility = Visibility.Collapsed;
@@ -457,7 +456,7 @@ namespace ThinkVoipTool
         {
             ExtensionsTotalDisplay.Visibility = Visibility.Visible;
             ExtensionsTotalInvalid.Visibility = Visibility.Visible;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            VoicemailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             ExtensionsTotalValid.Visibility = Visibility.Visible;
             BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
@@ -487,16 +486,16 @@ namespace ThinkVoipTool
 
 
             await UpdateExtensionsCountDisplay();
-            ThinkyMainImage.Visibility = Visibility.Collapsed;
-            ExtSeperator.Visibility = Visibility.Visible;
-            ExtSeperatorOperators.Visibility = Visibility.Visible;
-            PhoneSeperator.Visibility = Visibility.Visible;
+            ThinkyMainImage.Visibility = Visibility.Hidden;
+            ExtSeparator.Visibility = Visibility.Visible;
+            ExtSeparatorOperators.Visibility = Visibility.Visible;
+            PhoneSeparator.Visibility = Visibility.Visible;
             PleaseWaitTextBlock.Visibility = Visibility.Collapsed;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
             RefreshButton.Visibility = Visibility.Visible;
-            RefreshSeperator.Visibility = Visibility.Visible;
+            RefreshSeparator.Visibility = Visibility.Visible;
             Open3CxButton.Visibility = Visibility.Visible;
             OpenConfluenceButton.Visibility = Visibility.Visible;
         }
@@ -999,7 +998,7 @@ namespace ThinkVoipTool
             {
                 if(child is Image {Name: "ThinkyMainImage"})
                 {
-                    child.Opacity = 100;
+                    child.Opacity = 1;
                     child.Visibility = Visibility.Visible;
                 }
 

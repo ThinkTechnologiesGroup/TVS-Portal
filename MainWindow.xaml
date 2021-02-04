@@ -188,8 +188,8 @@
                    Grid.Column="3"
                    Width="25" HorizontalAlignment="Left" />
 
-        <!--extensions seperator-->
-        <Separator x:Name="ExtSeperatorOperators" Margin="5,4,5,5" Grid.Column="2" BorderBrush="#FF8DC748" Grid.Row="6"
+        <!--extensions separator-->
+        <Separator x:Name="ExtSeparatorOperators" Margin="5,4,5,5" Grid.Column="2" BorderBrush="#FF8DC748" Grid.Row="6"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left" VerticalAlignment="Center"
                    Grid.ColumnSpan="2" Visibility="Hidden" />
 
@@ -203,7 +203,7 @@
                    HorizontalAlignment="Left" Margin="5,4,5,2" Grid.Column="3" />
 
         <!--Voicemail Only extensions-->
-        <Button x:Name="VoimailOnlyExtensionsDisplay" BorderBrush="LightGray" Grid.Row="8" Margin="5,4,5,2"
+        <Button x:Name="VoicemailOnlyExtensionsDisplay" BorderBrush="LightGray" Grid.Row="8" Margin="5,4,5,2"
                 Grid.Column="2"
                 MaxHeight="25" Content="Voicemail Only:"
                 VerticalAlignment="Top" HorizontalAlignment="Left" Click="VoicemailOnlyExtensionsDisplay_Click"
@@ -231,8 +231,8 @@
         <TextBlock x:Name="BilledUserExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Grid.Row="10"
                    Grid.Column="3" Margin="5,4,5,2" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
-        <!--extensions seperator-->
-        <Separator x:Name="ExtSeperator" Grid.Column="2" Grid.Row="11" BorderThickness="3" Margin="5,4,5,5"
+        <!--extensions separator-->
+        <Separator x:Name="ExtSeparator" Grid.Column="2" Grid.Row="11" BorderThickness="3" Margin="5,4,5,5"
                    VerticalAlignment="Center" Width="142" HorizontalAlignment="Left" Grid.ColumnSpan="2"
                    BorderBrush="#FF8DC748" Visibility="Hidden" />
 
@@ -246,8 +246,8 @@
                    VerticalAlignment="Center" Margin="5,4,5,2"
                    HorizontalAlignment="Left" />
 
-        <!--phones seperator-->
-        <Separator x:Name="PhoneSeperator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"
+        <!--phones separator-->
+        <Separator x:Name="PhoneSeparator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
                    Visibility="Hidden" BorderBrush="#FF8DC748" />
 
@@ -262,8 +262,8 @@
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"
                 Content="  Add Phone  " Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" />
 
-        <!--phones seperator-->
-        <Separator x:Name="RefreshSeperator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"
+        <!--phones separator-->
+        <Separator x:Name="RefreshSeparator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
                    Visibility="Hidden" BorderBrush="#FF8DC748" />
 
