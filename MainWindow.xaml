@@ -129,6 +129,8 @@
 
                 <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Right"
                           IsCheckable="True" Click="OnShowTtgClientsClick" />
+                <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
+                          IsEnabled="False" IsCheckable="True" />
                 <Separator />
 
                 <MenuItem Header="Reset Password" x:Name="ResetPasswordMenuItem" Click="Menu_Item_ResetPassword"
@@ -138,8 +140,7 @@
 
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
-                          IsEnabled="False" IsCheckable="True" />
+
 
             </MenuItem>
 
@@ -393,11 +394,14 @@
             </ListView.View>
         </ListView>
 
-        <VirtualizingStackPanel x:Name="MonthsPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <VirtualizingStackPanel x:Name="BillingMonthsPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Grid.Column="2" Visibility="Collapsed" />
-        <VirtualizingStackPanel x:Name="MinutesPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <VirtualizingStackPanel x:Name="BillingMinutesPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Grid.Column="3" Visibility="Collapsed" />
-        <VirtualizingStackPanel x:Name="CallsPanel" Grid.Row="3" HorizontalAlignment="Center" VerticalAlignment="Top"
+        <VirtualizingStackPanel x:Name="BillingCallsPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
                                 Grid.Column="4" Visibility="Collapsed" />
 
 
