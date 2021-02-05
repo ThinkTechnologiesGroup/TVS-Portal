@@ -130,13 +130,16 @@ namespace ThinkVoipTool
                 return;
             }
 
-            if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
+            using (new OverrideCursor(Cursors.Wait))
             {
-                if(Settings.Default.RememberMe)
+                if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
                 {
-                    if(LoginWindow.TryLogin(SavedUser, SavedPass))
+                    if(Settings.Default.RememberMe)
                     {
-                        IsAuthenticated = true;
+                        if(LoginWindow.TryLogin(SavedUser, SavedPass))
+                        {
+                            IsAuthenticated = true;
+                        }
                     }
                 }
             }
@@ -175,18 +178,21 @@ namespace ThinkVoipTool
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if(CwApiUser == "")
+            using (new OverrideCursor(Cursors.Wait))
             {
-                CwApiUser = await Secrets.GetSecretValue("CWApiUser");
-            }
+                if(CwApiUser == "")
+                {
+                    CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+                }
 
-            if(CwApiKey == "")
-            {
-                CwApiKey = await Secrets.GetSecretValue("CWApiKey");
-            }
+                if(CwApiKey == "")
+                {
+                    CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+                }
 
-            _cwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
-            await UpdateCustomerList();
+                _cwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
+                await UpdateCustomerList();
+            }
         }
 
         private void OnContentRendered(object sender, EventArgs e)
@@ -222,26 +228,29 @@ namespace ThinkVoipTool
                 return;
             }
 
-            switch (CustomersList.SelectedItems[0])
+            using (new OverrideCursor(Cursors.Wait))
             {
-                case CompanyModel.Agreement _:
-                    ShowExtensionUiElements();
-                    await UpdateSelectedCompanyInfo();
-                    break;
-                case SkySwitchDomains _:
+                switch (CustomersList.SelectedItems[0])
                 {
-                    BillingMonthsPanel.Visibility = Visibility.Visible;
-                    BillingMinutesPanel.Visibility = Visibility.Visible;
-                    BillingCallsPanel.Visibility = Visibility.Visible;
-                    var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
-                    var billing = new Billing.Billing();
-                    BillingMonthsPanel.Children.Clear();
-                    BillingMinutesPanel.Children.Clear();
-                    BillingCallsPanel.Children.Clear();
-                    ThinkyMainImage.Opacity = .05;
-                    GenerateBillingHeaders();
-                    await PopulateBillingData(billing, client);
-                    break;
+                    case CompanyModel.Agreement _:
+                        ShowExtensionUiElements();
+                        await UpdateSelectedCompanyInfo();
+                        break;
+                    case SkySwitchDomains _:
+                    {
+                        BillingMonthsPanel.Visibility = Visibility.Visible;
+                        BillingMinutesPanel.Visibility = Visibility.Visible;
+                        BillingCallsPanel.Visibility = Visibility.Visible;
+                        var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
+                        var billing = new Billing.Billing();
+                        BillingMonthsPanel.Children.Clear();
+                        BillingMinutesPanel.Children.Clear();
+                        BillingCallsPanel.Children.Clear();
+                        ThinkyMainImage.Opacity = .05;
+                        GenerateBillingHeaders();
+                        await PopulateBillingData(billing, client);
+                        break;
+                    }
                 }
             }
         }
@@ -314,30 +323,32 @@ namespace ThinkVoipTool
 
         private async Task UpdateSelectedCompanyInfo()
         {
-            CleanExtensionDataGrid();
-            _lastView = Views.None;
-            PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
-            PleaseWaitTextBlock.Visibility = Visibility.Visible;
-            ThreeCxClient = null;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
-                _companyId = selectedCompany.company.id;
-            }
+                CleanExtensionDataGrid();
+                _lastView = Views.None;
+                ThreeCxClient = null;
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
+                if(selectedCompany != null)
+                {
+                    _companyId = selectedCompany.company.id;
+                }
 
-            try
-            {
-                ResetPasswordMenuItem.Visibility = Visibility.Visible;
-                await DisplayClientInfo(_companyId);
-            }
-            catch
-            {
-                PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                try
+                {
+                    ResetPasswordMenuItem.Visibility = Visibility.Visible;
+                    await DisplayClientInfo(_companyId);
+                }
+                catch
+                {
+                    ExtensionsHeader.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                }
             }
         }
 
         private void CleanExtensionDataGrid()
         {
+            ExtensionsHeader.Text = "Extensions: ";
             ThinkyMainImage.Opacity = .05;
             ThinkyMainImage.Visibility = Visibility.Visible;
             ListViewGrid.Visibility = Visibility.Collapsed;
@@ -387,18 +398,21 @@ namespace ThinkVoipTool
             //var user = await Secrets.GetSecretValue("AdAuthUser");
             //var pass = await Secrets.GetSecretValue("AdAuthPass");
 
-            _lastView = Views.Valid;
-            ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
-            var company = await _cwClient.GetCompany(companyId);
-            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
-            ThreeCxPassword = loginInfo.Password;
-            ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
-
-            if(ThreeCxClient != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
-                _extensionList = await ThreeCxClient.GetExtensionsList();
-                await UpdateDisplay();
+                _lastView = Views.Valid;
+                ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
+                var company = await _cwClient.GetCompany(companyId);
+                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+                var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
+                ThreeCxPassword = loginInfo.Password;
+                ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
+
+                if(ThreeCxClient != null)
+                {
+                    _extensionList = await ThreeCxClient.GetExtensionsList();
+                    await UpdateDisplay();
+                }
             }
         }
 
@@ -490,7 +504,7 @@ namespace ThinkVoipTool
             ExtSeparator.Visibility = Visibility.Visible;
             ExtSeparatorOperators.Visibility = Visibility.Visible;
             PhoneSeparator.Visibility = Visibility.Visible;
-            PleaseWaitTextBlock.Visibility = Visibility.Collapsed;
+            // PleaseWaitTextBlock.Visibility = Visibility.Collapsed;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
@@ -847,37 +861,43 @@ namespace ThinkVoipTool
 
         private async void OnShowTtgClientsClick(object sender, RoutedEventArgs e)
         {
-            Settings.Default.showTtgClients = ShowTtgCheckbox.IsChecked;
-            Settings.Default.Save();
-            await UpdateCustomerList();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                Settings.Default.showTtgClients = ShowTtgCheckbox.IsChecked;
+                Settings.Default.Save();
+                await UpdateCustomerList();
+            }
         }
 
 
         private static void OpenUrl(string url)
         {
-            try
+            using (new OverrideCursor(Cursors.Wait))
             {
-                Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                try
                 {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    Process.Start(url);
                 }
-                else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                catch
                 {
-                    Process.Start("xdg-open", url);
-                }
-                else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
+                    // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                    if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        url = url.Replace("&", "^&");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    }
+                    else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        Process.Start("xdg-open", url);
+                    }
+                    else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        Process.Start("open", url);
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
         }
@@ -885,40 +905,49 @@ namespace ThinkVoipTool
 
         private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
-                _companyId = selectedCompany.company.id;
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
+                if(selectedCompany != null)
+                {
+                    _companyId = selectedCompany.company.id;
+                }
+
+                var company = await _cwClient.GetCompany(_companyId);
+                var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
+
+                OpenUrl("https://docs.think-team.com" + url);
             }
-
-            var company = await _cwClient.GetCompany(_companyId);
-            var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
-
-            OpenUrl("https://docs.think-team.com" + url);
         }
 
         private async void open3cxPage_Click(object sender, RoutedEventArgs e)
         {
-            var company = await _cwClient.GetCompany(_companyId);
-            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                var company = await _cwClient.GetCompany(_companyId);
+                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+                var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
 
-            var hostName = loginInfo.HostName;
-            var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
+                var hostName = loginInfo.HostName;
+                var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
 
-            OpenUrl(cleanedHostName);
+                OpenUrl(cleanedHostName);
+            }
         }
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            using (new OverrideCursor(Cursors.Wait))
             {
-                await UpdateDisplay();
-            }
-            catch
-            {
-                await UpdateSelectedCompanyInfo();
+                try
+                {
+                    await UpdateDisplay();
+                }
+                catch
+                {
+                    await UpdateSelectedCompanyInfo();
+                }
             }
         }
 
@@ -938,14 +967,17 @@ namespace ThinkVoipTool
             CurrentExtension = selectedItem?.Number;
             CurrentExtensionClass = selectedItem;
 
-            var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
-            if(result == "Failed")
+            using (new OverrideCursor(Cursors.Wait))
             {
-                MessageBox.Show("Failed to set as admin", "Error");
-            }
-            else
-            {
-                MessageBox.Show("Success");
+                var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
+                if(result == "Failed")
+                {
+                    MessageBox.Show("Failed to set as admin", "Error");
+                }
+                else
+                {
+                    MessageBox.Show("Success");
+                }
             }
         }
 
@@ -975,19 +1007,22 @@ namespace ThinkVoipTool
         {
             _isBilling = !_isBilling;
 
-            if(_isBilling)
+            using (new OverrideCursor(Cursors.Wait))
             {
-                HideExtensionUiElements();
-                var billing = new Billing.Billing();
-                _skySwitchDomainsList = await billing.SkySwitchDomains();
-                _skySwitchDomainsList.RemoveAll(a => a.Description.Contains("Think Technologies Group") || a.Description.Contains("DemoTrunk"));
-                CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
-                CustomersList.DisplayMemberPath = "Description";
-            }
-            else
-            {
-                HideBillingUiElementsVisibility();
-                await UpdateCustomerList();
+                if(_isBilling)
+                {
+                    HideExtensionUiElements();
+                    var billing = new Billing.Billing();
+                    _skySwitchDomainsList = await billing.SkySwitchDomains();
+                    _skySwitchDomainsList.RemoveAll(a => a.Description.Contains("Think Technologies Group") || a.Description.Contains("DemoTrunk"));
+                    CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
+                    CustomersList.DisplayMemberPath = "Description";
+                }
+                else
+                {
+                    HideBillingUiElementsVisibility();
+                    await UpdateCustomerList();
+                }
             }
         }
 
@@ -1051,7 +1086,6 @@ namespace ThinkVoipTool
                 switch (child)
                 {
                     case ListBox _:
-                    case TextBlock {Name: "PleaseWaitTextBlock"}:
                     case Menu _:
                     case Image {Name: "ThinkyTitleImage"}:
                         break;
@@ -1062,6 +1096,33 @@ namespace ThinkVoipTool
             }
 
             SizeToContent = SizeToContent.Width;
+        }
+    }
+
+    public class OverrideCursor : IDisposable
+    {
+        private static readonly Stack<Cursor> SStack = new Stack<Cursor>();
+
+        public OverrideCursor(Cursor changeToCursor)
+        {
+            SStack.Push(changeToCursor);
+
+            if(Mouse.OverrideCursor != changeToCursor)
+            {
+                Mouse.OverrideCursor = changeToCursor;
+            }
+        }
+
+        void IDisposable.Dispose()
+        {
+            SStack.Pop();
+
+            var cursor = SStack.Count > 0 ? SStack.Peek() : null;
+
+            if(cursor != Mouse.OverrideCursor)
+            {
+                Mouse.OverrideCursor = cursor;
+            }
         }
     }
 }

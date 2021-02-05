@@ -152,11 +152,6 @@
                Grid.ColumnSpan="6" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
 
 
-        <!--PLease wait label-->
-        <TextBlock x:Name="PleaseWaitTextBlock" Grid.Column="2" Grid.Row="3" Visibility="Hidden" FontWeight="Normal"
-                   Foreground="Red" Text="Please wait..."
-                   Margin="0,0,2,2" />
-
         <!--Customer ListBox-->
         <ListBox x:Name="CustomersList" Margin="0,0,4,0" Visibility="Hidden" BorderThickness="0,.5,1,0" Grid.Row="3"
                  Grid.Column="1" DisplayMemberPath="company.name" SelectionChanged="CustomersList_SelectionChanged"
