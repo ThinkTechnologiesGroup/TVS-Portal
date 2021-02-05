@@ -13,7 +13,7 @@ namespace ThinkVoipTool
         private const string ClientId = "b8aad1d2-dfec-44f0-9e1f-d1896e5e1031";
         private const string ClientSecret = "saFZRKIQpvnK5i1xt88~~y__G5_iFTo.1~";
 
-        private static readonly SecretClient Client = new(new Uri(KvUri),
+        private static readonly SecretClient Client = new SecretClient(new Uri(KvUri),
             new ClientSecretCredential("9d1d44a0-b14f-4e5f-9da3-775d779bb1f5",
                 ClientId,
                 ClientSecret));

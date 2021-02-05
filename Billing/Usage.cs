@@ -12,7 +12,7 @@ namespace ThinkVoipTool.Billing
         private BillingResponse _monthly;
 
 
-        public Usage(Month month, string clientUrl)
+        public Usage(Month month, string? clientUrl)
         {
             if(int.Parse(month.MonthNumber) == DateTime.Today.Month)
             {

@@ -115,7 +115,7 @@
 
         <!--Main Menu-->
         <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="7"
-              Visibility="Hidden" Padding="0" Height="Auto" Effect="{DynamicResource MaterialDesignShadowDepth1}">
+              Visibility="Collapsed" Padding="0" Height="Auto" Effect="{DynamicResource MaterialDesignShadowDepth1}">
 
             <MenuItem x:Name="FileMenu" Header="_File">
                 <MenuItem Header="_Switch Theme" Click="OnThemeClick" />
@@ -163,13 +163,13 @@
         <!--extensions header-->
         <TextBlock x:Name="ExtensionsHeader" Text="Extensions: " MaxHeight="25" Margin="5,0,5,2" Grid.Row="3"
                    TextDecorations="Underline" VerticalAlignment="Top" Grid.Column="2" FontWeight="Bold"
-                   Visibility="Hidden" />
+                   Visibility="Collapsed" />
 
         <!--Total extensions-->
         <Button x:Name="ExtensionsTotalDisplay" Margin="5,4,5,2" BorderBrush="LightGray" MaxHeight="25" Grid.Row="4"
                 Grid.Column="2" VerticalAlignment="Top"
                 Content="Total Extensions:" HorizontalAlignment="Left" Click="ExtensionsTotalDisplay_Click"
-                Visibility="Hidden" Width="142" />
+                Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="ExtensionsTotal" Margin="5,4,5,2" Width="25" FontWeight="Bold" MaxHeight="25" Grid.Row="4"
                    Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -177,7 +177,7 @@
         <!--Invalid (operator,test users ) extensions-->
         <Button x:Name="ExtensionsTotalInvalid" BorderBrush="LightGray" Margin="5,4,5,2" MaxHeight="25" Grid.Row="5"
                 Grid.Column="2" Content="Operator/Tests:"
-                HorizontalAlignment="Left" Click="ExtensionsTotalInvalid_Click" Visibility="Hidden" Width="142" />
+                HorizontalAlignment="Left" Click="ExtensionsTotalInvalid_Click" Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="InValidExtensions" FontWeight="Bold" Margin="5,4,5,2" MaxHeight="25" Grid.Row="5"
                    Grid.Column="3"
@@ -186,13 +186,13 @@
         <!--extensions separator-->
         <Separator x:Name="ExtSeparatorOperators" Margin="5,4,5,5" Grid.Column="2" BorderBrush="#FF8DC748" Grid.Row="6"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Grid.ColumnSpan="2" Visibility="Hidden" />
+                   Grid.ColumnSpan="2" Visibility="Collapsed" />
 
         <!--valid extensions-->
         <Button x:Name="ExtensionsTotalValid" BorderBrush="LightGray" MaxHeight="25" Margin="5,4,5,2" Grid.Row="7"
                 Grid.Column="2" Content="User Extensions:"
                 VerticalContentAlignment="Top" HorizontalAlignment="Left"
-                Click="ExtensionsTotalValid_Click" Visibility="Hidden" Width="142" />
+                Click="ExtensionsTotalValid_Click" Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="TotalValidExtensions" FontWeight="Bold" MaxHeight="25" Grid.Row="7" Width="25"
                    HorizontalAlignment="Left" Margin="5,4,5,2" Grid.Column="3" />
@@ -202,7 +202,7 @@
                 Grid.Column="2"
                 MaxHeight="25" Content="Voicemail Only:"
                 VerticalAlignment="Top" HorizontalAlignment="Left" Click="VoicemailOnlyExtensionsDisplay_Click"
-                Visibility="Hidden" Width="142" />
+                Visibility="Collapsed" Width="142" />
         <TextBlock x:Name="VoicemailOnlyExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Margin="5,4,5,2"
                    Grid.Row="8" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
@@ -211,7 +211,7 @@
                 Margin="5,4,5,2"
                 MaxHeight="25" Width="142"
                 Content="Forwarding Only:" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Click="ForwardingOnlyExtensionsDisplay_Click" Visibility="Hidden" />
+                Click="ForwardingOnlyExtensionsDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="ForwardingOnlyExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Margin="5,4,5,2"
                    Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -221,7 +221,7 @@
                 Margin="5,4,5,2"
                 MaxHeight="25" Width="142"
                 Content="Billed to Client:" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Click="BilledUserExtensionsDisplay_Click" Visibility="Hidden" />
+                Click="BilledUserExtensionsDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="BilledUserExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Grid.Row="10"
                    Grid.Column="3" Margin="5,4,5,2" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -229,13 +229,13 @@
         <!--extensions separator-->
         <Separator x:Name="ExtSeparator" Grid.Column="2" Grid.Row="11" BorderThickness="3" Margin="5,4,5,5"
                    VerticalAlignment="Center" Width="142" HorizontalAlignment="Left" Grid.ColumnSpan="2"
-                   BorderBrush="#FF8DC748" Visibility="Hidden" />
+                   BorderBrush="#FF8DC748" Visibility="Collapsed" />
 
         <!--Phones display-->
         <Button x:Name="PhonesTotalDisplay" BorderBrush="LightGray" MaxHeight="25" Grid.Row="12" Grid.Column="2"
                 Margin="5,4,5,2" VerticalAlignment="Top"
                 Content="Phones Detected:" Width="142"
-                HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Hidden" />
+                HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="PhonesTotal" FontWeight="Bold" MaxHeight="25" Grid.Row="12" Width="25" Grid.Column="3"
                    VerticalAlignment="Center" Margin="5,4,5,2"
@@ -244,30 +244,30 @@
         <!--phones separator-->
         <Separator x:Name="PhoneSeparator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
-                   Visibility="Hidden" BorderBrush="#FF8DC748" />
+                   Visibility="Collapsed" BorderBrush="#FF8DC748" />
 
         <!--Add buttons-->
         <Button x:Name="AddExt" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="2" Margin="5,5,2,0"
                 MaxHeight="25" FontWeight="Normal" Background="#FF8DC748"
                 VerticalAlignment="Center" BorderBrush="Gray" BorderThickness="1" Content="Add Extension"
-                Visibility="Hidden" Click="AddExtension_Click" Width="142" />
+                Visibility="Collapsed" Click="AddExtension_Click" Width="142" />
 
         <Button x:Name="AddPhoneButton" Grid.Row="15" Margin="5,5,2,0" MaxHeight="25" Grid.Column="2"
                 FontWeight="Normal" Background="#FF8DC748" Width="142"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"
-                Content="  Add Phone  " Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" />
+                Content="  Add Phone  " Visibility="Collapsed" Click="MenuItem_Add_New_Phone_Click" />
 
         <!--phones separator-->
         <Separator x:Name="RefreshSeparator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
-                   Visibility="Hidden" BorderBrush="#FF8DC748" />
+                   Visibility="Collapsed" BorderBrush="#FF8DC748" />
 
         <!--Refresh Button-->
 
         <Button x:Name="RefreshButton" Grid.Row="18" Margin="5,10,2,0" MaxHeight="25" Grid.Column="2" FontWeight="Bold"
                 Width="145"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"
-                Content="Refresh" Visibility="Hidden" Click="RefreshButton_Click"
+                Content="Refresh" Visibility="Collapsed" Click="RefreshButton_Click"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" />
 
         <!--Launch Pages-->
@@ -275,13 +275,13 @@
                 FontWeight="Bold" Width="65"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" BorderThickness="1" Content="Docs"
-                Visibility="Hidden" Click="openConfluenceButton_Click" />
+                Visibility="Collapsed" Click="openConfluenceButton_Click" />
 
         <Button x:Name="Open3CxButton" Grid.Row="17" Margin="70,5,2,0"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" MaxHeight="25" Grid.Column="2" FontWeight="Bold"
                 Width="65"
                 VerticalAlignment="top" HorizontalAlignment="Center" BorderBrush="Gray" BorderThickness="1"
-                Content="3cx " Visibility="Hidden" Click="open3cxPage_Click" />
+                Content="3cx " Visibility="Collapsed" Click="open3cxPage_Click" />
 
 
         <!--Extensions and phones datagrid-->

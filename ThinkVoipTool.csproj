@@ -2,8 +2,8 @@
 
   <PropertyGroup>
       <OutputType>WinExe</OutputType>
-      <LangVersion>9.0</LangVersion>
-      <TargetFramework>net5.0-windows</TargetFramework>
+      <LangVersion>8</LangVersion>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
       <UseWPF>true</UseWPF>
       <ApplicationIcon>Resources\Thinky.ico</ApplicationIcon>
       <AssemblyName>TVSPortal</AssemblyName>
@@ -21,7 +21,7 @@
       <Company>Think VoIP Services</Company>
       <NeutralLanguage>en</NeutralLanguage>
       <AssemblyVersion>1.0.0.1</AssemblyVersion>
-      <Nullable>disable</Nullable>
+      <Nullable>annotations</Nullable>
 
   </PropertyGroup>
 
@@ -51,6 +51,10 @@
         <PackageReference Include="MessagePack" Version="2.2.85"/>
         <PackageReference Include="Microsoft.Identity.Client" Version="4.25.0"/>
         <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.16.8"/>
+        <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
         <PackageReference Include="RestSharp" Version="106.11.7"/>
         <PackageReference Include="Serilog.Sinks.File" Version="4.1.0"/>

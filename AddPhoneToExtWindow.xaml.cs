@@ -8,7 +8,7 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class AddPhoneToExtWindow
     {
-        public AddPhoneToExtWindow(string extensionNumber)
+        public AddPhoneToExtWindow(string? extensionNumber)
         {
             InitializeComponent();
             var extensionDisplayString = "Selected Extension: " + extensionNumber;

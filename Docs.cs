@@ -21,7 +21,7 @@ namespace ThinkVoipTool
 {
     internal class Docs
     {
-        public static Docs ConfClient = new("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
+        public static readonly Docs ConfClient = CreateInstance("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
         private readonly string _authKey;
         private readonly string _baseUrl;
 
@@ -30,7 +30,7 @@ namespace ThinkVoipTool
 
         private RestRequest _restRequest;
 
-        public Docs(string baseUrl, string userName, string password)
+        private Docs(string baseUrl, string userName, string password)
         {
             _baseUrl = baseUrl;
             _scaffoldingUrl = baseUrl.Replace("api/", "");
@@ -38,7 +38,9 @@ namespace ThinkVoipTool
             _authKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}"));
         }
 
-        public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
+        private static Docs CreateInstance(string baseUrl, string userName, string password) => new Docs(baseUrl, userName, password);
+
+        public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser");
 
         public string FindThreeCxPageId(string spaceKey)
         {

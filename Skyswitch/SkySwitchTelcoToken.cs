@@ -14,8 +14,8 @@ namespace ThinkVoipTool.Skyswitch
         private const string ClientSecret = "xntm584xcne8csdbxsh8e6muay3y5sjpcqngqm";
         private const string Scope = "*";
 
-        private static readonly RestClient RestClient = new("https://telco-api.skyswitch.com/oauth/token");
-        private static readonly RestRequest RestRequest = new(Method.POST);
+        private static readonly RestClient RestClient = new RestClient("https://telco-api.skyswitch.com/oauth/token");
+        private static readonly RestRequest RestRequest = new RestRequest(Method.POST);
 
         [JsonProperty("access_token")]
         private string? _accessToken;
