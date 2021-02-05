@@ -21,7 +21,7 @@ namespace ThinkVoipTool
 {
     internal class Docs
     {
-        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
+        public static Docs ConfClient = new("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
         private readonly string _authKey;
         private readonly string _baseUrl;
 
@@ -770,6 +770,7 @@ namespace ThinkVoipTool
                 var manufacturer = new ThreeCxPageMacros
                 {
                     Macro = "text-data",
+                    // ReSharper disable once StringLiteralTypo
                     Name = "Text-VoipPhonesManucturer",
                     Value = phone.Vendor
                 };

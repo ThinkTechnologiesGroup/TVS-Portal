@@ -34,17 +34,17 @@ namespace ThinkVoipTool
         private const string FanvilH5 = "Fanvil H5";
 
 
-        private static readonly List<Phone> PhoneModels = new List<Phone>
+        private static readonly List<Phone> PhoneModels = new()
         {
-            new Phone {Model = TvsT46S, ModelDisplayName = "TVS - Yealink T46S"},
-            new Phone {Model = TvsT48S, ModelDisplayName = "TVS - Yealink T48S"},
-            new Phone {Model = YealinkCp960},
-            new Phone {Model = YealinkT40G},
-            new Phone {Model = YealinkT42S},
-            new Phone {Model = YealinkT46S},
-            new Phone {Model = YealinkT48S},
-            new Phone {Model = YealinkT57W},
-            new Phone {Model = FanvilH5}
+            new() {Model = TvsT46S, ModelDisplayName = "TVS - Yealink T46S"},
+            new() {Model = TvsT48S, ModelDisplayName = "TVS - Yealink T48S"},
+            new() {Model = YealinkCp960},
+            new() {Model = YealinkT40G},
+            new() {Model = YealinkT42S},
+            new() {Model = YealinkT46S},
+            new() {Model = YealinkT48S},
+            new() {Model = YealinkT57W},
+            new() {Model = FanvilH5}
         };
 
         public static bool IsAuthenticated;
@@ -63,8 +63,8 @@ namespace ThinkVoipTool
         public static string CwApiUser = string.Empty;
         public static string CwApiKey = string.Empty;
         public static bool IsAdmin;
-        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new SkySwitchTelcoToken();
-        public static readonly SkySwitchToken SkySwitchToken = new SkySwitchToken();
+        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new();
+        public static readonly SkySwitchToken SkySwitchToken = new();
 
         private static ConnectWiseConnection _cwClient;
         private readonly bool _isFirstLaunch = Settings.Default.firstLaunch;
@@ -263,15 +263,20 @@ namespace ThinkVoipTool
                 m.MinutesUsed = await Task.Run(() => used.MonthlyMinutes());
                 m.CallsMade = await Task.Run(() => used.MonthlyCalls());
 
-                BillingMonthsPanel.Children.Add(new TextBlock
+                // ReSharper disable once UseObjectOrCollectionInitializer
+                var b = new Button
                 {
-                    Text = m.Name,
+                    Content = m.Name + ": ",
                     Visibility = Visibility.Visible,
                     Margin = new Thickness(10, 5, 5, 5),
                     FontSize = 18,
-                    HorizontalAlignment = HorizontalAlignment.Center
-                });
-
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    MaxHeight = 35,
+                    MaxWidth = 125,
+                    MinWidth = 125
+                };
+                b.Click += OnBillingMonthButtonCLick;
+                BillingMonthsPanel.Children.Add(b);
 
                 BillingMinutesPanel.Children.Add(new TextBlock
                 {
@@ -279,17 +284,30 @@ namespace ThinkVoipTool
                     Visibility = Visibility.Visible,
                     Margin = new Thickness(40, 5, 5, 5),
                     FontSize = 18,
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    MinHeight = 35,
+                    MinWidth = 115
                 });
                 BillingCallsPanel.Children.Add(new TextBlock
                 {
                     Text = m.CallsMade,
                     Visibility = Visibility.Visible,
-                    Margin = new Thickness(40, 5, 5, 5),
+                    Margin = new Thickness(2, 5, 5, 5),
                     FontSize = 18,
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    MinHeight = 35,
+                    MinWidth = 115
                 });
             }
+        }
+
+
+        private void OnBillingMonthButtonCLick(object sender, RoutedEventArgs e)
+        {
+            var clickedMonth = sender as Button;
+            var monthName = clickedMonth?.Content.ToString()?.Replace(":", "").Trim();
         }
 
         private void GenerateBillingHeaders()
@@ -300,23 +318,29 @@ namespace ThinkVoipTool
                 FontSize = 20,
                 TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(10, 0, 0, 5)
+                Margin = new Thickness(40, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
             });
             BillingMinutesPanel.Children.Add(new TextBlock
             {
                 Text = "Minutes Used",
                 FontSize = 20,
                 TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(40, 0, 0, 5)
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
             });
             BillingCallsPanel.Children.Add(new TextBlock
             {
                 Text = "Total Calls",
                 FontSize = 20,
                 TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
-                HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(40, 0, 0, 5)
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
             });
         }
 
@@ -381,8 +405,8 @@ namespace ThinkVoipTool
                 _lastView = Views.Valid;
                 ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
                 var company = await _cwClient.GetCompany(companyId);
-                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-                var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
+                var pageId = await Task.Run(() => Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty)));
+                var loginInfo = await Task.Run(() => Docs.ConfClient.GetThreeCxLoginInfo(pageId));
                 ThreeCxPassword = loginInfo.Password;
                 ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
 
@@ -1091,11 +1115,11 @@ namespace ThinkVoipTool
 
     public class OverrideCursor : IDisposable
     {
-        private static readonly Stack<Cursor> SStack = new Stack<Cursor>();
+        private static readonly Stack<Cursor> CursorStack = new();
 
         public OverrideCursor(Cursor changeToCursor)
         {
-            SStack.Push(changeToCursor);
+            CursorStack.Push(changeToCursor);
 
             if(Mouse.OverrideCursor != changeToCursor)
             {
@@ -1105,9 +1129,9 @@ namespace ThinkVoipTool
 
         void IDisposable.Dispose()
         {
-            SStack.Pop();
+            CursorStack.Pop();
 
-            var cursor = SStack.Count > 0 ? SStack.Peek() : null;
+            var cursor = CursorStack.Count > 0 ? CursorStack.Peek() : null;
 
             if(cursor != Mouse.OverrideCursor)
             {
