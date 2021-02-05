@@ -183,7 +183,7 @@ namespace ThinkVoipTool
                     LastNameEntry.Visibility = Visibility.Visible;
                     //this.Email.Visibility = Visibility.Visible;
                     EmailEntry.Visibility = Visibility.Visible;
-                    AddExtentionButton.Visibility = Visibility.Visible;
+                    AddExtensionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.VoiceMailOnly:
@@ -197,7 +197,7 @@ namespace ThinkVoipTool
                     EmailEntry.SetValue(Grid.ColumnProperty, 3);
                     // this.Email.Visibility = Visibility.Visible;
                     EmailEntry.Visibility = Visibility.Visible;
-                    AddExtentionButton.Visibility = Visibility.Visible;
+                    AddExtensionButton.Visibility = Visibility.Visible;
                     break;
 
                 case ExtensionTypes.ForwardingOnly:
@@ -209,12 +209,12 @@ namespace ThinkVoipTool
                     FirstNameEntry.Visibility = Visibility.Visible;
                     // this.MobileNumber.Visibility = Visibility.Visible;
                     MobileNumberEntry.Visibility = Visibility.Visible;
-                    AddExtentionButton.Visibility = Visibility.Visible;
+                    AddExtensionButton.Visibility = Visibility.Visible;
                     break;
             }
         }
 
-        private async void AddExtention_Click(object sender, RoutedEventArgs e)
+        private async void AddExtenstion_Click(object sender, RoutedEventArgs e)
         {
             await AddExtension();
         }
@@ -232,14 +232,7 @@ namespace ThinkVoipTool
 
             extNumber = AvailableExtensionsDropDownList.Text;
 
-            if(IsValidEmail(EmailEntry.Text))
-            {
-                emailAddress = EmailEntry.Text;
-            }
-            else
-            {
-                emailAddress = "";
-            }
+            emailAddress = IsValidEmail(EmailEntry.Text) ? EmailEntry.Text : "";
 
             mobileNumber = MobileNumberEntry.Text
                 .Replace("-", "")
@@ -307,7 +300,7 @@ namespace ThinkVoipTool
         {
             //this.MobileNumber.Visibility = Visibility.Hidden;
             MobileNumberEntry.Visibility = Visibility.Hidden;
-            AddExtentionButton.Visibility = Visibility.Hidden;
+            AddExtensionButton.Visibility = Visibility.Hidden;
             SetExtensionBack.Visibility = Visibility.Hidden;
             //this.ExtNumber.Visibility = Visibility.Hidden;
             ExtNumberEntry.Visibility = Visibility.Hidden;
@@ -318,7 +311,7 @@ namespace ThinkVoipTool
             LastNameEntry.Visibility = Visibility.Hidden;
             //this.Email.Visibility = Visibility.Hidden;
             EmailEntry.Visibility = Visibility.Hidden;
-            AddExtentionButton.Visibility = Visibility.Hidden;
+            AddExtensionButton.Visibility = Visibility.Hidden;
             ExtensionDropDownTitle.Text = "Choose Extension Type";
             ExtensionTypeDropDownList.Visibility = Visibility.Visible;
             SetExtensionType.Visibility = Visibility.Visible;
