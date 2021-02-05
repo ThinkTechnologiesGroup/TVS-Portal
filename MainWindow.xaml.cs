@@ -986,6 +986,8 @@ namespace ThinkVoipTool
 
             using (new OverrideCursor(Cursors.Wait))
             {
+                ResetPasswordMenuItem.IsEnabled = !ResetPasswordMenuItem.IsEnabled;
+
                 if(_isBilling)
                 {
                     HideExtensionUiElements();
@@ -1063,7 +1065,7 @@ namespace ThinkVoipTool
             TotalValidExtensions.Text = "";
             PhonesTotal.Text = "";
             VoicemailOnlyExtensionsCount.Text = "";
-            //SizeToContent = SizeToContent.Width;
+            SizeToContent = SizeToContent.Width;
         }
 
         private void ShowExtensionUiElements()

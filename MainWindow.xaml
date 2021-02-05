@@ -276,10 +276,10 @@
                 Style="{DynamicResource MaterialDesignOutlinedButton}" BorderThickness="1" Content="Docs"
                 Visibility="Hidden" Click="openConfluenceButton_Click" />
 
-        <Button x:Name="Open3CxButton" Grid.Row="17" Margin="50,5,2,0"
+        <Button x:Name="Open3CxButton" Grid.Row="17" Margin="70,5,2,0"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" MaxHeight="25" Grid.Column="2" FontWeight="Bold"
                 Width="65"
-                VerticalAlignment="top" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1"
+                VerticalAlignment="top" HorizontalAlignment="Center" BorderBrush="Gray" BorderThickness="1"
                 Content="3cx " Visibility="Hidden" Click="open3cxPage_Click" />
 
 
