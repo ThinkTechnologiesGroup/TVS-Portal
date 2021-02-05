@@ -342,13 +342,13 @@ namespace ThinkVoipTool
                 catch
                 {
                     ExtensionsHeader.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                    ExtensionsHeader.Visibility = Visibility.Visible;
                 }
             }
         }
 
         private void CleanExtensionDataGrid()
         {
-            ExtensionsHeader.Text = "Extensions: ";
             ThinkyMainImage.Opacity = .05;
             ThinkyMainImage.Visibility = Visibility.Visible;
             ListViewGrid.Visibility = Visibility.Collapsed;
@@ -356,6 +356,7 @@ namespace ThinkVoipTool
             AddExt.Visibility = Visibility.Collapsed;
             AddPhoneButton.Visibility = Visibility.Collapsed;
             ExtensionsHeader.Visibility = Visibility.Collapsed;
+            ExtensionsHeader.Text = "Extensions: ";
             ExtSeparator.Visibility = Visibility.Collapsed;
             PhoneSeparator.Visibility = Visibility.Collapsed;
             ExtSeparatorOperators.Visibility = Visibility.Collapsed;
@@ -504,7 +505,6 @@ namespace ThinkVoipTool
             ExtSeparator.Visibility = Visibility.Visible;
             ExtSeparatorOperators.Visibility = Visibility.Visible;
             PhoneSeparator.Visibility = Visibility.Visible;
-            // PleaseWaitTextBlock.Visibility = Visibility.Collapsed;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
