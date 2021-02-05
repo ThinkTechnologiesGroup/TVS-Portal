@@ -15,8 +15,6 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class LoginWindow
     {
-        //private readonly MainWindow _mainWindow;
-
         public LoginWindow()
         {
             InitializeComponent();
