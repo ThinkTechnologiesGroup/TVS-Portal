@@ -1,11 +1,12 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RestSharp;
 
 namespace ThinkVoipTool.Skyswitch
 {
-    internal class SkySwitchTelcoToken
+    public class SkySwitchTelcoToken
     {
         private const string UserName = "sky-api@thinkvoipservices.com";
         private const string PassWord = "cqb7sn48q7bnj";
@@ -17,13 +18,15 @@ namespace ThinkVoipTool.Skyswitch
         private static readonly RestRequest RestRequest = new RestRequest(Method.POST);
 
         [JsonProperty("access_token")]
-        private string _accessToken;
+        private string? _accessToken;
 
         [JsonProperty("apiversion")]
-        private string _apiVersion;
+        private string? _apiVersion;
 
         [JsonProperty("domain")]
-        private string _domain;
+        private string? _domain;
+
+        private DateTime _expirationTime;
 
         [JsonProperty("expires_in")]
         private int _expiresIn;
@@ -32,15 +35,13 @@ namespace ThinkVoipTool.Skyswitch
         private bool _legacy;
 
         [JsonProperty("refresh_token")]
-        private string _refreshToken;
+        private string? _refreshToken;
 
         [JsonProperty("scope")]
-        private string _scope;
+        private string? _scope;
 
         [JsonProperty("token_type")]
-        private string _tokenType;
-
-        public DateTime ExpirationTime;
+        private string? _tokenType;
 
         public SkySwitchTelcoToken()
         {
@@ -53,14 +54,14 @@ namespace ThinkVoipTool.Skyswitch
         }
 
 
-        public string AccessToken
+        public string? AccessToken
         {
             get
             {
                 if(_accessToken == null)
                 {
                     JsonConvert.PopulateObject(RestClient.Execute(RestRequest).Content, this);
-                    ExpirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
+                    _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
                 }
 
                 if(IsExpired())
@@ -74,18 +75,18 @@ namespace ThinkVoipTool.Skyswitch
         }
 
 
-        private bool IsExpired() => ExpirationTime > DateTime.Now;
+        private bool IsExpired() => _expirationTime > DateTime.Now;
 
-        public async Task RefreshToken(SkySwitchTelcoToken token)
+        private async Task RefreshToken(SkySwitchTelcoToken token)
         {
             var restClient = new RestClient("https://telco-api.skyswitch.com/oauth/token");
             var restRequest = new RestRequest(Method.POST);
             restRequest.AddParameter("grant_type", "refresh_token");
             restRequest.AddParameter("client_id", ClientId);
             restRequest.AddParameter("client_secret", ClientSecret);
-            restRequest.AddParameter("refresh_token", _refreshToken);
+            restRequest.AddParameter("refresh_token", _refreshToken!);
             JsonConvert.PopulateObject((await restClient.ExecuteAsync(restRequest).ConfigureAwait(false)).Content, token);
-            ExpirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
+            _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }
     }
 }

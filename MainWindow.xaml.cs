@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -48,30 +49,29 @@ namespace ThinkVoipTool
         };
 
         public static bool IsAuthenticated;
-        private static List<Extension> _extensionList;
-        public static ThreeCxClient ThreeCxClient;
+        private static List<Extension>? _extensionList;
+        public static ThreeCxClient? ThreeCxClient;
         private static int _companyId;
-
-        public static string CurrentExtension;
+        public static string? CurrentExtension;
 
         //public static List<Extension> ToBeAdded = new List<Extension>();
-        public static string ThreeCxPassword;
-        private static List<Extension> _systemExtensions;
-        public static Extension CurrentExtensionClass;
-        public static IList ToBeUpdated;
+        public static string? ThreeCxPassword;
+        public static Extension? CurrentExtensionClass;
+        public static IList? ToBeUpdated;
         public static string AuthU = string.Empty;
         public static string AuthP = string.Empty;
         public static string CwApiUser = string.Empty;
         public static string CwApiKey = string.Empty;
         public static bool IsAdmin;
+        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new SkySwitchTelcoToken();
+        public static readonly SkySwitchToken SkySwitchToken = new SkySwitchToken();
 
-        private static ConnectWiseConnection _cwClient;
+        private static ConnectWiseConnection? _cwClient;
         private readonly bool _isFirstLaunch = Settings.Default.firstLaunch;
+        private bool _isBilling;
         private Views _lastView;
 
-        private ThreeCxLoginInfo _loginInfo;
-
-        private List<SkySwitchDomains> _skySwitchDomainsList;
+        private List<SkySwitchDomains>? _skySwitchDomainsList;
         public bool IsDark = Settings.Default.isDark;
 
 
@@ -79,6 +79,7 @@ namespace ThinkVoipTool
         {
             InitializeComponent();
             ShowMenu();
+            _isBilling = BillingButton.IsChecked;
         }
 
         public MainWindow(bool isAuthenticated)
@@ -86,6 +87,7 @@ namespace ThinkVoipTool
             IsAuthenticated = isAuthenticated;
             InitializeComponent();
             ShowMenu();
+            _isBilling = BillingButton.IsChecked;
         }
 
         private bool ShowTtg => Settings.Default.showTtgClients;
@@ -116,7 +118,7 @@ namespace ThinkVoipTool
 
             if(_isFirstLaunch)
             {
-                IsDark = ReadRegistry.isDarkEnabled;
+                IsDark = ReadRegistry.IsDarkEnabled();
                 Settings.Default.firstLaunch = false;
                 Settings.Default.Save();
             }
@@ -128,13 +130,16 @@ namespace ThinkVoipTool
                 return;
             }
 
-            if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
+            using (new OverrideCursor(Cursors.Wait))
             {
-                if(Settings.Default.RememberMe)
+                if(!Keyboard.IsKeyDown(Key.LeftCtrl) && !Keyboard.IsKeyDown(Key.LeftAlt))
                 {
-                    if(LoginWindow.TryLogin(SavedUser, SavedPass))
+                    if(Settings.Default.RememberMe)
                     {
-                        IsAuthenticated = true;
+                        if(LoginWindow.TryLogin(SavedUser, SavedPass))
+                        {
+                            IsAuthenticated = true;
+                        }
                     }
                 }
             }
@@ -173,18 +178,21 @@ namespace ThinkVoipTool
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            if(CwApiUser == "")
+            using (new OverrideCursor(Cursors.Wait))
             {
-                CwApiUser = await Secrets.GetSecretValue("CWApiUser");
-            }
+                if(CwApiUser == "")
+                {
+                    CwApiUser = await Secrets.GetSecretValue("CWApiUser");
+                }
 
-            if(CwApiKey == "")
-            {
-                CwApiKey = await Secrets.GetSecretValue("CWApiKey");
-            }
+                if(CwApiKey == "")
+                {
+                    CwApiKey = await Secrets.GetSecretValue("CWApiKey");
+                }
 
-            _cwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
-            await UpdateCustomerList();
+                _cwClient = new ConnectWiseConnection(CwApiUser, CwApiKey);
+                await UpdateCustomerList();
+            }
         }
 
         private void OnContentRendered(object sender, EventArgs e)
@@ -194,7 +202,7 @@ namespace ThinkVoipTool
 
         private async Task UpdateCustomerList()
         {
-            var allVoipClients = await _cwClient.GetAllTvsVoIpClients();
+            var allVoipClients = await _cwClient?.GetAllTvsVoIpClients()!;
 
             if(ShowTtg)
             {
@@ -220,92 +228,167 @@ namespace ThinkVoipTool
                 return;
             }
 
-            if(CustomersList.SelectedItems[0] is CompanyModel.Agreement)
+            using (new OverrideCursor(Cursors.Wait))
             {
-                ShowExtensionUiElements();
-                await UpdateSelectedCompanyInfo();
-            }
-
-            if(CustomersList.SelectedItems[0] is SkySwitchDomains)
-            {
-                var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
-                var billing = new Billing.Billing();
-                foreach (var m in billing.LastSixMonths)
+                switch (CustomersList.SelectedItems[0])
                 {
-                    var used = new Usage(m, client?.Domain);
-                    m.MinutesUsed = await used.Monthly();
+                    case CompanyModel.Agreement _:
+                        ShowExtensionUiElements();
+                        await UpdateSelectedCompanyInfo();
+                        break;
+                    case SkySwitchDomains _:
+                    {
+                        BillingMonthsPanel.Visibility = Visibility.Visible;
+                        BillingMinutesPanel.Visibility = Visibility.Visible;
+                        BillingCallsPanel.Visibility = Visibility.Visible;
+                        var client = CustomersList.SelectedItems[0] as SkySwitchDomains;
+                        var billing = new Billing.Billing();
+                        BillingMonthsPanel.Children.Clear();
+                        BillingMinutesPanel.Children.Clear();
+                        BillingCallsPanel.Children.Clear();
+                        ThinkyMainImage.Opacity = .05;
+                        GenerateBillingHeaders();
+                        await PopulateBillingData(billing, client);
+                        break;
+                    }
                 }
             }
+        }
+
+        private async Task PopulateBillingData(Billing.Billing billing, SkySwitchDomains? client)
+        {
+            foreach (var m in billing.LastSixMonths)
+            {
+                var used = new Usage(m, client?.Domain);
+                m.MinutesUsed = await Task.Run(() => used.MonthlyMinutes());
+                m.CallsMade = await Task.Run(() => used.MonthlyCalls());
+
+                // ReSharper disable once UseObjectOrCollectionInitializer
+                var b = new Button
+                {
+                    Content = m.Name + ": ",
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(10, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    MaxHeight = 35,
+                    MaxWidth = 125,
+                    MinWidth = 125
+                };
+                b.Click += OnBillingMonthButtonCLick;
+                BillingMonthsPanel.Children.Add(b);
+
+                BillingMinutesPanel.Children.Add(new TextBlock
+                {
+                    Text = m.MinutesUsed,
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(40, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    MinHeight = 35,
+                    MinWidth = 115
+                });
+                BillingCallsPanel.Children.Add(new TextBlock
+                {
+                    Text = m.CallsMade,
+                    Visibility = Visibility.Visible,
+                    Margin = new Thickness(2, 5, 5, 5),
+                    FontSize = 18,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    MinHeight = 35,
+                    MinWidth = 115
+                });
+            }
+        }
+
+
+        private void OnBillingMonthButtonCLick(object sender, RoutedEventArgs e)
+        {
+            //var clickedMonth = sender as Button;
+        }
+
+        private void GenerateBillingHeaders()
+        {
+            BillingMonthsPanel.Children.Add(new TextBlock
+            {
+                Text = "Month",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(40, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
+            });
+            BillingMinutesPanel.Children.Add(new TextBlock
+            {
+                Text = "Minutes Used",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
+            });
+            BillingCallsPanel.Children.Add(new TextBlock
+            {
+                Text = "Total Calls",
+                FontSize = 20,
+                TextDecorations = new TextDecorationCollection(1) {TextDecorations.Underline},
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(2, 0, 0, 5),
+                MinHeight = 35,
+                MinWidth = 125
+            });
         }
 
 
         private async Task UpdateSelectedCompanyInfo()
         {
-            CleanExtensionDataGrid();
-            _lastView = Views.None;
-            PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Please wait...");
-            PleaseWaitTextBlock.Visibility = Visibility.Visible;
-            ThreeCxClient = null;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
+                HideExtensionUiElements();
+                _lastView = Views.None;
+                ThreeCxClient = null;
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
                 _companyId = selectedCompany.company.id;
-            }
 
-            try
-            {
-                ResetPasswordMenuItem.Visibility = Visibility.Visible;
-                await DisplayClientInfo(_companyId);
-            }
-            catch
-            {
-                PleaseWaitTextBlock.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                try
+                {
+                    ResetPasswordMenuItem.Visibility = Visibility.Visible;
+                    await DisplayClientInfo(_companyId);
+                }
+                catch
+                {
+                    ExtensionsHeader.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                    ExtensionsHeader.Visibility = Visibility.Visible;
+                }
             }
         }
 
-        private void CleanExtensionDataGrid()
-        {
-            ThinkyMainImage.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Hidden;
-
-            AddExt.Visibility = Visibility.Hidden;
-            AddPhoneButton.Visibility = Visibility.Hidden;
-            ExtensionsHeader.Visibility = Visibility.Hidden;
-            ExtSeperator.Visibility = Visibility.Hidden;
-            PhoneSeperator.Visibility = Visibility.Hidden;
-            ExtSeperatorOperators.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            RefreshButton.Visibility = Visibility.Hidden;
-            RefreshSeperator.Visibility = Visibility.Hidden;
-            Open3CxButton.Visibility = Visibility.Hidden;
-            OpenConfluenceButton.Visibility = Visibility.Hidden;
-
-            ForwardingOnlyExtensionsCount.Text = "";
-            BilledUserExtensionsDisplay.Visibility = Visibility.Hidden;
-            BilledUserExtensionsCount.Text = "";
-            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Hidden;
-            ExtensionsTotalInvalid.Visibility = Visibility.Hidden;
-            ExtensionsTotalValid.Visibility = Visibility.Hidden;
-            PhonesTotalDisplay.Visibility = Visibility.Hidden;
-            ExtensionsTotal.Text = "";
-            InValidExtensions.Text = "";
-            TotalValidExtensions.Text = "";
-            PhonesTotal.Text = "";
-            VoicemailOnlyExtensionsCount.Text = "";
-        }
 
         private void UpdateExtensionDataGrid()
         {
             ExtensionsTotal.Text = "";
+            ExtensionsTotal.Visibility = Visibility.Visible;
             InValidExtensions.Text = "";
+            InValidExtensions.Visibility = Visibility.Visible;
+
             TotalValidExtensions.Text = "";
+            TotalValidExtensions.Visibility = Visibility.Visible;
+
             PhonesTotal.Text = "";
+            PhonesTotal.Visibility = Visibility.Visible;
+
             VoicemailOnlyExtensionsCount.Text = "";
+            VoicemailOnlyExtensionsCount.Visibility = Visibility.Visible;
+
             ForwardingOnlyExtensionsCount.Text = "";
+            ForwardingOnlyExtensionsCount.Visibility = Visibility.Visible;
+
             BilledUserExtensionsCount.Text = "";
+            BilledUserExtensionsCount.Visibility = Visibility.Visible;
         }
 
         private async Task DisplayClientInfo(int companyId)
@@ -313,18 +396,16 @@ namespace ThinkVoipTool
             //var user = await Secrets.GetSecretValue("AdAuthUser");
             //var pass = await Secrets.GetSecretValue("AdAuthPass");
 
-            _lastView = Views.Valid;
-            ExtensionsTotalDisplay.Visibility = Visibility.Hidden;
-            var company = await _cwClient.GetCompany(companyId);
-            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
-            _loginInfo = loginInfo;
-            ThreeCxPassword = loginInfo.Password;
-            ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
-            _systemExtensions = await ThreeCxClient.GetSystemExtensions();
-
-            if(ThreeCxClient != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
+                _lastView = Views.Valid;
+                ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
+                var company = await _cwClient?.GetCompany(companyId)!;
+                var pageId = await Task.Run(() => Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty)));
+                var loginInfo = await Task.Run(() => Docs.ConfClient.GetThreeCxLoginInfo(pageId));
+                ThreeCxPassword = loginInfo.Password;
+                ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
+
                 _extensionList = await ThreeCxClient.GetExtensionsList();
                 await UpdateDisplay();
             }
@@ -332,30 +413,36 @@ namespace ThinkVoipTool
 
         private async Task UpdateExtensionsCountDisplay()
         {
-            var extCount = _extensionList.Count;
-            var invalidExtensions = GetUnBilledExtensionsCount(_extensionList);
-            var phones = await ThreeCxClient.GetPhonesList();
-            UpdateExtensionDisplayGridNames();
-            ExtensionsTotal.Text = extCount.ToString();
-            InValidExtensions.Text = invalidExtensions.ToString();
-            TotalValidExtensions.Text = (extCount - invalidExtensions).ToString();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                if(_extensionList != null)
+                {
+                    var extCount = _extensionList.Count;
+                    var invalidExtensions = GetUnBilledExtensionsCount(_extensionList);
+                    var phones = await ThreeCxClient?.GetPhonesList()!;
+                    UpdateExtensionDisplayGridNames();
+                    ExtensionsTotal.Text = extCount.ToString();
+                    InValidExtensions.Text = invalidExtensions.ToString();
+                    TotalValidExtensions.Text = (extCount - invalidExtensions).ToString();
 
 
-            PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
-                .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
+                    PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
+                        .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
+                }
 
 
-            VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(_extensionList).Count.ToString();
-            ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(_extensionList).Count.ToString();
+                VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(_extensionList).Count.ToString();
+                ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(_extensionList).Count.ToString();
 
-            BilledUserExtensionsCount.Text = GetBilledUserExtensions(_extensionList).Count.ToString();
+                BilledUserExtensionsCount.Text = GetBilledUserExtensions(_extensionList)?.Count.ToString();
+            }
         }
 
-        private List<Extension> GetBilledUserExtensions(List<Extension> extensions)
+        private List<Extension>? GetBilledUserExtensions(List<Extension>? extensions)
         {
-            var forwarding = extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
-            var voicemail = extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
-            var op = extensions.Where(ext =>
+            var forwarding = extensions!.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            var voicemail = extensions!.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
+            var op = extensions!.Where(ext =>
                 ext.FirstName.ToLower().Contains("test") ||
                 ext.LastName.ToLower().Contains("test") ||
                 ext.FirstName.ToLower().Contains("copy me") ||
@@ -364,27 +451,27 @@ namespace ThinkVoipTool
                 ext.LastName.ToLower().Contains("template"));
 
             var billedExtensions = extensions;
-            billedExtensions.RemoveAll(a => forwarding.Contains(a));
-            billedExtensions.RemoveAll(a => voicemail.Contains(a));
-            billedExtensions.RemoveAll(a => op.Contains(a));
+            billedExtensions?.RemoveAll(a => forwarding.Contains(a));
+            billedExtensions?.RemoveAll(a => voicemail.Contains(a));
+            billedExtensions?.RemoveAll(a => op.Contains(a));
             return billedExtensions;
         }
 
-        private List<Extension> GetForwardingOnlyExtensions(List<Extension> extensions)
+        private List<Extension> GetForwardingOnlyExtensions(List<Extension>? extensions)
         {
-            return extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            return extensions!.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
         }
 
-        private List<Extension> GetVoicemailOnlyExtensions(List<Extension> extensions)
+        private List<Extension> GetVoicemailOnlyExtensions(List<Extension>? extensions)
         {
-            return extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
+            return extensions!.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
         }
 
         private void UpdateExtensionDisplayGridNames()
         {
             ExtensionsTotalDisplay.Visibility = Visibility.Visible;
             ExtensionsTotalInvalid.Visibility = Visibility.Visible;
-            VoimailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
+            VoicemailOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Visible;
             ExtensionsTotalValid.Visibility = Visibility.Visible;
             BilledUserExtensionsDisplay.Visibility = Visibility.Visible;
@@ -404,7 +491,7 @@ namespace ThinkVoipTool
 
         private async Task UpdateView()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
 
             if(_companyId == 19532)
             {
@@ -414,15 +501,15 @@ namespace ThinkVoipTool
 
 
             await UpdateExtensionsCountDisplay();
-            ExtSeperator.Visibility = Visibility.Visible;
-            ExtSeperatorOperators.Visibility = Visibility.Visible;
-            PhoneSeperator.Visibility = Visibility.Visible;
-            PleaseWaitTextBlock.Visibility = Visibility.Hidden;
+            ThinkyMainImage.Visibility = Visibility.Hidden;
+            ExtSeparator.Visibility = Visibility.Visible;
+            ExtSeparatorOperators.Visibility = Visibility.Visible;
+            PhoneSeparator.Visibility = Visibility.Visible;
             AddExt.Visibility = Visibility.Visible;
             AddPhoneButton.Visibility = Visibility.Visible;
             ExtensionsHeader.Visibility = Visibility.Visible;
             RefreshButton.Visibility = Visibility.Visible;
-            RefreshSeperator.Visibility = Visibility.Visible;
+            RefreshSeparator.Visibility = Visibility.Visible;
             Open3CxButton.Visibility = Visibility.Visible;
             OpenConfluenceButton.Visibility = Visibility.Visible;
         }
@@ -430,105 +517,122 @@ namespace ThinkVoipTool
         private async void ExtensionsTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Total;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            await DisplayExtensionInfo();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await DisplayExtensionInfo();
+            }
         }
 
         private async Task DisplayExtensionInfo()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
-            _extensionList = _extensionList.OrderBy(a => a.Number).ToList();
-            ListViewGrid.ItemsSource = _extensionList;
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Visible;
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                _extensionList = await ThreeCxClient?.GetExtensionsList()!;
+                _extensionList = _extensionList.OrderBy(a => a.Number).ToList();
+                ListViewGrid.ItemsSource = _extensionList;
+                PhoneListViewGrid.Visibility = Visibility.Collapsed;
+                ListViewGrid.Visibility = Visibility.Visible;
+            }
         }
 
         private async void ExtensionsTotalInvalid_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Invalid;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            await DisplayInvalidExtensionInfo();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await DisplayInvalidExtensionInfo();
+            }
         }
 
         private async Task DisplayInvalidExtensionInfo()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
-            var cleanedExtensions = _extensionList
-                .Where(ext =>
-                    ext.FirstName.ToLower().Contains("test") ||
-                    ext.LastName.ToLower().Contains("test") ||
-                    ext.FirstName.ToLower().Contains("copy me") ||
-                    ext.FirstName.ToLower().Equals("operator") ||
-                    ext.FirstName.ToLower().Contains("template") ||
-                    ext.LastName.ToLower().Contains("template")).ToList();
-            if(!cleanedExtensions.Any())
+            using (new OverrideCursor(Cursors.Wait))
             {
-                ListViewGrid.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                ListViewGrid.ItemsSource = cleanedExtensions;
-                PhoneListViewGrid.Visibility = Visibility.Hidden;
+                _extensionList = await ThreeCxClient?.GetExtensionsList()!;
+                var cleanedExtensions = _extensionList
+                    .Where(ext =>
+                        ext.FirstName.ToLower().Contains("test") ||
+                        ext.LastName.ToLower().Contains("test") ||
+                        ext.FirstName.ToLower().Contains("copy me") ||
+                        ext.FirstName.ToLower().Equals("operator") ||
+                        ext.FirstName.ToLower().Contains("template") ||
+                        ext.LastName.ToLower().Contains("template")).ToList();
+                if(!cleanedExtensions.Any())
+                {
+                    ListViewGrid.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ListViewGrid.ItemsSource = cleanedExtensions;
+                    PhoneListViewGrid.Visibility = Visibility.Collapsed;
 
-                ListViewGrid.Visibility = Visibility.Visible;
+                    ListViewGrid.Visibility = Visibility.Visible;
+                }
             }
         }
 
         private async void ExtensionsTotalValid_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Valid;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            var companyId = selectedCompany.company.id;
-            await DisplayValidExtensions(companyId);
+            //var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await DisplayValidExtensions();
+            }
         }
 
-        private async Task DisplayValidExtensions(int companyId)
+        private async Task DisplayValidExtensions()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
-            var cleanedExtensions = new List<Extension>();
-            cleanedExtensions.AddRange(_extensionList
-                .Where(ext => !ext.FirstName.ToLower().Contains("test"))
-                .Where(ext => !ext.LastName.ToLower().Contains("test"))
-                .Where(ext => !ext.FirstName.ToLower().Contains("copy me"))
-                .Where(ext => !ext.FirstName.ToLower().Equals("operator"))
-                .Where(ext => !ext.FirstName.ToLower().Contains("template"))
-                .Where(ext => !ext.LastName.ToLower().Contains("template")));
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                _extensionList = await ThreeCxClient?.GetExtensionsList()!;
+                var cleanedExtensions = new List<Extension>();
+                cleanedExtensions.AddRange(_extensionList
+                    .Where(ext => !ext.FirstName.ToLower().Contains("test"))
+                    .Where(ext => !ext.LastName.ToLower().Contains("test"))
+                    .Where(ext => !ext.FirstName.ToLower().Contains("copy me"))
+                    .Where(ext => !ext.FirstName.ToLower().Equals("operator"))
+                    .Where(ext => !ext.FirstName.ToLower().Contains("template"))
+                    .Where(ext => !ext.LastName.ToLower().Contains("template")));
 
-            ListViewGrid.ItemsSource = cleanedExtensions;
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
-            ListViewGrid.Visibility = Visibility.Visible;
+                ListViewGrid.ItemsSource = cleanedExtensions;
+                PhoneListViewGrid.Visibility = Visibility.Collapsed;
+                ListViewGrid.Visibility = Visibility.Visible;
+            }
         }
 
         private async void PhonesTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Phones;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
-            await DisplayPhones();
+            //var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await DisplayPhones();
+            }
         }
 
         private async Task DisplayPhones()
         {
-            var phones = await ThreeCxClient.GetPhonesList();
-            var cleanedPhones = phones
-                .Where(phone => !phone.Model.ToLower().Contains("windows"))
-                .Where(phone => !phone.Model.ToLower().Contains("app"))
-                .Where(phone => !phone.Model.ToLower().Contains("web client"));
-            // ReSharper disable once PossibleMultipleEnumeration
-            if(!cleanedPhones.Any())
+            using (new OverrideCursor(Cursors.Wait))
             {
-                cleanedPhones = new List<Phone>();
+                var phones = await ThreeCxClient?.GetPhonesList()!;
+                var cleanedPhones = phones
+                    .Where(phone => !phone.Model.ToLower().Contains("windows"))
+                    .Where(phone => !phone.Model.ToLower().Contains("app"))
+                    .Where(phone => !phone.Model.ToLower().Contains("web client"));
+                // ReSharper disable once PossibleMultipleEnumeration
+                if(!cleanedPhones.Any())
+                {
+                    cleanedPhones = new List<Phone>();
+                }
+
+
+                ListViewGrid.Visibility = Visibility.Collapsed;
+                // ReSharper disable once PossibleMultipleEnumeration
+                cleanedPhones = cleanedPhones.ToList().OrderBy(a => a.ExtensionNumber);
+                PhoneListViewGrid.ItemsSource = cleanedPhones;
+                PhoneListViewGrid.Visibility = Visibility.Visible;
             }
-
-
-            ListViewGrid.Visibility = Visibility.Hidden;
-            // ReSharper disable once PossibleMultipleEnumeration
-            cleanedPhones = cleanedPhones.ToList().OrderBy(a => a.ExtensionNumber);
-            PhoneListViewGrid.ItemsSource = cleanedPhones;
-            PhoneListViewGrid.Visibility = Visibility.Visible;
         }
 
 
@@ -596,19 +700,23 @@ namespace ThinkVoipTool
                             }
                     }
 
-                    var result = MessageBox.Show($"Are you sure you want to remove extension(s) {extensionListString}?", "Are you sure?",
+                    var result = MessageBox.Show($"Are you sure you want to remove extension(s) {extensionListString}?",
+                        "Are you sure?",
                         MessageBoxButton.YesNo);
 
                     if(result == MessageBoxResult.Yes)
                     {
-                        foreach (var extension in extensions)
+                        using (new OverrideCursor(Cursors.Wait))
                         {
-                            await ThreeCxClient.DeleteExtension(extension.Number);
-                        }
+                            foreach (var extension in extensions)
+                            {
+                                await ThreeCxClient?.DeleteExtension(extension.Number)!;
+                            }
 
-                        UpdateExtensionDataGrid();
-                        await UpdateView();
-                        await UpdateDisplay();
+                            UpdateExtensionDataGrid();
+                            await UpdateView();
+                            await UpdateDisplay();
+                        }
                     }
 
                     break;
@@ -620,8 +728,7 @@ namespace ThinkVoipTool
         {
             if(CustomersList.SelectedItem != null)
             {
-                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-                Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
                 var companyId = selectedCompany.company.id;
                 _companyId = companyId;
 
@@ -638,15 +745,17 @@ namespace ThinkVoipTool
 
         private void AddExtension_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             {
                 var companyId = selectedCompany.company.id;
                 _companyId = companyId;
             }
 
-            var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
-            window.ShowDialog();
+            if(ThreeCxClient != null)
+            {
+                var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
+                window.ShowDialog();
+            }
         }
 
 
@@ -665,7 +774,7 @@ namespace ThinkVoipTool
 
                     break;
                 case Views.Valid:
-                    await DisplayValidExtensions(_companyId);
+                    await DisplayValidExtensions();
 
                     break;
                 case Views.Invalid:
@@ -730,23 +839,23 @@ namespace ThinkVoipTool
 
         private async void DisplayVoicemailExtensionsInGrid()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             _lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(_extensionList);
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.ItemsSource = vmOnlyList.OrderBy(a => a.Number).ToList();
             ListViewGrid.Visibility = Visibility.Visible;
         }
 
         private async void DisplayForwardingExtensionsInGrid()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             _lastView = Views.ForwardingOnly;
             var fwdOnlyList = GetForwardingOnlyExtensions(_extensionList);
 
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
+            PhoneListViewGrid.Visibility = Visibility.Collapsed;
             ListViewGrid.ItemsSource = fwdOnlyList.OrderBy(a => a.Number).ToList();
             ListViewGrid.Visibility = Visibility.Visible;
         }
@@ -763,48 +872,57 @@ namespace ThinkVoipTool
 
         private void DisplayBilledUserExtensions()
         {
-            _lastView = Views.BilledToClient;
-            var billedToClient = GetBilledUserExtensions(_extensionList);
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                _lastView = Views.BilledToClient;
+                var billedToClient = GetBilledUserExtensions(_extensionList);
 
-            PhoneListViewGrid.Visibility = Visibility.Hidden;
-            ListViewGrid.ItemsSource = billedToClient.OrderBy(a => a.Number).ToList();
-            ListViewGrid.Visibility = Visibility.Visible;
+                PhoneListViewGrid.Visibility = Visibility.Collapsed;
+                ListViewGrid.ItemsSource = billedToClient!.OrderBy(a => a.Number).ToList();
+                ListViewGrid.Visibility = Visibility.Visible;
+            }
         }
 
 
         private async void OnShowTtgClientsClick(object sender, RoutedEventArgs e)
         {
-            Settings.Default.showTtgClients = ShowTtgCheckbox.IsChecked;
-            Settings.Default.Save();
-            await UpdateCustomerList();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                Settings.Default.showTtgClients = ShowTtgCheckbox.IsChecked;
+                Settings.Default.Save();
+                await UpdateCustomerList();
+            }
         }
 
 
         private static void OpenUrl(string url)
         {
-            try
+            using (new OverrideCursor(Cursors.Wait))
             {
-                Process.Start(url);
-            }
-            catch
-            {
-                // hack because of this: https://github.com/dotnet/corefx/issues/10361
-                if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                try
                 {
-                    url = url.Replace("&", "^&");
-                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    Process.Start(url);
                 }
-                else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                catch
                 {
-                    Process.Start("xdg-open", url);
-                }
-                else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                {
-                    Process.Start("open", url);
-                }
-                else
-                {
-                    throw;
+                    // hack because of this: https://github.com/dotnet/corefx/issues/10361
+                    if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        url = url.Replace("&", "^&");
+                        Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") {CreateNoWindow = true});
+                    }
+                    else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                    {
+                        Process.Start("xdg-open", url);
+                    }
+                    else if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                    {
+                        Process.Start("open", url);
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
         }
@@ -812,40 +930,46 @@ namespace ThinkVoipTool
 
         private async void openConfluenceButton_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            using (new OverrideCursor(Cursors.Wait))
             {
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
                 _companyId = selectedCompany.company.id;
+
+                var company = await _cwClient?.GetCompany(_companyId)!;
+                var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
+
+                OpenUrl("https://docs.think-team.com" + url);
             }
-
-            var company = await _cwClient.GetCompany(_companyId);
-            var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
-
-            OpenUrl("https://docs.think-team.com" + url);
         }
 
         private async void open3cxPage_Click(object sender, RoutedEventArgs e)
         {
-            var company = await _cwClient.GetCompany(_companyId);
-            var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
-            var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                var company = await _cwClient?.GetCompany(_companyId)!;
+                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+                var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
 
-            var hostName = loginInfo.HostName;
-            var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
+                var hostName = loginInfo.HostName;
+                var cleanedHostName = Regex.Replace(hostName, @"/api/", string.Empty);
 
-            OpenUrl(cleanedHostName);
+                OpenUrl(cleanedHostName);
+            }
         }
 
         private async void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            try
+            using (new OverrideCursor(Cursors.Wait))
             {
-                await UpdateDisplay();
-            }
-            catch
-            {
-                await UpdateSelectedCompanyInfo();
+                try
+                {
+                    await UpdateDisplay();
+                }
+                catch
+                {
+                    await UpdateSelectedCompanyInfo();
+                }
             }
         }
 
@@ -865,14 +989,17 @@ namespace ThinkVoipTool
             CurrentExtension = selectedItem?.Number;
             CurrentExtensionClass = selectedItem;
 
-            var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
-            if(result == "Failed")
+            using (new OverrideCursor(Cursors.Wait))
             {
-                MessageBox.Show("Failed to set as admin", "Error");
-            }
-            else
-            {
-                MessageBox.Show("Success");
+                var result = await ThreeCxClient?.MakeExtensionAdmin(CurrentExtension)!;
+                if(result == "Failed")
+                {
+                    MessageBox.Show("Failed to set as admin", "Error");
+                }
+                else
+                {
+                    MessageBox.Show("Success");
+                }
             }
         }
 
@@ -890,7 +1017,7 @@ namespace ThinkVoipTool
 
             IsAuthenticated = false;
             IsAdmin = false;
-            AdminMenu.Visibility = Visibility.Hidden;
+            AdminMenu.Visibility = Visibility.Collapsed;
             ExtensionRemoveButton.IsEnabled = false;
             ResetPasswordMenuItem.IsEnabled = false;
             MakeExtAdminMenuItem.IsEnabled = false;
@@ -900,92 +1027,140 @@ namespace ThinkVoipTool
 
         private async void Billing_OnClick(object sender, RoutedEventArgs e)
         {
-            if(BillingButton.IsChecked)
+            _isBilling = !_isBilling;
+
+            using (new OverrideCursor(Cursors.Wait))
             {
-                HideExtensionUiElements();
-                var billing = new Billing.Billing();
-                _skySwitchDomainsList = await billing.SkySwitchDomains();
-                CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
-                CustomersList.DisplayMemberPath = "Description";
+                ResetPasswordMenuItem.IsEnabled = !ResetPasswordMenuItem.IsEnabled;
+
+                if(_isBilling)
+                {
+                    HideExtensionUiElements();
+                    var billing = new Billing.Billing();
+                    _skySwitchDomainsList = await billing.SkySwitchDomains();
+                    _skySwitchDomainsList.RemoveAll(a => a.Description.Contains("Think Technologies Group") || a.Description.Contains("DemoTrunk"));
+                    CustomersList.ItemsSource = _skySwitchDomainsList.OrderBy(a => a.Domain);
+                    CustomersList.DisplayMemberPath = "Description";
+                }
+                else
+                {
+                    HideBillingUiElementsVisibility();
+                    await UpdateCustomerList();
+                }
             }
-            else
+        }
+
+        private void HideBillingUiElementsVisibility()
+        {
+            var children = MainWindowGrid.Children;
+            foreach (UIElement? child in children)
             {
-                await UpdateCustomerList();
+                if(child is Image {Name: "ThinkyMainImage"})
+                {
+                    child.Opacity = 1;
+                    child.Visibility = Visibility.Visible;
+                }
+
+                if(child is VirtualizingStackPanel childStack)
+                {
+                    if(child.IsVisible)
+                    {
+                        childStack.Children.Clear();
+                        child.Visibility = Visibility.Collapsed;
+                    }
+                }
             }
+
+            SizeToContent = SizeToContent.Width;
         }
 
         private void HideExtensionUiElements()
         {
             var children = MainWindowGrid.Children;
 
-            foreach (UIElement child in children)
+
+            foreach (UIElement? child in children)
             {
-                if(child is ListBox listBox)
+                switch (child)
                 {
-                    if(listBox.Name == ListViewGrid.Name || listBox.Name == PhoneListViewGrid.Name)
-                    {
-                        child.Visibility = Visibility.Hidden;
-                    }
-                    else
-                    {
-                        continue;
-                    }
-                }
+                    case TextBlock _:
 
-                if(child is Menu)
-                {
-                    continue;
+                    case ListView _:
+                        child.Visibility = Visibility.Collapsed;
+                        break;
+                    case ListBox _:
+                    case Menu _:
+                    case Image {Name: "ThinkyTitleImage"}:
+                        break;
+                    case Image {Name: "ThinkyMainImage"}:
+                        child.Opacity = 1;
+                        child.Visibility = Visibility.Visible;
+                        break;
+                    default:
+                        child!.Visibility = Visibility.Collapsed;
+                        break;
                 }
-
-                if(child is Image newChild)
-                {
-                    if(newChild.Name == "ThinkyTitleImage")
-                    {
-                        continue;
-                    }
-                }
-
-                child.Visibility = Visibility.Hidden;
             }
 
-
-            // ListViewGrid.Visibility = Visibility.Hidden;
-            // PhoneListViewGrid.Visibility = Visibility.Hidden;
+            ExtensionsHeader.Text = "Extensions: ";
+            ForwardingOnlyExtensionsCount.Text = "";
+            BilledUserExtensionsCount.Text = "";
+            ExtensionsTotal.Text = "";
+            InValidExtensions.Text = "";
+            TotalValidExtensions.Text = "";
+            PhonesTotal.Text = "";
+            VoicemailOnlyExtensionsCount.Text = "";
+            SizeToContent = SizeToContent.Width;
         }
 
         private void ShowExtensionUiElements()
         {
             var children = MainWindowGrid.Children;
-            foreach (UIElement child in children)
+            foreach (UIElement? child in children)
             {
-                if(child is ListBox)
+                switch (child)
                 {
-                    continue;
+                    case ListBox _:
+                    case Menu _:
+                    case Image {Name: "ThinkyTitleImage"}:
+                        break;
+                    default:
+                        if(child != null)
+                        {
+                            child.Visibility = Visibility.Visible;
+                        }
+
+                        break;
                 }
+            }
 
-                if(child is TextBlock textBlock)
-                {
-                    if(textBlock.Name == "PleaseWaitTextBlock")
-                    {
-                        continue;
-                    }
-                }
+            SizeToContent = SizeToContent.Width;
+        }
+    }
 
+    public class OverrideCursor : IDisposable
+    {
+        private static readonly Stack<Cursor> CursorStack = new Stack<Cursor>();
 
-                if(child is Menu)
-                {
-                    continue;
-                }
+        public OverrideCursor(Cursor changeToCursor)
+        {
+            CursorStack.Push(changeToCursor);
 
-                if(child is Image newChild)
-                {
-                    if(newChild.Name == "ThinkyTitleImage")
-                    {
-                        continue;
-                    }
-                }
+            if(Mouse.OverrideCursor != changeToCursor)
+            {
+                Mouse.OverrideCursor = changeToCursor;
+            }
+        }
 
-                child.Visibility = Visibility.Visible;
+        void IDisposable.Dispose()
+        {
+            CursorStack.Pop();
+
+            var cursor = CursorStack.Count > 0 ? CursorStack.Peek() : null;
+
+            if(cursor != Mouse.OverrideCursor)
+            {
+                Mouse.OverrideCursor = cursor;
             }
         }
     }

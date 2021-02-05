@@ -1,5 +1,7 @@
 ﻿using System;
 
+// ReSharper disable InconsistentNaming
+
 namespace ThinkVoipTool.Models
 {
     public class BaseModels

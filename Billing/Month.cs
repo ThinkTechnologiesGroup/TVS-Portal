@@ -24,6 +24,7 @@ namespace ThinkVoipTool.Billing
         private readonly string _name;
         private readonly string _startDay = "1";
         private readonly string _year;
+        private string _callsMade;
         private string _lastDay;
         private string _minutesUsed;
 
@@ -52,6 +53,12 @@ namespace ThinkVoipTool.Billing
         {
             get => _minutesUsed;
             set => _minutesUsed = value;
+        }
+
+        public string CallsMade
+        {
+            get => _callsMade;
+            set => _callsMade = value;
         }
     }
 }

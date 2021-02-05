@@ -3,8 +3,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using ThinkVoipTool.Properties;
+using static ThinkVoipTool.MainWindow;
 
 namespace ThinkVoipTool
 {
@@ -13,8 +15,6 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class LoginWindow
     {
-        //private readonly MainWindow _mainWindow;
-
         public LoginWindow()
         {
             InitializeComponent();
@@ -35,35 +35,38 @@ namespace ThinkVoipTool
             ResultLabel.Visibility = Visibility.Visible;
 
 
-            var username = UserNameEntry.Text.StripDomain();
-            var password = PasswordEntry.Password;
-
-            if(!ValidateEntries(username, password))
+            using (new OverrideCursor(Cursors.Wait))
             {
-                DisplayLoginResultInfo(Brushes.Red, "Please fill out all fields.");
-                return;
-            }
+                var username = UserNameEntry.Text.StripDomain();
+                var password = PasswordEntry.Password;
 
-            DisplayLoginResultInfo(Brushes.Green, "Attempting Login...");
-
-
-            if(await RunLogonProcess(username, password))
-            {
-                DisplayLoginResultInfo(Brushes.Green, "Success");
-                MainWindow.IsAuthenticated = true;
-                SaveUsername();
-
-                if(RememberMeCheckBox.IsChecked != null && (bool) RememberMeCheckBox.IsChecked)
+                if(!ValidateEntries(username, password))
                 {
-                    SavePassword(password);
+                    DisplayLoginResultInfo(Brushes.Red, "Please fill out all fields.");
+                    return;
                 }
 
+                DisplayLoginResultInfo(Brushes.Green, "Attempting Login...");
 
-                Close();
-            }
-            else
-            {
-                DisplayLoginResultInfo(Brushes.Red, "Login Failed");
+
+                if(await RunLogonProcess(username, password))
+                {
+                    DisplayLoginResultInfo(Brushes.Green, "Success");
+                    IsAuthenticated = true;
+                    SaveUsername();
+
+                    if(RememberMeCheckBox.IsChecked != null && (bool) RememberMeCheckBox.IsChecked)
+                    {
+                        SavePassword(password);
+                    }
+
+
+                    Close();
+                }
+                else
+                {
+                    DisplayLoginResultInfo(Brushes.Red, "Login Failed");
+                }
             }
         }
 

@@ -1,25 +1,28 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
-    <ApplicationIcon>Resources\Thinky.ico</ApplicationIcon>
-    <AssemblyName>TVSPortal</AssemblyName>
-    <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
-    <Platforms>AnyCPU;x64</Platforms>
-    <PackageId>ThinkVoipPortal</PackageId>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>TVSPortal.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <AnalysisLevel>latest</AnalysisLevel>
-    <Version>1</Version>
-    <Authors>Matt Wiener</Authors>
-    <Company>Think VoIP Services</Company>
-    <NeutralLanguage>en</NeutralLanguage>
-    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+      <OutputType>WinExe</OutputType>
+      <LangVersion>8</LangVersion>
+      <TargetFramework>netcoreapp3.1</TargetFramework>
+      <UseWPF>true</UseWPF>
+      <ApplicationIcon>Resources\Thinky.ico</ApplicationIcon>
+      <AssemblyName>TVSPortal</AssemblyName>
+      <PackageIcon>Think-VoIP-Thinky.png</PackageIcon>
+      <Platforms>AnyCPU;x64</Platforms>
+      <PackageId>ThinkVoipPortal</PackageId>
+      <SignAssembly>true</SignAssembly>
+      <AssemblyOriginatorKeyFile>TVSPortal.snk</AssemblyOriginatorKeyFile>
+      <DelaySign>false</DelaySign>
+      <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+      <EnableNETAnalyzers>true</EnableNETAnalyzers>
+      <AnalysisLevel>latest</AnalysisLevel>
+      <Version>1</Version>
+      <Authors>Matt Wiener</Authors>
+      <Company>Think VoIP Services</Company>
+      <NeutralLanguage>en</NeutralLanguage>
+      <AssemblyVersion>1.0.0.1</AssemblyVersion>
+      <Nullable>annotations</Nullable>
+
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,99 +41,40 @@
     <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Fonts\JetBrainsMono-Bold-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Bold.ttf" />
-    <None Remove="Fonts\JetBrainsMono-ExtraBold-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-ExtraBold.ttf" />
-    <None Remove="Fonts\JetBrainsMono-ExtraLight-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-ExtraLight.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Light-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Light.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Medium-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Medium.ttf" />
-    <None Remove="Fonts\JetBrainsMono-Regular.ttf" />
-    <None Remove="Fonts\JetBrainsMono-SemiLight-Italic.ttf" />
-    <None Remove="Fonts\JetBrainsMono-SemiLight.ttf" />
-    <None Remove="Resources\Think-VoIP-Thinky Smaller.png" />
-    <None Remove="Resources\Think-VoIP-Thinky.png" />
-    <None Remove="Resources\Think-VoIP-v2-gray.png" />
-    <None Remove="Resources\Thinky %281%29.png" />
-    <None Remove="Resources\Thinky.ico" />
-    <None Remove="Resources\Thinky.png" />
-  </ItemGroup>
 
-  <ItemGroup>
-      <PackageReference Include="Azure.Identity" Version="1.3.0"/>
-      <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0"/>
-      <PackageReference Include="Costura.Fody" Version="4.1.0"/>
-      <PackageReference Include="CsvHelper" Version="22.1.1"/>
-      <PackageReference Include="MaterialDesignThemes" Version="3.2.0"/>
-      <PackageReference Include="MessagePack" Version="2.2.85"/>
-      <PackageReference Include="Microsoft.Identity.Client" Version="4.25.0"/>
-      <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.16.8"/>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
-      <PackageReference Include="RestSharp" Version="106.11.7"/>
-      <PackageReference Include="Serilog.Sinks.File" Version="4.1.0"/>
-      <PackageReference Include="ShowMeTheXAML.MSBuild" Version="2.0.0"/>
-      <PackageReference Include="System.DirectoryServices.AccountManagement" Version="5.0.0"/>
-      <PackageReference Include="System.DirectoryServices.Protocols" Version="5.0.0"/>
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Azure.Identity" Version="1.3.0"/>
+        <PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.1.0"/>
+        <PackageReference Include="Costura.Fody" Version="4.1.0"/>
+        <PackageReference Include="CsvHelper" Version="22.1.1"/>
+        <PackageReference Include="MaterialDesignThemes" Version="3.2.0"/>
+        <PackageReference Include="MessagePack" Version="2.2.85"/>
+        <PackageReference Include="Microsoft.Identity.Client" Version="4.25.0"/>
+        <PackageReference Include="Microsoft.Identity.Client.Extensions.Msal" Version="2.16.8"/>
+        <PackageReference Include="Microsoft.Net.Compilers.Toolset" Version="3.8.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
+        <PackageReference Include="RestSharp" Version="106.11.7"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="4.1.0"/>
+        <PackageReference Include="ShowMeTheXAML.MSBuild" Version="2.0.0"/>
+        <PackageReference Include="System.DirectoryServices.AccountManagement" Version="5.0.0"/>
+        <PackageReference Include="System.DirectoryServices.Protocols" Version="5.0.0"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <Resource Include="Fonts\JetBrainsMono-Bold-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Bold.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-ExtraBold-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-ExtraBold.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-ExtraLight-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-ExtraLight.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Light-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Light.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Medium-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Medium.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-Regular.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-SemiLight-Italic.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Fonts\JetBrainsMono-SemiLight.ttf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Think-VoIP-Thinky Smaller.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Think-VoIP-Thinky.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Think-VoIP-v2-gray.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Resources\Thinky (1).png">
+    <ItemGroup>
+
+        <Resource Include="Resources\Think-VoIP-Thinky Smaller.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Resources\Think-VoIP-Thinky.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Resources\Think-VoIP-v2-gray.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Resource>
+        <Resource Include="Resources\Thinky (1).png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Thinky.ico">

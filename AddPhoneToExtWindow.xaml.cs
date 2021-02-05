@@ -8,16 +8,13 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class AddPhoneToExtWindow
     {
-        public AddPhoneToExtWindow(string extensionNumber)
+        public AddPhoneToExtWindow(string? extensionNumber)
         {
             InitializeComponent();
-            extension = extensionNumber;
             var extensionDisplayString = "Selected Extension: " + extensionNumber;
             ExtTextBlock.Text = extensionDisplayString;
             ExtTextBlock.Visibility = Visibility.Visible;
         }
-
-        public string extension { get; }
 
         private async void AddPhoneToExtension_Click(object sender, RoutedEventArgs e)
         {
@@ -33,7 +30,7 @@ namespace ThinkVoipTool
 
         private async Task SavePhone(string phoneType, string macAddress, string extensionNUmber)
         {
-            var result = await MainWindow.ThreeCxClient.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
+            var result = await MainWindow.ThreeCxClient!.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
 
             var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
 

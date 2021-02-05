@@ -14,24 +14,23 @@
         Title="Th!nk" Height="750" Width="1375" Loaded="Window_Loaded" Icon="/Resources/Thinky.png"
         SizeToContent="Width" WindowStartupLocation="CenterScreen" WindowStyle="SingleBorderWindow"
         Initialized="Window_Initialized" ContentRendered="OnContentRendered" KeyDown="Window_KeyDown"
-        BorderBrush="{DynamicResource MaterialDesignShadowBrush}" d:DataContext="{d:DesignInstance }">
+        BorderBrush="{DynamicResource MaterialDesignShadowBrush}">
 
 
     <Grid x:Name="MainWindowGrid" ContextMenuClosing="Grid_ContextMenuClosing" VerticalAlignment="Top"
           Grid.IsSharedSizeScope="True">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="20" />
-            <ColumnDefinition Width="Auto" SharedSizeGroup="CustomerList" />
-            <ColumnDefinition Width="Auto" SharedSizeGroup="Extensions" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <!--row 0 //file menu-->
-            <RowDefinition Height="45" />
+            <RowDefinition Height="45" SharedSizeGroup="Menu" />
             <!--row 1 // TVS Title Text-->
             <RowDefinition Height="105" />
             <!--row 2 //begin data grids and such -->
@@ -111,12 +110,12 @@
 
 
         </Grid.Resources>
-        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="1" Grid.RowSpan="19" Grid.ColumnSpan="6"
+        <Image x:Name="ThinkyMainImage" Grid.Row="3" Grid.Column="2" Grid.RowSpan="19" Grid.ColumnSpan="5"
                HorizontalAlignment="Center" Source="/Resources/Think-VoIP-Thinky.png" Stretch="Uniform" />
 
         <!--Main Menu-->
-        <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="8"
-              Visibility="Hidden" Padding="0" Height="Auto" Effect="{DynamicResource MaterialDesignShadowDepth1}">
+        <Menu x:Name="MainMenu" Grid.Column="0" FontSize="12" Grid.Row="0" Margin="0,0,0,10" Grid.ColumnSpan="7"
+              Visibility="Collapsed" Padding="0" Height="Auto" Effect="{DynamicResource MaterialDesignShadowDepth1}">
 
             <MenuItem x:Name="FileMenu" Header="_File">
                 <MenuItem Header="_Switch Theme" Click="OnThemeClick" />
@@ -125,9 +124,12 @@
 
 
             </MenuItem>
-            <MenuItem x:Name="AdminMenu" Header="_Admin" Visibility="Hidden">
+            <MenuItem x:Name="AdminMenu" Header="_Admin" Visibility="Collapsed">
 
-                <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Right"
+
+                <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
+                          IsEnabled="False" IsCheckable="True" HorizontalAlignment="Left" />
+                <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Left"
                           IsCheckable="True" Click="OnShowTtgClientsClick" />
                 <Separator />
 
@@ -138,8 +140,7 @@
 
                     </MenuItem.Icon>
                 </MenuItem>
-                <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
-                          IsEnabled="False" IsCheckable="True" />
+
 
             </MenuItem>
 
@@ -148,13 +149,8 @@
 
         <Image x:Name="ThinkyTitleImage" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0"
                Visibility="Visible" Grid.Row="1" Grid.Column="1"
-               Grid.ColumnSpan="7" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
+               Grid.ColumnSpan="6" Source="/Resources/Think-VoIP-v2-gray.png" Stretch="Uniform" />
 
-
-        <!--PLease wait label-->
-        <TextBlock x:Name="PleaseWaitTextBlock" Grid.Column="2" Grid.Row="3" Visibility="Hidden" FontWeight="Normal"
-                   Foreground="Red" Text="Please wait..."
-                   Margin="0,0,2,2" />
 
         <!--Customer ListBox-->
         <ListBox x:Name="CustomersList" Margin="0,0,4,0" Visibility="Hidden" BorderThickness="0,.5,1,0" Grid.Row="3"
@@ -167,13 +163,13 @@
         <!--extensions header-->
         <TextBlock x:Name="ExtensionsHeader" Text="Extensions: " MaxHeight="25" Margin="5,0,5,2" Grid.Row="3"
                    TextDecorations="Underline" VerticalAlignment="Top" Grid.Column="2" FontWeight="Bold"
-                   Visibility="Hidden" />
+                   Visibility="Collapsed" />
 
         <!--Total extensions-->
         <Button x:Name="ExtensionsTotalDisplay" Margin="5,4,5,2" BorderBrush="LightGray" MaxHeight="25" Grid.Row="4"
                 Grid.Column="2" VerticalAlignment="Top"
                 Content="Total Extensions:" HorizontalAlignment="Left" Click="ExtensionsTotalDisplay_Click"
-                Visibility="Hidden" Width="142" />
+                Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="ExtensionsTotal" Margin="5,4,5,2" Width="25" FontWeight="Bold" MaxHeight="25" Grid.Row="4"
                    Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -181,32 +177,32 @@
         <!--Invalid (operator,test users ) extensions-->
         <Button x:Name="ExtensionsTotalInvalid" BorderBrush="LightGray" Margin="5,4,5,2" MaxHeight="25" Grid.Row="5"
                 Grid.Column="2" Content="Operator/Tests:"
-                HorizontalAlignment="Left" Click="ExtensionsTotalInvalid_Click" Visibility="Hidden" Width="142" />
+                HorizontalAlignment="Left" Click="ExtensionsTotalInvalid_Click" Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="InValidExtensions" FontWeight="Bold" Margin="5,4,5,2" MaxHeight="25" Grid.Row="5"
                    Grid.Column="3"
                    Width="25" HorizontalAlignment="Left" />
 
-        <!--extensions seperator-->
-        <Separator x:Name="ExtSeperatorOperators" Margin="5,4,5,5" Grid.Column="2" BorderBrush="#FF8DC748" Grid.Row="6"
+        <!--extensions separator-->
+        <Separator x:Name="ExtSeparatorOperators" Margin="5,4,5,5" Grid.Column="2" BorderBrush="#FF8DC748" Grid.Row="6"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left" VerticalAlignment="Center"
-                   Grid.ColumnSpan="2" Visibility="Hidden" />
+                   Grid.ColumnSpan="2" Visibility="Collapsed" />
 
         <!--valid extensions-->
         <Button x:Name="ExtensionsTotalValid" BorderBrush="LightGray" MaxHeight="25" Margin="5,4,5,2" Grid.Row="7"
                 Grid.Column="2" Content="User Extensions:"
                 VerticalContentAlignment="Top" HorizontalAlignment="Left"
-                Click="ExtensionsTotalValid_Click" Visibility="Hidden" Width="142" />
+                Click="ExtensionsTotalValid_Click" Visibility="Collapsed" Width="142" />
 
         <TextBlock x:Name="TotalValidExtensions" FontWeight="Bold" MaxHeight="25" Grid.Row="7" Width="25"
                    HorizontalAlignment="Left" Margin="5,4,5,2" Grid.Column="3" />
 
         <!--Voicemail Only extensions-->
-        <Button x:Name="VoimailOnlyExtensionsDisplay" BorderBrush="LightGray" Grid.Row="8" Margin="5,4,5,2"
+        <Button x:Name="VoicemailOnlyExtensionsDisplay" BorderBrush="LightGray" Grid.Row="8" Margin="5,4,5,2"
                 Grid.Column="2"
                 MaxHeight="25" Content="Voicemail Only:"
                 VerticalAlignment="Top" HorizontalAlignment="Left" Click="VoicemailOnlyExtensionsDisplay_Click"
-                Visibility="Hidden" Width="142" />
+                Visibility="Collapsed" Width="142" />
         <TextBlock x:Name="VoicemailOnlyExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Margin="5,4,5,2"
                    Grid.Row="8" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
@@ -215,7 +211,7 @@
                 Margin="5,4,5,2"
                 MaxHeight="25" Width="142"
                 Content="Forwarding Only:" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Click="ForwardingOnlyExtensionsDisplay_Click" Visibility="Hidden" />
+                Click="ForwardingOnlyExtensionsDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="ForwardingOnlyExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Margin="5,4,5,2"
                    Grid.Row="9" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Left" />
@@ -225,53 +221,53 @@
                 Margin="5,4,5,2"
                 MaxHeight="25" Width="142"
                 Content="Billed to Client:" VerticalAlignment="Top" HorizontalAlignment="Left"
-                Click="BilledUserExtensionsDisplay_Click" Visibility="Hidden" />
+                Click="BilledUserExtensionsDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="BilledUserExtensionsCount" FontWeight="Bold" MaxHeight="25" Width="25" Grid.Row="10"
                    Grid.Column="3" Margin="5,4,5,2" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
-        <!--extensions seperator-->
-        <Separator x:Name="ExtSeperator" Grid.Column="2" Grid.Row="11" BorderThickness="3" Margin="5,4,5,5"
-                   VerticalAlignment="Center" Width="142" HorizontalAlignment="Left" Grid.ColumnSpan="3"
-                   BorderBrush="#FF8DC748" Visibility="Hidden" />
+        <!--extensions separator-->
+        <Separator x:Name="ExtSeparator" Grid.Column="2" Grid.Row="11" BorderThickness="3" Margin="5,4,5,5"
+                   VerticalAlignment="Center" Width="142" HorizontalAlignment="Left" Grid.ColumnSpan="2"
+                   BorderBrush="#FF8DC748" Visibility="Collapsed" />
 
         <!--Phones display-->
         <Button x:Name="PhonesTotalDisplay" BorderBrush="LightGray" MaxHeight="25" Grid.Row="12" Grid.Column="2"
                 Margin="5,4,5,2" VerticalAlignment="Top"
                 Content="Phones Detected:" Width="142"
-                HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Hidden" />
+                HorizontalAlignment="Left" Click="PhonesTotalDisplay_Click" Visibility="Collapsed" />
 
         <TextBlock x:Name="PhonesTotal" FontWeight="Bold" MaxHeight="25" Grid.Row="12" Width="25" Grid.Column="3"
                    VerticalAlignment="Center" Margin="5,4,5,2"
                    HorizontalAlignment="Left" />
 
-        <!--phones seperator-->
-        <Separator x:Name="PhoneSeperator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"
+        <!--phones separator-->
+        <Separator x:Name="PhoneSeparator" Grid.Column="2" Grid.Row="13" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
-                   Visibility="Hidden" BorderBrush="#FF8DC748" />
+                   Visibility="Collapsed" BorderBrush="#FF8DC748" />
 
         <!--Add buttons-->
         <Button x:Name="AddExt" HorizontalAlignment="Left" Grid.Row="14" Grid.Column="2" Margin="5,5,2,0"
                 MaxHeight="25" FontWeight="Normal" Background="#FF8DC748"
                 VerticalAlignment="Center" BorderBrush="Gray" BorderThickness="1" Content="Add Extension"
-                Visibility="Hidden" Click="AddExtension_Click" Width="142" />
+                Visibility="Collapsed" Click="AddExtension_Click" Width="142" />
 
         <Button x:Name="AddPhoneButton" Grid.Row="15" Margin="5,5,2,0" MaxHeight="25" Grid.Column="2"
                 FontWeight="Normal" Background="#FF8DC748" Width="142"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"
-                Content="  Add Phone  " Visibility="Hidden" Click="MenuItem_Add_New_Phone_Click" />
+                Content="  Add Phone  " Visibility="Collapsed" Click="MenuItem_Add_New_Phone_Click" />
 
-        <!--phones seperator-->
-        <Separator x:Name="RefreshSeperator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"
+        <!--phones separator-->
+        <Separator x:Name="RefreshSeparator" Grid.Column="2" Grid.Row="16" Margin="5,4,5,5" VerticalAlignment="Center"
                    BorderThickness="3" Width="142" HorizontalAlignment="Left"
-                   Visibility="Hidden" BorderBrush="#FF8DC748" />
+                   Visibility="Collapsed" BorderBrush="#FF8DC748" />
 
         <!--Refresh Button-->
 
         <Button x:Name="RefreshButton" Grid.Row="18" Margin="5,10,2,0" MaxHeight="25" Grid.Column="2" FontWeight="Bold"
                 Width="145"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray" BorderThickness="1"
-                Content="Refresh" Visibility="Hidden" Click="RefreshButton_Click"
+                Content="Refresh" Visibility="Collapsed" Click="RefreshButton_Click"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" />
 
         <!--Launch Pages-->
@@ -279,20 +275,21 @@
                 FontWeight="Bold" Width="65"
                 VerticalAlignment="top" HorizontalAlignment="Left" BorderBrush="Gray"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" BorderThickness="1" Content="Docs"
-                Visibility="Hidden" Click="openConfluenceButton_Click" />
+                Visibility="Collapsed" Click="openConfluenceButton_Click" />
 
-        <Button x:Name="Open3CxButton" Grid.Row="17" Margin="50,5,2,0"
+        <Button x:Name="Open3CxButton" Grid.Row="17" Margin="70,5,2,0"
                 Style="{DynamicResource MaterialDesignOutlinedButton}" MaxHeight="25" Grid.Column="2" FontWeight="Bold"
                 Width="65"
-                VerticalAlignment="top" HorizontalAlignment="Right" BorderBrush="Gray" BorderThickness="1"
-                Content="3cx " Visibility="Hidden" Click="open3cxPage_Click" />
+                VerticalAlignment="top" HorizontalAlignment="Center" BorderBrush="Gray" BorderThickness="1"
+                Content="3cx " Visibility="Collapsed" Click="open3cxPage_Click" />
 
 
         <!--Extensions and phones datagrid-->
-        <ListView x:Name="ListViewGrid" Visibility="Hidden" FontSize="14" Grid.Row="3" Grid.Column="5" Margin="5,0,0,0"
+        <ListView x:Name="ListViewGrid" Visibility="Collapsed" FontSize="14" Grid.Row="3" Grid.Column="5"
+                  Margin="5,0,0,0"
                   Grid.RowSpan="18" SelectionMode="Single" HorizontalContentAlignment="Stretch"
-                  HorizontalAlignment="Stretch"
-                  MinWidth="600" MinHeight="525" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="False"
+                  HorizontalAlignment="Center"
+                  MinWidth="600" MinHeight="525" IsSynchronizedWithCurrentItem="False"
                   AlternationCount="2" ItemContainerStyle="{DynamicResource AlternatingWithTriggers}"
                   ScrollViewer.CanContentScroll="True" UseLayoutRounding="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -318,8 +315,7 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=Number}" TextAlignment="Center" Width="Auto"
-                                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                           d:DataContext="{d:DesignInstance }" />
+                                           Style="{DynamicResource MaterialDesignSubtitle1TextBlock}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
 
@@ -338,8 +334,7 @@
                                           BorderBrush="Black" BorderThickness="1"
                                           Style="{DynamicResource MaterialDesignFilterChipCheckBox}" IsEnabled="False"
                                           Background="{DynamicResource AttentionToActionBrush}"
-                                          OverridesDefaultStyle="False" ForceCursor="False"
-                                          d:DataContext="{d:DesignInstance }" />
+                                          OverridesDefaultStyle="False" ForceCursor="False" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -349,10 +344,10 @@
             </ListView.View>
         </ListView>
 
-        <ListView x:Name="PhoneListViewGrid" Visibility="Hidden" Margin="5,0,0,0" FontSize="14" Grid.Row="3"
+        <ListView x:Name="PhoneListViewGrid" Visibility="Collapsed" Margin="5,0,0,0" FontSize="14" Grid.Row="3"
                   Grid.Column="5" Grid.RowSpan="18" SelectionMode="Single" HorizontalContentAlignment="Stretch"
-                  HorizontalAlignment="Stretch"
-                  MinWidth="600" MinHeight="600" Grid.ColumnSpan="2" IsSynchronizedWithCurrentItem="False"
+                  HorizontalAlignment="Center"
+                  MinWidth="600" MinHeight="600" IsSynchronizedWithCurrentItem="False"
                   AlternationCount="2" ItemContainerStyle="{DynamicResource AlternatingWithTriggers}"
                   ScrollViewer.CanContentScroll="True" UseLayoutRounding="True"
                   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -372,7 +367,7 @@
                             <DataTemplate>
                                 <TextBlock Text="{Binding Path=ExtensionNumber}"
                                            Style="{DynamicResource MaterialDesignSubtitle1TextBlock}"
-                                           TextAlignment="Center" Width="Auto" d:DataContext="{d:DesignInstance }" />
+                                           TextAlignment="Center" Width="Auto" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -387,14 +382,23 @@
                     <GridViewColumn Header="Mac Address" Width="Auto">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Path=MacAddress}" TextAlignment="Center" MaxWidth="200"
-                                           d:DataContext="{d:DesignInstance }" />
+                                <TextBlock Text="{Binding Path=MacAddress}" TextAlignment="Center" MaxWidth="200" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
+
+        <VirtualizingStackPanel x:Name="BillingMonthsPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Grid.Column="2" Visibility="Collapsed" VirtualizationMode="Recycling" />
+        <VirtualizingStackPanel x:Name="BillingMinutesPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Grid.Column="3" Visibility="Collapsed" VirtualizationMode="Recycling" />
+        <VirtualizingStackPanel x:Name="BillingCallsPanel" Grid.Row="3" HorizontalAlignment="Center"
+                                VerticalAlignment="Top"
+                                Grid.Column="4" Visibility="Collapsed" VirtualizationMode="Recycling" />
 
 
     </Grid>

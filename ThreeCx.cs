@@ -101,7 +101,7 @@ namespace ThinkVoipTool
             return saveResult;
         }
 
-        public async Task<string> MakeExtensionAdmin(string extensionNumber)
+        public async Task<string> MakeExtensionAdmin(string? extensionNumber)
         {
             //  {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessEnabled"}]},"PropertyValue":true}
             // {"Path":{"ObjectId":"6","PropertyPath":[{"Name":"AccessRole"}]},"PropertyValue":"AccessRole.GlobalExtensionManager"}

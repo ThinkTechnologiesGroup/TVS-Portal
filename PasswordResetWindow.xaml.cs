@@ -8,9 +8,9 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class PasswordResetWindow
     {
+        private ThreeCxLoginInfo _loginInfo;
+        private string _pageId;
         private ThreeCxClient _threeCxClient;
-        private ThreeCxLoginInfo loginInfo;
-        private string pageId;
 
         public PasswordResetWindow()
         {
@@ -28,15 +28,15 @@ namespace ThinkVoipTool
         {
             var password1 = FirstPassword.Password;
             var password2 = SecondPassword.Password;
-            loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId.Replace(", PA", ""));
-            var originalPassword = loginInfo.Password;
+            _loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(_pageId.Replace(", PA", ""));
+            var originalPassword = _loginInfo.Password;
 
             if(password1 != password2)
             {
                 MessageBox.Show(this, "Passwords do not match.", "Failed");
             }
 
-            var confUpdateResponse = Docs.ConfClient.UpdateThreeCxPassword(pageId, password1);
+            var confUpdateResponse = Docs.ConfClient.UpdateThreeCxPassword(_pageId, password1);
 
             if(confUpdateResponse == ResponseStatus.Error)
             {
@@ -58,13 +58,13 @@ namespace ThinkVoipTool
             else
             {
                 //Meh...
-                var revertConfluenceUpdateStatus = Docs.ConfClient.UpdateThreeCxPassword(pageId, originalPassword);
+                var revertConfluenceUpdateStatus = Docs.ConfClient.UpdateThreeCxPassword(_pageId, originalPassword);
 
                 if(revertConfluenceUpdateStatus == ResponseStatus.Error)
                 {
                     //Fuck, did the internet die?
                     MessageBox.Show(this, "Failed to update 3cx and was unable to revert changes to confluence \n" +
-                                          $"Please check page ID:{pageId} and update the password back to \"{originalPassword}\"", "Failed");
+                                          $"Please check page ID:{_pageId} and update the password back to \"{originalPassword}\"", "Failed");
                 }
 
                 MessageBox.Show(this, "Failed to update 3cx server. Changes to confluence have been reverted.", "Failed");
@@ -83,9 +83,9 @@ namespace ThinkVoipTool
             var cwClient = new ConnectWiseConnection(MainWindow.CwApiUser, MainWindow.CwApiKey);
 
             var company = await cwClient.GetCompany(companyId);
-            pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", ""));
-            loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
-            _threeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
+            _pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", ""));
+            _loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(_pageId);
+            _threeCxClient = new ThreeCxClient(_loginInfo.HostName, _loginInfo.Username, _loginInfo.Password);
         }
     }
 }

@@ -36,26 +36,28 @@ namespace ThinkVoipTool.Billing
 
         public async Task<List<SkySwitchDomains>> SkySwitchDomains()
         {
-            if(_skySwitchDomains.Count == 0)
+            if(_skySwitchDomains.Count != 0)
             {
-                var token = new SkySwitchTelcoToken();
-                var authToken = "Bearer " + token.AccessToken;
-                var url = "https://telco-api.skyswitch.com/accounts/c6cb9e70-42b9-11ea-b482-e365812db6e4/pbx/domains";
-                var client = new RestClient(url);
-                var request = new RestRequest(Method.GET);
-                request.AddHeader("Authorization", authToken);
-                var response = await client.ExecuteGetAsync(request);
-                var result = JsonConvert.DeserializeObject<JsonObject>(response.Content);
-                foreach (JObject domain in result.Values)
+                return _skySwitchDomains;
+            }
+
+            //var token = new SkySwitchTelcoToken();
+            var authToken = "Bearer " + MainWindow.SkySwitchTelcoToken.AccessToken;
+            var url = "https://telco-api.skyswitch.com/accounts/c6cb9e70-42b9-11ea-b482-e365812db6e4/pbx/domains";
+            var client = new RestClient(url);
+            var request = new RestRequest(Method.GET);
+            request.AddHeader("Authorization", authToken);
+            var response = await client.ExecuteAsync(request);
+            var result = JsonConvert.DeserializeObject<JsonObject>(response.Content);
+            foreach (JObject domain in result.Values)
+            {
+                var skySwitchDomain = new SkySwitchDomains
                 {
-                    var skySwitchDomain = new SkySwitchDomains
-                    {
-                        Domain = domain["domain"]?.Value<string>(),
-                        Reseller = domain["reseller"]?.Value<string>(),
-                        Description = domain["description"]?.Value<string>()
-                    };
-                    _skySwitchDomains.Add(skySwitchDomain);
-                }
+                    Domain = domain["domain"]?.Value<string>(),
+                    Reseller = domain["reseller"]?.Value<string>(),
+                    Description = domain["description"]?.Value<string>()
+                };
+                _skySwitchDomains.Add(skySwitchDomain);
             }
 
             return _skySwitchDomains;

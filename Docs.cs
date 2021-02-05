@@ -12,6 +12,8 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Serilog;
 
+// ReSharper disable InconsistentNaming
+
 
 // ReSharper disable UnusedMember.Global
 
@@ -19,7 +21,7 @@ namespace ThinkVoipTool
 {
     internal class Docs
     {
-        public static Docs ConfClient = new Docs("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
+        public static readonly Docs ConfClient = CreateInstance("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
         private readonly string _authKey;
         private readonly string _baseUrl;
 
@@ -28,7 +30,7 @@ namespace ThinkVoipTool
 
         private RestRequest _restRequest;
 
-        public Docs(string baseUrl, string userName, string password)
+        private Docs(string baseUrl, string userName, string password)
         {
             _baseUrl = baseUrl;
             _scaffoldingUrl = baseUrl.Replace("api/", "");
@@ -36,7 +38,9 @@ namespace ThinkVoipTool
             _authKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}"));
         }
 
-        public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser") ?? string.Empty;
+        private static Docs CreateInstance(string baseUrl, string userName, string password) => new Docs(baseUrl, userName, password);
+
+        public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser");
 
         public string FindThreeCxPageId(string spaceKey)
         {
@@ -87,7 +91,7 @@ namespace ThinkVoipTool
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
                 if(getUrl)
                 {
-                    return results.First().links.tinyui;
+                    return results.First().Links.tinyui;
                 }
 
                 return results.First().Id;
@@ -116,7 +120,7 @@ namespace ThinkVoipTool
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
-                return results.First().links.tinyui;
+                return results.First().Links.tinyui;
             }
             catch (Exception e)
             {
@@ -215,7 +219,7 @@ namespace ThinkVoipTool
 
 
         [JsonProperty("_links")]
-        public Links links { get; set; }
+        public Links Links { get; set; }
 
         //public string type { get; set; }
         //public string status { get; set; }
@@ -768,6 +772,7 @@ namespace ThinkVoipTool
                 var manufacturer = new ThreeCxPageMacros
                 {
                     Macro = "text-data",
+                    // ReSharper disable once StringLiteralTypo
                     Name = "Text-VoipPhonesManucturer",
                     Value = phone.Vendor
                 };
