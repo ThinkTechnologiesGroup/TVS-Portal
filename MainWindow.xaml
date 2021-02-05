@@ -126,10 +126,11 @@
             </MenuItem>
             <MenuItem x:Name="AdminMenu" Header="_Admin" Visibility="Collapsed">
 
-                <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Right"
-                          IsCheckable="True" Click="OnShowTtgClientsClick" />
+
                 <MenuItem x:Name="BillingButton" Header="_Billing" Click="Billing_OnClick" Visibility="Visible"
-                          IsEnabled="False" IsCheckable="True" />
+                          IsEnabled="False" IsCheckable="True" HorizontalAlignment="Left" />
+                <MenuItem Header="Show TTG Clients" x:Name="ShowTtgCheckbox" HorizontalAlignment="Left"
+                          IsCheckable="True" Click="OnShowTtgClientsClick" />
                 <Separator />
 
                 <MenuItem Header="Reset Password" x:Name="ResetPasswordMenuItem" Click="Menu_Item_ResetPassword"
