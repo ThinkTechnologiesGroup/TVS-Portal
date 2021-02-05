@@ -214,7 +214,7 @@ namespace ThinkVoipTool
             }
         }
 
-        private async void AddExtention_Click(object sender, RoutedEventArgs e)
+        private async void AddExtenstion_Click(object sender, RoutedEventArgs e)
         {
             await AddExtension();
         }
@@ -232,14 +232,7 @@ namespace ThinkVoipTool
 
             extNumber = AvailableExtensionsDropDownList.Text;
 
-            if(IsValidEmail(EmailEntry.Text))
-            {
-                emailAddress = EmailEntry.Text;
-            }
-            else
-            {
-                emailAddress = "";
-            }
+            emailAddress = IsValidEmail(EmailEntry.Text) ? EmailEntry.Text : "";
 
             mobileNumber = MobileNumberEntry.Text
                 .Replace("-", "")

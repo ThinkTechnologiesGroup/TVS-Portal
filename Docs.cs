@@ -141,13 +141,13 @@ namespace ThinkVoipTool
                 var response = _restClient.Execute(_restRequest).Content;
                 var result = JsonConvert.DeserializeObject<List<ThreeCxPageMacros>>(response);
                 var hostName = result.FirstOrDefault(table => table.Name == "Text-3cxManagementAdminURL")?.Value;
-                hostName = StripHtml(hostName);
+                hostName = StripHtml(hostName!);
 
                 return new ThreeCxLoginInfo
                 {
                     HostName = hostName + "/api/",
-                    Username = result.FirstOrDefault(table => table.Name == "Text-3cxManagementAdminUsername")?.Value,
-                    Password = result.FirstOrDefault(table => table.Name == "Text-3cxManagementAdminPassword")?.Value
+                    Username = result.FirstOrDefault(table => table.Name == "Text-3cxManagementAdminUsername")?.Value!,
+                    Password = result.FirstOrDefault(table => table.Name == "Text-3cxManagementAdminPassword")?.Value!
                 };
             }
             catch (Exception e)
@@ -163,10 +163,10 @@ namespace ThinkVoipTool
             _restClient = new RestClient(_scaffoldingUrl + "scaffolding/1.0/api/form/" + pageId);
             _restRequest = new RestRequest(Method.PUT);
             _restRequest.AddHeader("Authorization", "Basic " + _authKey);
-            var passwordMacro = new ThreeCxPageMacros();
-            passwordMacro.Macro = "text-data";
-            passwordMacro.Name = "Text-3cxManagementAdminPassword";
-            passwordMacro.Value = newPassword;
+            var passwordMacro = new ThreeCxPageMacros
+            {
+                Macro = "text-data", Name = "Text-3cxManagementAdminPassword", Value = newPassword
+            };
             macroList.Add(passwordMacro);
             var serializedInfo = JsonConvert.SerializeObject(macroList);
             _restRequest.AddJsonBody(serializedInfo);

@@ -22,7 +22,7 @@ namespace ThinkVoipTool
             if(PhonesDropDownList.SelectedItem is Phone selectedPhone)
             {
                 var phoneType = selectedPhone.Model;
-                await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber);
+                await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber!);
             }
 
             Close();
