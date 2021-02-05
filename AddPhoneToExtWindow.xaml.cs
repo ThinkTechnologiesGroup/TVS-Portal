@@ -30,7 +30,7 @@ namespace ThinkVoipTool
 
         private async Task SavePhone(string phoneType, string macAddress, string extensionNUmber)
         {
-            var result = await MainWindow.ThreeCxClient.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
+            var result = await MainWindow.ThreeCxClient!.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
 
             var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
 

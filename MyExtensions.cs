@@ -5,7 +5,7 @@ namespace ThinkVoipTool
 {
     public static class MyExtensions
     {
-        private static readonly Dictionary<long, long> History = new Dictionary<long, long>();
+        private static readonly Dictionary<long, long> History = new();
         public static string StripDomain(this string messyString) => Regex.Replace(messyString, @"(.*)\\|@(.*)", string.Empty);
 
         public static string CleanUpMacAddress(this string messyString) => Regex.Replace(messyString, @"(-|:*)", string.Empty);

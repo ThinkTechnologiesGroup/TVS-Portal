@@ -23,7 +23,7 @@ namespace ThinkVoipTool
         private readonly MainWindow mainWindow;
         private readonly ThreeCxClient threeCxClient;
         private readonly bool update;
-        private HashSet<string> availableExtensionNumbers = new HashSet<string>();
+        private HashSet<string> availableExtensionNumbers = new();
         private AvailableExtensionNumbers availableExtensionsObj;
         private string currentExtension;
         private string emailAddress;
@@ -341,8 +341,8 @@ namespace ThinkVoipTool
     public class AvailableExtensionNumbers
     {
         private readonly int extensionDigitCount;
-        private readonly HashSet<string> extensionsToFiler = new HashSet<string>();
-        public readonly HashSet<string> PossibleExtensions = new HashSet<string>();
+        private readonly HashSet<string> extensionsToFiler = new();
+        public readonly HashSet<string> PossibleExtensions = new();
 
         public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension> systemExtensions)
         {

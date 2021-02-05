@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,28 +37,27 @@ namespace ThinkVoipTool
 
         private static readonly List<Phone> PhoneModels = new()
         {
-            new() {Model = TvsT46S, ModelDisplayName = "TVS - Yealink T46S"},
-            new() {Model = TvsT48S, ModelDisplayName = "TVS - Yealink T48S"},
-            new() {Model = YealinkCp960},
-            new() {Model = YealinkT40G},
-            new() {Model = YealinkT42S},
-            new() {Model = YealinkT46S},
-            new() {Model = YealinkT48S},
-            new() {Model = YealinkT57W},
-            new() {Model = FanvilH5}
+            new Phone {Model = TvsT46S, ModelDisplayName = "TVS - Yealink T46S"},
+            new Phone {Model = TvsT48S, ModelDisplayName = "TVS - Yealink T48S"},
+            new Phone {Model = YealinkCp960},
+            new Phone {Model = YealinkT40G},
+            new Phone {Model = YealinkT42S},
+            new Phone {Model = YealinkT46S},
+            new Phone {Model = YealinkT48S},
+            new Phone {Model = YealinkT57W},
+            new Phone {Model = FanvilH5}
         };
 
         public static bool IsAuthenticated;
-        private static List<Extension> _extensionList;
-        public static ThreeCxClient ThreeCxClient;
+        private static List<Extension>? _extensionList;
+        public static ThreeCxClient? ThreeCxClient;
         private static int _companyId;
-
-        public static string CurrentExtension;
+        public static string? CurrentExtension;
 
         //public static List<Extension> ToBeAdded = new List<Extension>();
-        public static string ThreeCxPassword;
-        public static Extension CurrentExtensionClass;
-        public static IList ToBeUpdated;
+        public static string? ThreeCxPassword;
+        public static Extension? CurrentExtensionClass;
+        public static IList? ToBeUpdated;
         public static string AuthU = string.Empty;
         public static string AuthP = string.Empty;
         public static string CwApiUser = string.Empty;
@@ -66,12 +66,12 @@ namespace ThinkVoipTool
         public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new();
         public static readonly SkySwitchToken SkySwitchToken = new();
 
-        private static ConnectWiseConnection _cwClient;
+        private static ConnectWiseConnection? _cwClient;
         private readonly bool _isFirstLaunch = Settings.Default.firstLaunch;
         private bool _isBilling;
         private Views _lastView;
 
-        private List<SkySwitchDomains> _skySwitchDomainsList;
+        private List<SkySwitchDomains>? _skySwitchDomainsList;
         public bool IsDark = Settings.Default.isDark;
 
 
@@ -202,7 +202,7 @@ namespace ThinkVoipTool
 
         private async Task UpdateCustomerList()
         {
-            var allVoipClients = await _cwClient.GetAllTvsVoIpClients();
+            var allVoipClients = await _cwClient?.GetAllTvsVoIpClients()!;
 
             if(ShowTtg)
             {
@@ -255,7 +255,7 @@ namespace ThinkVoipTool
             }
         }
 
-        private async Task PopulateBillingData(Billing.Billing billing, SkySwitchDomains client)
+        private async Task PopulateBillingData(Billing.Billing billing, SkySwitchDomains? client)
         {
             foreach (var m in billing.LastSixMonths)
             {
@@ -352,11 +352,8 @@ namespace ThinkVoipTool
                 HideExtensionUiElements();
                 _lastView = Views.None;
                 ThreeCxClient = null;
-                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-                if(selectedCompany != null)
-                {
-                    _companyId = selectedCompany.company.id;
-                }
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
+                _companyId = selectedCompany.company.id;
 
                 try
                 {
@@ -404,33 +401,33 @@ namespace ThinkVoipTool
             {
                 _lastView = Views.Valid;
                 ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
-                var company = await _cwClient.GetCompany(companyId);
+                var company = await _cwClient?.GetCompany(companyId)!;
                 var pageId = await Task.Run(() => Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty)));
                 var loginInfo = await Task.Run(() => Docs.ConfClient.GetThreeCxLoginInfo(pageId));
                 ThreeCxPassword = loginInfo.Password;
                 ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
 
-                if(ThreeCxClient != null)
-                {
-                    _extensionList = await ThreeCxClient.GetExtensionsList();
-                    await UpdateDisplay();
-                }
+                _extensionList = await ThreeCxClient.GetExtensionsList();
+                await UpdateDisplay();
             }
         }
 
         private async Task UpdateExtensionsCountDisplay()
         {
-            var extCount = _extensionList.Count;
-            var invalidExtensions = GetUnBilledExtensionsCount(_extensionList);
-            var phones = await ThreeCxClient.GetPhonesList();
-            UpdateExtensionDisplayGridNames();
-            ExtensionsTotal.Text = extCount.ToString();
-            InValidExtensions.Text = invalidExtensions.ToString();
-            TotalValidExtensions.Text = (extCount - invalidExtensions).ToString();
+            if(_extensionList != null)
+            {
+                var extCount = _extensionList.Count;
+                var invalidExtensions = GetUnBilledExtensionsCount(_extensionList);
+                var phones = await ThreeCxClient?.GetPhonesList()!;
+                UpdateExtensionDisplayGridNames();
+                ExtensionsTotal.Text = extCount.ToString();
+                InValidExtensions.Text = invalidExtensions.ToString();
+                TotalValidExtensions.Text = (extCount - invalidExtensions).ToString();
 
 
-            PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
-                .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
+                PhonesTotal.Text = phones.Where(phone => !phone.Model.ToLower().Contains("windows"))
+                    .Count(phone => !phone.Model.ToLower().Contains("web client")).ToString();
+            }
 
 
             VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(_extensionList).Count.ToString();
@@ -439,9 +436,9 @@ namespace ThinkVoipTool
             BilledUserExtensionsCount.Text = GetBilledUserExtensions(_extensionList).Count.ToString();
         }
 
-        private List<Extension> GetBilledUserExtensions(List<Extension> extensions)
+        private List<Extension> GetBilledUserExtensions(List<Extension>? extensions)
         {
-            var forwarding = extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            var forwarding = extensions!.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
             var voicemail = extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
             var op = extensions.Where(ext =>
                 ext.FirstName.ToLower().Contains("test") ||
@@ -458,14 +455,14 @@ namespace ThinkVoipTool
             return billedExtensions;
         }
 
-        private List<Extension> GetForwardingOnlyExtensions(List<Extension> extensions)
+        private List<Extension> GetForwardingOnlyExtensions(List<Extension>? extensions)
         {
-            return extensions.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
+            return extensions!.Where(a => a.FirstName.ToLower().Contains("forward only")).ToList();
         }
 
-        private List<Extension> GetVoicemailOnlyExtensions(List<Extension> extensions)
+        private List<Extension> GetVoicemailOnlyExtensions(List<Extension>? extensions)
         {
-            return extensions.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
+            return extensions!.Where(a => a.FirstName.ToLower().Contains("voicemail only")).ToList();
         }
 
         private void UpdateExtensionDisplayGridNames()
@@ -492,7 +489,7 @@ namespace ThinkVoipTool
 
         private async Task UpdateView()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
 
             if(_companyId == 19532)
             {
@@ -518,14 +515,13 @@ namespace ThinkVoipTool
         private async void ExtensionsTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Total;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+            //var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             await DisplayExtensionInfo();
         }
 
         private async Task DisplayExtensionInfo()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             _extensionList = _extensionList.OrderBy(a => a.Number).ToList();
             ListViewGrid.ItemsSource = _extensionList;
             PhoneListViewGrid.Visibility = Visibility.Collapsed;
@@ -535,14 +531,13 @@ namespace ThinkVoipTool
         private async void ExtensionsTotalInvalid_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Invalid;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+            // var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             await DisplayInvalidExtensionInfo();
         }
 
         private async Task DisplayInvalidExtensionInfo()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             var cleanedExtensions = _extensionList
                 .Where(ext =>
                     ext.FirstName.ToLower().Contains("test") ||
@@ -567,14 +562,13 @@ namespace ThinkVoipTool
         private async void ExtensionsTotalValid_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Valid;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+            //var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             await DisplayValidExtensions();
         }
 
         private async Task DisplayValidExtensions()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             var cleanedExtensions = new List<Extension>();
             cleanedExtensions.AddRange(_extensionList
                 .Where(ext => !ext.FirstName.ToLower().Contains("test"))
@@ -592,14 +586,13 @@ namespace ThinkVoipTool
         private async void PhonesTotalDisplay_Click(object sender, RoutedEventArgs e)
         {
             _lastView = Views.Phones;
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+            //var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             await DisplayPhones();
         }
 
         private async Task DisplayPhones()
         {
-            var phones = await ThreeCxClient.GetPhonesList();
+            var phones = await ThreeCxClient?.GetPhonesList()!;
             var cleanedPhones = phones
                 .Where(phone => !phone.Model.ToLower().Contains("windows"))
                 .Where(phone => !phone.Model.ToLower().Contains("app"))
@@ -691,7 +684,7 @@ namespace ThinkVoipTool
                     {
                         foreach (var extension in extensions)
                         {
-                            await ThreeCxClient.DeleteExtension(extension.Number);
+                            await ThreeCxClient?.DeleteExtension(extension.Number)!;
                         }
 
                         UpdateExtensionDataGrid();
@@ -708,8 +701,7 @@ namespace ThinkVoipTool
         {
             if(CustomersList.SelectedItem != null)
             {
-                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-                Debug.Assert(selectedCompany != null, nameof(selectedCompany) + " != null");
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
                 var companyId = selectedCompany.company.id;
                 _companyId = companyId;
 
@@ -726,8 +718,7 @@ namespace ThinkVoipTool
 
         private void AddExtension_Click(object sender, RoutedEventArgs e)
         {
-            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-            if(selectedCompany != null)
+            var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             {
                 var companyId = selectedCompany.company.id;
                 _companyId = companyId;
@@ -818,7 +809,7 @@ namespace ThinkVoipTool
 
         private async void DisplayVoicemailExtensionsInGrid()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             _lastView = Views.VoicemailOnly;
             var vmOnlyList = GetVoicemailOnlyExtensions(_extensionList);
 
@@ -829,7 +820,7 @@ namespace ThinkVoipTool
 
         private async void DisplayForwardingExtensionsInGrid()
         {
-            _extensionList = await ThreeCxClient.GetExtensionsList();
+            _extensionList = await ThreeCxClient?.GetExtensionsList()!;
             _lastView = Views.ForwardingOnly;
             var fwdOnlyList = GetForwardingOnlyExtensions(_extensionList);
 
@@ -908,13 +899,10 @@ namespace ThinkVoipTool
         {
             using (new OverrideCursor(Cursors.Wait))
             {
-                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
-                if(selectedCompany != null)
-                {
-                    _companyId = selectedCompany.company.id;
-                }
+                var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
+                _companyId = selectedCompany.company.id;
 
-                var company = await _cwClient.GetCompany(_companyId);
+                var company = await _cwClient?.GetCompany(_companyId)!;
                 var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
 
                 OpenUrl("https://docs.think-team.com" + url);
@@ -925,7 +913,7 @@ namespace ThinkVoipTool
         {
             using (new OverrideCursor(Cursors.Wait))
             {
-                var company = await _cwClient.GetCompany(_companyId);
+                var company = await _cwClient?.GetCompany(_companyId)!;
                 var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
                 var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
@@ -970,7 +958,7 @@ namespace ThinkVoipTool
 
             using (new OverrideCursor(Cursors.Wait))
             {
-                var result = await ThreeCxClient.MakeExtensionAdmin(CurrentExtension);
+                var result = await ThreeCxClient?.MakeExtensionAdmin(CurrentExtension)!;
                 if(result == "Failed")
                 {
                     MessageBox.Show("Failed to set as admin", "Error");
