@@ -325,7 +325,7 @@ namespace ThinkVoipTool
         {
             using (new OverrideCursor(Cursors.Wait))
             {
-                CleanExtensionDataGrid();
+                HideExtensionUiElements();
                 _lastView = Views.None;
                 ThreeCxClient = null;
                 var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0];
@@ -347,51 +347,28 @@ namespace ThinkVoipTool
             }
         }
 
-        private void CleanExtensionDataGrid()
-        {
-            ThinkyMainImage.Opacity = .05;
-            ThinkyMainImage.Visibility = Visibility.Visible;
-            ListViewGrid.Visibility = Visibility.Collapsed;
-
-            AddExt.Visibility = Visibility.Collapsed;
-            AddPhoneButton.Visibility = Visibility.Collapsed;
-            ExtensionsHeader.Visibility = Visibility.Collapsed;
-            ExtensionsHeader.Text = "Extensions: ";
-            ExtSeparator.Visibility = Visibility.Collapsed;
-            PhoneSeparator.Visibility = Visibility.Collapsed;
-            ExtSeparatorOperators.Visibility = Visibility.Collapsed;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
-            BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
-            ForwardingOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
-            RefreshButton.Visibility = Visibility.Collapsed;
-            RefreshSeparator.Visibility = Visibility.Collapsed;
-            Open3CxButton.Visibility = Visibility.Collapsed;
-            OpenConfluenceButton.Visibility = Visibility.Collapsed;
-
-            ForwardingOnlyExtensionsCount.Text = "";
-            BilledUserExtensionsDisplay.Visibility = Visibility.Collapsed;
-            BilledUserExtensionsCount.Text = "";
-            ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
-            VoicemailOnlyExtensionsDisplay.Visibility = Visibility.Collapsed;
-            ExtensionsTotalInvalid.Visibility = Visibility.Collapsed;
-            ExtensionsTotalValid.Visibility = Visibility.Collapsed;
-            PhonesTotalDisplay.Visibility = Visibility.Collapsed;
-            ExtensionsTotal.Text = "";
-            InValidExtensions.Text = "";
-            TotalValidExtensions.Text = "";
-            PhonesTotal.Text = "";
-            VoicemailOnlyExtensionsCount.Text = "";
-        }
 
         private void UpdateExtensionDataGrid()
         {
             ExtensionsTotal.Text = "";
+            ExtensionsTotal.Visibility = Visibility.Visible;
             InValidExtensions.Text = "";
+            InValidExtensions.Visibility = Visibility.Visible;
+
             TotalValidExtensions.Text = "";
+            TotalValidExtensions.Visibility = Visibility.Visible;
+
             PhonesTotal.Text = "";
+            PhonesTotal.Visibility = Visibility.Visible;
+
             VoicemailOnlyExtensionsCount.Text = "";
+            VoicemailOnlyExtensionsCount.Visibility = Visibility.Visible;
+
             ForwardingOnlyExtensionsCount.Text = "";
+            ForwardingOnlyExtensionsCount.Visibility = Visibility.Visible;
+
             BilledUserExtensionsCount.Text = "";
+            BilledUserExtensionsCount.Visibility = Visibility.Visible;
         }
 
         private async Task DisplayClientInfo(int companyId)
@@ -1054,10 +1031,13 @@ namespace ThinkVoipTool
         {
             var children = MainWindowGrid.Children;
 
+
             foreach (UIElement child in children)
             {
                 switch (child)
                 {
+                    case TextBlock _:
+
                     case ListView _:
                         child.Visibility = Visibility.Collapsed;
                         break;
@@ -1075,7 +1055,15 @@ namespace ThinkVoipTool
                 }
             }
 
-            SizeToContent = SizeToContent.Width;
+            ExtensionsHeader.Text = "Extensions: ";
+            ForwardingOnlyExtensionsCount.Text = "";
+            BilledUserExtensionsCount.Text = "";
+            ExtensionsTotal.Text = "";
+            InValidExtensions.Text = "";
+            TotalValidExtensions.Text = "";
+            PhonesTotal.Text = "";
+            VoicemailOnlyExtensionsCount.Text = "";
+            //SizeToContent = SizeToContent.Width;
         }
 
         private void ShowExtensionUiElements()

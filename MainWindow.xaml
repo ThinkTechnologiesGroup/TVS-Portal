@@ -26,8 +26,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
-            <!-- <ColumnDefinition Width="*" /> -->
-            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <!--row 0 //file menu-->
