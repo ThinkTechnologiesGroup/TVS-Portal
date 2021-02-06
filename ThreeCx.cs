@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Serilog;
 
-// ReSharper disable RedundantAssignment
+
 // ReSharper disable UnusedVariable
 // ReSharper disable NotAccessedVariable
 
@@ -218,7 +218,7 @@ namespace ThinkVoipTool
             _restRequest.AddCookie(_cookie?[0].Name!, _cookie?[0].Value!);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
             var bytes = response.RawBytes;
-            var results = new List<Phone>();
+            List<Phone> results;
             try
             {
                 results = MessagePackSerializer.Deserialize<List<Phone>>(bytes);
@@ -463,12 +463,31 @@ namespace ThinkVoipTool
             var update = ExtensionPropertyModel.SerializeExtProperty(phoneActiveObjectId, "Model", phoneType);
             var updateResponse = await SendUpdate(response, update);
 
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
+
             update = ExtensionPropertyModel.SerializeExtProperty(phoneActiveObjectId, "MacAddress", macAddress);
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
+
             //save phone to extension
             updateResponse = await SaveUpdate(response, phoneActiveObjectId);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
+
             //save extension to system 
             updateResponse = await SaveUpdate(response, extensionActiveObjectId);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             await UpdatePhoneSettingsOnExtension(extensionId, macAddress, extensionNumber);
 
@@ -506,14 +525,13 @@ namespace ThinkVoipTool
             }
 
             var extensionActiveObjectId = properties["Id"].ToString();
-            var phoneDevices = new JObject();
             var extensionProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
+            JObject phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
             var phonesToEdit = new JArray();
             var phones = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
             var phonesList = new List<Phone>();
@@ -574,16 +592,14 @@ namespace ThinkVoipTool
             }
 
             var extensionActiveObjectId = properties["Id"].ToString();
-            var phoneDevices = new JObject();
             var extensionProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
                 new JsonSerializerSettings
                 {
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-            phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
-            var phonesToEdit = new JArray();
-            phonesToEdit = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
+            JObject phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
+            JArray phonesToEdit = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
             var idInCollection = "";
             foreach (var phone in phonesToEdit)
             {
@@ -602,26 +618,47 @@ namespace ThinkVoipTool
                 idInCollection = propId;
             }
 
-            var update = "";
-            update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
+            string update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "ScreensaverTimeout", "6 hours");
 
             var updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "BacklightTimeout", "Always On");
 
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "PowerLed", "Voicemails only");
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
+
             update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "TimeFormat", "12-hour clock (AM/PM)");
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
+
             update = ExtensionExtendedPropertyModel.SerializeExtProperty(extensionActiveObjectId, "PhoneDevices", idInCollection,
                 "ProvisioningMethod", "PROVISIONING_METHOD_STUN");
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             var extInt = int.Parse(extensionNumber!);
             var localSipPort = 6000 + extInt;
@@ -634,7 +671,7 @@ namespace ThinkVoipTool
                 updateResponse = await SendUpdate(response, update);
                 if(updateResponse == "Failed")
                 {
-                    throw new Exception();
+                    return updateResponse;
                 }
             }
             catch
@@ -642,18 +679,34 @@ namespace ThinkVoipTool
                 update = ExtensionExtendedPropertyModel.SerializeExtPropertyIntId(extensionActiveObjectId, "PhoneDevices", idInCollection,
                     "LocalSipPort", localSipPort);
                 updateResponse = await SendUpdate(response, update);
+                if(updateResponse == "Failed")
+                {
+                    return updateResponse;
+                }
             }
 
             update = ExtensionPropertyModel.SerializeExtProperty(extensionActiveObjectId, "AllowLanOnly", false);
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             update = ExtensionPropertyModel.SerializeExtProperty(extensionActiveObjectId, "CapabilityReInvite", false);
 
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             update = ExtensionPropertyModel.SerializeExtProperty(extensionActiveObjectId, "CapabilityPBXDeliversAudio", true);
 
             updateResponse = await SendUpdate(response, update);
+            if(updateResponse == "Failed")
+            {
+                return updateResponse;
+            }
 
             updateResponse = await SaveUpdate(response, extensionActiveObjectId);
 
@@ -927,7 +980,7 @@ namespace ThinkVoipTool
             //Accept Multiple Calls
             await UpdateExtensionAcceptMultipleCalls(response, id).ConfigureAwait(false);
 
-            //voicemail Only Extension FOrwarding and restriction settings
+            //voicemail Only Extension Forwarding and restriction settings
             if(vmOnly)
             {
                 await UpdateForwardingRulesForVmOnly(response, id).ConfigureAwait(false);
@@ -992,13 +1045,13 @@ namespace ThinkVoipTool
 
         private async Task UpdateRestrictionsForFwdOnly(IRestResponse response, string? id)
         {
-            var updateResponse = await SendUpdate(response,
-                    ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", true))
-                .ConfigureAwait(false);
-
-            updateResponse = await SendUpdate(response,
+            string updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", false))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task UpdateForwardingRulesForVmOnly(IRestResponse response, string? id)
@@ -1328,23 +1381,43 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AccessEnabled", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
             updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AccessRole", "AccessRole.GlobalExtensionManager"))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
             updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AccessAdmin", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
 
             updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporter", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
             updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AccessReporterRecording", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task<string> SendUpdate(IRestResponse originalResponse, string? update)
@@ -1601,7 +1674,7 @@ namespace ThinkVoipTool
         public int BlacklistedIpCount { get; set; }
         public int MemoryUsage { get; set; }
         public int PhysicalMemoryUsage { get; set; }
-        public long FreeFirtualMemory { get; set; }
+        public long FreeVirtualMemory { get; set; }
         public long TotalVirtualMemory { get; set; }
         public long FreePhysicalMemory { get; set; }
         public long TotalPhysicalMemory { get; set; }
