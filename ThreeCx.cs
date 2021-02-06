@@ -15,10 +15,6 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Serilog;
 
-
-// ReSharper disable UnusedVariable
-// ReSharper disable NotAccessedVariable
-
 #pragma warning disable 618
 
 namespace ThinkVoipTool
@@ -171,7 +167,6 @@ namespace ThinkVoipTool
                 throw new Exception();
             }
 
-            var originalResponse = response;
             var extensionActiveObject = properties["ActiveObject"];
             var extJObject = JObject.Parse(extensionActiveObject.ToString()!);
             var vmPin = extJObject.SelectToken("VMPin");
@@ -524,7 +519,6 @@ namespace ThinkVoipTool
                 throw new Exception();
             }
 
-            var extensionActiveObjectId = properties["Id"].ToString();
             var extensionProperties = JsonConvert.DeserializeObject<Dictionary<string, object>>(properties["ActiveObject"].ToString()!,
                 new JsonSerializerSettings
                 {
@@ -532,7 +526,7 @@ namespace ThinkVoipTool
                     NullValueHandling = NullValueHandling.Ignore
                 });
             JObject phoneDevices = JsonConvert.DeserializeObject<JObject>(extensionProperties?["PhoneDevices"].ToString()!);
-            var phonesToEdit = new JArray();
+            //var _ = new JArray();
             var phones = JsonConvert.DeserializeObject<JArray>(phoneDevices["_value"]?.ToString()!);
             var phonesList = new List<Phone>();
 
@@ -546,7 +540,6 @@ namespace ThinkVoipTool
                     Formatting = Formatting.Indented,
                     NullValueHandling = NullValueHandling.Ignore
                 });
-                var propId = props?["Id"].ToString();
 
                 var mac = props?["_str"].ToString();
                 var model = props?["Model"].ToString();
@@ -1019,10 +1012,18 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", false))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
-            var updateResponse2 = await SendUpdate(response,
+            updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task UndoForwardingRulesForVmOnly(IRestResponse response, string? id)
@@ -1030,6 +1031,10 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "20"))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task UpdateRestrictionsForVmOnly(IRestResponse response, string? id)
@@ -1037,10 +1042,18 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "BlockRemoteTunnel", true))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
-            var updateResponse2 = await SendUpdate(response,
+            updateResponse = await SendUpdate(response,
                     ExtensionPropertyModel.SerializeExtProperty(id, "AllowWebMeeting", false))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task UpdateRestrictionsForFwdOnly(IRestResponse response, string? id)
@@ -1059,6 +1072,10 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "1"))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
         private async Task UpdateForwardingRulesForFwdOnly(IRestResponse response, string? id)
@@ -1066,6 +1083,10 @@ namespace ThinkVoipTool
             var updateResponse = await SendUpdate(response,
                     ExtensionExtendedPropertyModel.SerializeExtFwdProperty(id, "ForwardingAvailable", "NoAnswerTimeout", "1"))
                 .ConfigureAwait(false);
+            if(updateResponse == "Failed")
+            {
+                throw new Exception();
+            }
         }
 
 
@@ -1248,7 +1269,10 @@ namespace ThinkVoipTool
         {
             var enabledResponse =
                 await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
-
+            if(enabledResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
             var updateResponse = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMPin", pin)).ConfigureAwait(false);
             if(updateResponse != "OK")
@@ -1266,6 +1290,10 @@ namespace ThinkVoipTool
         {
             var enabledResponse =
                 await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEnabled", true)).ConfigureAwait(false);
+            if(enabledResponse == "Failed")
+            {
+                throw new Exception();
+            }
 
             var responseStatus = await SendUpdate(response, ExtensionPropertyModel.SerializeExtProperty(id, "VMEmailOptions", voiceMailOptions))
                 .ConfigureAwait(false);
