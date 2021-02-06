@@ -26,9 +26,9 @@ namespace ThinkVoipTool
         public static List<ThreeCxPageMacros> UpdatedDocs(ThreeCxServer server, List<ThreeCxPageMacros> pageList)
         {
             var updates = new List<ThreeCxPageMacros>();
-            var sipTrunkName = server.SipTrunks[0].Name; //Should loop around the whole list and then just skip the WebClient one.
-            var gateway = server.SipTrunks[0].Type; //Same as above, these would just fall as steps to that method
-            var host = server.SipTrunks[0].Host; //Same as above, these would just fall as steps to that method
+            var sipTrunkName = server.SipTrunks?[0].Name; //Should loop around the whole list and then just skip the WebClient one.
+            var gateway = server.SipTrunks?[0].Type; //Same as above, these would just fall as steps to that method
+            var host = server.SipTrunks?[0].Host; //Same as above, these would just fall as steps to that method
             var nexVortex = false;
             var skySwitch = false;
             var azure = false;
@@ -37,7 +37,7 @@ namespace ThinkVoipTool
                 switch (table.Name)
                 {
                     case "List-LabelMaker2000":
-                        foreach (var value in table.Value)
+                        foreach (var value in table.Value!)
                         {
                             if(value == "3cxazure")
                             {
@@ -93,7 +93,7 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "List-VOIPProviderSIPTrunk-SkySwitchBilling":
-                        if((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host.Contains("22335.service"))
+                        if((gateway == "TypeOfGateway.VoipProvider" || gateway == "Provider") && host!.Contains("22335.service"))
                         {
                             table.Value = new JArray("SkySwitchBilling");
                             skySwitch = true;
@@ -171,21 +171,21 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-SkySwitchBilling-SIPTrunkUsername":
-                        var skySwitchAuthobject = server.SipTrunkSettings.GetValue("ActiveObject");
-                        var skySwitchauth = skySwitchAuthobject.Value<JToken>("AuthId");
-                        var skySwitchauthId = skySwitchauth.Value<string>("_value");
+                        var skySwitchAuthobject = server.SipTrunkSettings?.GetValue("ActiveObject");
+                        var skySwitchauth = skySwitchAuthobject?.Value<JToken>("AuthId");
+                        var skySwitchauthId = skySwitchauth?.Value<string>("_value");
                         table.Value = skySwitchauthId;
                         updates.Add(table);
                         break;
                     case "Text-SkySwitchBilling-SIPTrunkPassword":
-                        var skySwitchPassobject = server.SipTrunkSettings.GetValue("ActiveObject");
-                        var skySwitchPassauth = skySwitchPassobject.Value<JToken>("AuthId");
-                        var skySwitchPass = skySwitchPassauth.Value<string>("_value");
+                        var skySwitchPassobject = server.SipTrunkSettings?.GetValue("ActiveObject");
+                        var skySwitchPassauth = skySwitchPassobject?.Value<JToken>("AuthId");
+                        var skySwitchPass = skySwitchPassauth?.Value<string>("_value");
                         table.Value = skySwitchPass;
                         updates.Add(table);
                         break;
                     case "Text-NumberOfConcurrentCalls":
-                        var conCalls = server.SipTrunks[0].SimCalls;
+                        var conCalls = server.SipTrunks?[0].SimCalls;
                         table.Value = conCalls;
                         updates.Add(table);
                         break;
@@ -222,56 +222,56 @@ namespace ThinkVoipTool
                         updates.Add(table);
                         break;
                     case "Text-providerPrimaryNumber":
-                        var primaryNUmber = server.SipTrunks[0].ExternalNumber;
+                        var primaryNUmber = server.SipTrunks?[0].ExternalNumber;
                         table.Value = primaryNUmber;
                         updates.Add(table);
                         break;
                     case "Text-providerAuthenticationID":
-                        var aobject = server.SipTrunkSettings.GetValue("ActiveObject");
-                        var auth = aobject.Value<JToken>("AuthId");
-                        var authId = auth.Value<string>("_value");
+                        var aobject = server.SipTrunkSettings?.GetValue("ActiveObject");
+                        var auth = aobject?.Value<JToken>("AuthId");
+                        var authId = auth?.Value<string>("_value");
                         table.Value = authId;
                         updates.Add(table);
                         break;
                     case "Text-ProviderAuthenticationPass":
-                        var apobject = server.SipTrunkSettings.GetValue("ActiveObject");
-                        var authPass = apobject.Value<JToken>("AuthPassword");
-                        var authPassValue = authPass.Value<string>("_value");
+                        var apobject = server.SipTrunkSettings?.GetValue("ActiveObject");
+                        var authPass = apobject?.Value<JToken>("AuthPassword");
+                        var authPassValue = authPass?.Value<string>("_value");
                         table.Value = authPassValue;
                         updates.Add(table);
                         break;
                     case "Text-3CXAzureVMPublicIP":
-                        table.Value = server.SystemStatus.Ip;
+                        table.Value = server.SystemStatus?.Ip;
                         updates.Add(table);
                         break;
                     case "Text-3cxlicensekey":
-                        table.Value = server.ThreeCxLicense.Key;
+                        table.Value = server.ThreeCxLicense?.Key;
                         updates.Add(table);
                         break;
                     case "Text-3cxlicenseconcurrentcalls":
-                        table.Value = server.ThreeCxLicense.MaxSimCalls;
+                        table.Value = server.ThreeCxLicense!.MaxSimCalls;
                         updates.Add(table);
                         break;
                     case "Date-Expiration":
-                        var time = DateTime.Parse(server.SystemStatus.MaintenanceExpiresAt.ToString(CultureInfo.InvariantCulture));
+                        var time = DateTime.Parse(server.SystemStatus?.MaintenanceExpiresAt?.ToString(CultureInfo.InvariantCulture)!);
                         table.Value = time.ToString("yyyy-MM-dd HH:mm:ss");
                         updates.Add(table);
                         break;
                     case "List-AutoUpdateDay":
-                        table.Value = new JArray(server.UpdateDay);
+                        table.Value = new JArray(server.UpdateDay!);
                         updates.Add(table);
                         break;
                     case "Table-DID":
                         table.Value = new JObject();
                         var i = 0;
-                        foreach (var did in server.InboundRulesList)
+                        foreach (var did in server.InboundRulesList!)
                         {
                             var tmpArray = new JArray();
                             var number = new ThreeCxPageMacros
                             {
                                 Macro = "text-data",
                                 Name = "Text-DIDNumber",
-                                Value = did.Did.Replace("*", string.Empty)
+                                Value = did.Did?.Replace("*", string.Empty)
                             };
                             var assigned = new ThreeCxPageMacros
                             {
@@ -291,9 +291,9 @@ namespace ThinkVoipTool
                         table.Value = new JObject();
                         var j = 0;
                         var phones = new Dictionary<string, Phone>();
-                        foreach (var phone in server.Phones.Distinct())
+                        foreach (var phone in server.Phones!.Distinct())
                         {
-                            if(phones.ContainsKey(phone.Model))
+                            if(phones.ContainsKey(phone.Model!))
                             {
                                 continue;
                             }

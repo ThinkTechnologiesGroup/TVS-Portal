@@ -216,7 +216,7 @@ namespace ThinkVoipTool
                 allVoipClients.Add(ttgAgreement);
             }
 
-            CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company.name);
+            CustomersList.ItemsSource = allVoipClients.OrderBy(a => a.company?.name);
             CustomersList.DisplayMemberPath = "company.name";
             CustomersList.Visibility = Visibility.Visible;
         }
@@ -353,7 +353,7 @@ namespace ThinkVoipTool
                 _lastView = Views.None;
                 ThreeCxClient = null;
                 var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
-                _companyId = selectedCompany.company.id;
+                _companyId = selectedCompany.company!.id;
 
                 try
                 {
@@ -402,7 +402,7 @@ namespace ThinkVoipTool
                 _lastView = Views.Valid;
                 ExtensionsTotalDisplay.Visibility = Visibility.Collapsed;
                 var company = await _cwClient?.GetCompany(companyId)!;
-                var pageId = await Task.Run(() => Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty)));
+                var pageId = await Task.Run(() => Docs.ConfClient.FindThreeCxPageIdByTitle(company.name?.Replace(", PA", string.Empty)));
                 var loginInfo = await Task.Run(() => Docs.ConfClient.GetThreeCxLoginInfo(pageId));
                 ThreeCxPassword = loginInfo.Password;
                 ThreeCxClient = new ThreeCxClient(loginInfo.HostName, loginInfo.Username, loginInfo.Password);
@@ -728,7 +728,7 @@ namespace ThinkVoipTool
             if(CustomersList.SelectedItem != null)
             {
                 var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
-                var companyId = selectedCompany.company.id;
+                var companyId = selectedCompany.company!.id;
                 _companyId = companyId;
 
                 var window = new PasswordResetWindow(companyId);
@@ -746,7 +746,7 @@ namespace ThinkVoipTool
         {
             var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
             {
-                var companyId = selectedCompany.company.id;
+                var companyId = selectedCompany.company!.id;
                 _companyId = companyId;
             }
 
@@ -932,10 +932,10 @@ namespace ThinkVoipTool
             using (new OverrideCursor(Cursors.Wait))
             {
                 var selectedCompany = (CompanyModel.Agreement) CustomersList.SelectedItems[0]!;
-                _companyId = selectedCompany.company.id;
+                _companyId = selectedCompany.company!.id;
 
                 var company = await _cwClient?.GetCompany(_companyId)!;
-                var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty), true);
+                var url = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name?.Replace(", PA", string.Empty), true);
 
                 OpenUrl("https://docs.think-team.com" + url);
             }
@@ -946,7 +946,7 @@ namespace ThinkVoipTool
             using (new OverrideCursor(Cursors.Wait))
             {
                 var company = await _cwClient?.GetCompany(_companyId)!;
-                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", string.Empty));
+                var pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name?.Replace(", PA", string.Empty));
                 var loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(pageId);
 
 

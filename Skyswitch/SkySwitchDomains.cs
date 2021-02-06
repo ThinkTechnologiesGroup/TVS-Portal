@@ -4,12 +4,12 @@ namespace ThinkVoipTool.Skyswitch
 {
     public class SkySwitchDomains
     {
-        private string _description;
+        private string? _description;
         //https://telco-api.skyswitch.com/accounts/c6cb9e70-42b9-11ea-b482-e365812db6e4/pbx/domains
 
 
-        private string _domain;
-        private string _reseller;
+        private string? _domain;
+        private string? _reseller;
 
 
         [JsonProperty("domain")]

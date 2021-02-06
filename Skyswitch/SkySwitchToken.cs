@@ -7,13 +7,13 @@ namespace ThinkVoipTool.Skyswitch
     public class SkySwitchToken
     {
         [JsonProperty("access_token")]
-        private readonly string _accessToken;
+        private readonly string? _accessToken;
 
         [JsonProperty("apiversion")]
-        private string _apiVersion;
+        private string? _apiVersion;
 
         [JsonProperty("domain")]
-        private string _domain;
+        private string? _domain;
 
         private DateTime _expirationTime;
 
@@ -24,13 +24,13 @@ namespace ThinkVoipTool.Skyswitch
         private bool _legacy;
 
         [JsonProperty("refresh_token")]
-        private string _refreshToken;
+        private string? _refreshToken;
 
         [JsonProperty("scope")]
-        private string _scope;
+        private string? _scope;
 
         [JsonProperty("token_type")]
-        private string _tokenType;
+        private string? _tokenType;
 
         private SkySwitchToken()
         {
@@ -51,7 +51,7 @@ namespace ThinkVoipTool.Skyswitch
             _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }
 
-        public string Token
+        public string? Token
         {
             get
             {
@@ -78,7 +78,7 @@ namespace ThinkVoipTool.Skyswitch
             restRequest.AddParameter("grant_type", "refresh_token");
             restRequest.AddParameter("client_id", clientId);
             restRequest.AddParameter("client_secret", clientSecret);
-            restRequest.AddParameter("refresh_token", _refreshToken);
+            restRequest.AddParameter("refresh_token", _refreshToken!);
             JsonConvert.PopulateObject(restClient.Execute(restRequest).Content, this);
             _expirationTime = DateTime.Now.AddMinutes(_expiresIn - 15);
         }
