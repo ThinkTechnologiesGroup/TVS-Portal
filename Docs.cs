@@ -183,7 +183,7 @@ namespace ThinkVoipTool
                 _restRequest.AddHeader("Authorization", "Basic " + _authKey);
                 var response = _restClient.Execute(_restRequest).Content;
                 var result = JsonConvert.DeserializeObject<List<ThreeCxPageMacrosBase>>(response, new MacroConverter());
-                return result;
+                return result!;
             }
             catch (Exception e)
             {

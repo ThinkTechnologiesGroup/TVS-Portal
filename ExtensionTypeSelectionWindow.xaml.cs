@@ -216,7 +216,10 @@ namespace ThinkVoipTool
 
         private async void AddExtenstion_Click(object sender, RoutedEventArgs e)
         {
-            await AddExtension();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await AddExtension();
+            }
         }
 
         private async Task AddExtension()
@@ -267,10 +270,6 @@ namespace ThinkVoipTool
             Close();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-        }
-
 
         private async void FirstName_KeyDown(object sender, KeyEventArgs e)
         {
@@ -284,7 +283,10 @@ namespace ThinkVoipTool
         {
             if(e.Key == Key.Enter)
             {
-                await AddExtension();
+                using (new OverrideCursor(Cursors.Wait))
+                {
+                    await AddExtension();
+                }
             }
         }
 
@@ -292,24 +294,22 @@ namespace ThinkVoipTool
         {
             if(e.Key == Key.Enter)
             {
-                await AddExtension();
+                using (new OverrideCursor(Cursors.Wait))
+                {
+                    await AddExtension();
+                }
             }
         }
 
         private void SetExtensionBack_Click(object sender, RoutedEventArgs e)
         {
-            //this.MobileNumber.Visibility = Visibility.Hidden;
             MobileNumberEntry.Visibility = Visibility.Hidden;
             AddExtensionButton.Visibility = Visibility.Hidden;
             SetExtensionBack.Visibility = Visibility.Hidden;
-            //this.ExtNumber.Visibility = Visibility.Hidden;
             ExtNumberEntry.Visibility = Visibility.Hidden;
             AvailableExtensionsDropDownList.Visibility = Visibility.Hidden;
-            //this.FirstName.Visibility = Visibility.Hidden;
             FirstNameEntry.Visibility = Visibility.Hidden;
-            //this.LastName.Visibility = Visibility.Hidden;
             LastNameEntry.Visibility = Visibility.Hidden;
-            //this.Email.Visibility = Visibility.Hidden;
             EmailEntry.Visibility = Visibility.Hidden;
             AddExtensionButton.Visibility = Visibility.Hidden;
             ExtensionDropDownTitle.Text = "Choose Extension Type";
@@ -320,10 +320,13 @@ namespace ThinkVoipTool
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            availableExtensionsObj =
-                new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
-            availableExtensionNumbers = availableExtensionsObj.PossibleExtensions;
-            AvailableExtensionsDropDownList.ItemsSource = availableExtensionNumbers;
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                availableExtensionsObj =
+                    new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
+                availableExtensionNumbers = availableExtensionsObj.PossibleExtensions;
+                AvailableExtensionsDropDownList.ItemsSource = availableExtensionNumbers;
+            }
         }
 
         private enum ExtensionTypes
@@ -370,7 +373,6 @@ namespace ThinkVoipTool
             usedExtensions.UnionWith(userExtensions);
             usedExtensions.UnionWith(systemExtensionsList);
 
-            //wtf man.
             var range = Enumerable.Range(int.Parse(startingExtensionNumber), int.Parse(finalExtensionNumber));
             foreach (var i in range)
             {
