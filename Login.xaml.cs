@@ -82,9 +82,8 @@ namespace ThinkVoipTool
 
         private static async Task<bool> RunLogonProcess(string userName, string passWord)
         {
-            var result = Task.Run(() => TryLogin(userName, passWord));
-
-            return await result;
+            var result = await Task.Run(() => TryLogin(userName, passWord));
+            return result;
         }
 
 

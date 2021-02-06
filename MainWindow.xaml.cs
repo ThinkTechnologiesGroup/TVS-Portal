@@ -63,8 +63,8 @@ namespace ThinkVoipTool
         public static string CwApiUser = string.Empty;
         public static string CwApiKey = string.Empty;
         public static bool IsAdmin;
-        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = new SkySwitchTelcoToken();
-        public static readonly SkySwitchToken SkySwitchToken = new SkySwitchToken();
+        public static readonly SkySwitchTelcoToken SkySwitchTelcoToken = SkySwitchTelcoToken.CreateInstance();
+        public static readonly SkySwitchToken SkySwitchToken = SkySwitchToken.CreateInstance();
 
         private static ConnectWiseConnection? _cwClient;
         private readonly bool _isFirstLaunch = Settings.Default.firstLaunch;

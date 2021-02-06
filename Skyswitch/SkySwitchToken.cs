@@ -32,7 +32,7 @@ namespace ThinkVoipTool.Skyswitch
         [JsonProperty("token_type")]
         private string _tokenType;
 
-        public SkySwitchToken()
+        private SkySwitchToken()
         {
             var restClient = new RestClient("https://pbx.skyswitch.com/ns-api/oauth2/token/");
             var restRequest = new RestRequest(Method.POST);
@@ -63,6 +63,8 @@ namespace ThinkVoipTool.Skyswitch
                 return _accessToken;
             }
         }
+
+        public static SkySwitchToken CreateInstance() => new SkySwitchToken();
 
         private static bool IsExpired(SkySwitchToken token) => token._expirationTime > DateTime.Now;
 
