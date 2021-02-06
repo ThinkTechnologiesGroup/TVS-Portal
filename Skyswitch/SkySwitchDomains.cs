@@ -13,21 +13,21 @@ namespace ThinkVoipTool.Skyswitch
 
 
         [JsonProperty("domain")]
-        public string Domain
+        public string? Domain
         {
             get => _domain;
             set => _domain = value;
         }
 
         [JsonProperty("reseller")]
-        public string Reseller
+        public string? Reseller
         {
             get => _reseller;
             set => _reseller = value;
         }
 
         [JsonProperty("description")]
-        public string Description
+        public string? Description
         {
             get => _description;
             set => _description = value;

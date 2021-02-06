@@ -32,7 +32,7 @@ namespace ThinkVoipTool
             Close();
         }
 
-        private async Task SavePhone(string phoneType, string macAddress, string extensionNUmber)
+        private async Task SavePhone(string? phoneType, string macAddress, string extensionNUmber)
         {
             using (new OverrideCursor(Cursors.Wait))
             {

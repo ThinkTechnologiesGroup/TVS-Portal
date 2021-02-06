@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+#pragma warning disable 8620
+
 // ReSharper disable InconsistentNaming
 
 namespace ThinkVoipTool
@@ -24,13 +26,13 @@ namespace ThinkVoipTool
         private readonly ThreeCxClient threeCxClient;
         private readonly bool update;
         private HashSet<string> availableExtensionNumbers = new HashSet<string>();
-        private AvailableExtensionNumbers availableExtensionsObj;
-        private string currentExtension;
-        private string emailAddress;
-        private string extNumber;
-        private string firstName;
-        private string lastName;
-        private string mobileNumber;
+        private AvailableExtensionNumbers? availableExtensionsObj;
+        private string? currentExtension;
+        private string? emailAddress;
+        private string? extNumber;
+        private string? firstName;
+        private string? lastName;
+        private string? mobileNumber;
 
         public ExtensionTypeSelectionWindow(ThreeCxClient? threeCxClient, MainWindow mainWindow, bool update = false)
         {
@@ -84,15 +86,15 @@ namespace ThinkVoipTool
                 {
                     if(MainWindow.ToBeUpdated != null)
                     {
-                        foreach (Extension ext in MainWindow.ToBeUpdated)
+                        foreach (Extension? ext in MainWindow.ToBeUpdated)
                         {
-                            currentExtension = ext.Number;
-                            emailAddress = ext.Email;
-                            firstName = ext.FirstName;
-                            firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
-                            lastName = ext.LastName;
-                            lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
-                            mobileNumber = ext.MobileNumber;
+                            currentExtension = ext?.Number;
+                            emailAddress = ext?.Email;
+                            firstName = ext?.FirstName;
+                            firstName = cultureInfo.TextInfo.ToTitleCase(firstName?.ToLower()!);
+                            lastName = ext?.LastName;
+                            lastName = cultureInfo.TextInfo.ToTitleCase(lastName?.ToLower()!);
+                            mobileNumber = ext?.MobileNumber;
 
                             var extensionId = await threeCxClient.GetExtensionId(currentExtension);
                             var phonesList = await threeCxClient.GetListOfPhonesForExtension(currentExtension, extensionId);
@@ -343,10 +345,10 @@ namespace ThinkVoipTool
         private readonly HashSet<string> extensionsToFiler = new HashSet<string>();
         public readonly HashSet<string> PossibleExtensions = new HashSet<string>();
 
-        public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension> systemExtensions)
+        public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension>? systemExtensions)
         {
             var userExtensions = extensions.Select(a => a.Number).ToList();
-            var systemExtensionsList = systemExtensions.Select(a => a.Number).ToList();
+            var systemExtensionsList = systemExtensions!.Select(a => a.Number).ToList();
             var first = userExtensions.FirstOrDefault();
 
             if(first != null)

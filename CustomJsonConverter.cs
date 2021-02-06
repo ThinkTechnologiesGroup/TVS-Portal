@@ -11,7 +11,7 @@ namespace ThinkVoipTool
 
         private static ThreeCxPageMacrosBase Create(JObject jObject)
         {
-            var type = (string) jObject.Property("name");
+            var type = (string) jObject.Property("name")!;
             return type switch
             {
                 "List-LabelMaker2000" => new LabelMaker2000 {Required = true},
@@ -73,7 +73,7 @@ namespace ThinkVoipTool
             };
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
         {
             // Load JObject from stream 
             var jObject = JObject.Load(reader);

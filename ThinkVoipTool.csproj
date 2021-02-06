@@ -21,7 +21,7 @@
       <Company>Think VoIP Services</Company>
       <NeutralLanguage>en</NeutralLanguage>
       <AssemblyVersion>1.0.0.1</AssemblyVersion>
-      <Nullable>annotations</Nullable>
+      <Nullable>enable</Nullable>
       <Configurations>Debug;Release</Configurations>
       <RuntimeIdentifier>win-x64</RuntimeIdentifier>
       <!--      <PublishTrimmed>true</PublishTrimmed>-->

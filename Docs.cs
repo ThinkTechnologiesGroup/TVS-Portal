@@ -12,9 +12,8 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using Serilog;
 
+
 // ReSharper disable InconsistentNaming
-
-
 // ReSharper disable UnusedMember.Global
 
 namespace ThinkVoipTool
@@ -22,27 +21,27 @@ namespace ThinkVoipTool
     internal class Docs
     {
         public static readonly Docs ConfClient = CreateInstance("https://docs.think-team.com/rest/api/", MainWindow.AuthU, MainWindow.AuthP);
-        private readonly string _authKey;
-        private readonly string _baseUrl;
+        private readonly string? _authKey;
+        private readonly string? _baseUrl;
 
-        private readonly string _scaffoldingUrl;
+        private readonly string? _scaffoldingUrl;
         private RestClient _restClient;
 
-        private RestRequest _restRequest;
+        private RestRequest? _restRequest;
 
-        private Docs(string baseUrl, string userName, string password)
+        private Docs(string? baseUrl, string? userName, string? password)
         {
             _baseUrl = baseUrl;
-            _scaffoldingUrl = baseUrl.Replace("api/", "");
-            _restClient = new RestClient(_baseUrl);
+            _scaffoldingUrl = baseUrl?.Replace("api/", "");
+            _restClient = new RestClient(_baseUrl!);
             _authKey = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{userName}:{password}"));
         }
 
-        private static Docs CreateInstance(string baseUrl, string userName, string password) => new Docs(baseUrl, userName, password);
+        private static Docs CreateInstance(string? baseUrl, string? userName, string? password) => new Docs(baseUrl, userName, password);
 
         public static async Task<string> GetUserName() => await Secrets.GetSecretValue("AdAuthUser");
 
-        public string FindThreeCxPageId(string spaceKey)
+        public string? FindThreeCxPageId(string? spaceKey)
         {
             _restClient = new RestClient(_baseUrl + $"content/search?cql=space={spaceKey} and label=\"3cxinfo\" and label =\"test\"");
             _restRequest = new RestRequest(Method.GET);
@@ -64,16 +63,16 @@ namespace ThinkVoipTool
             }
         }
 
-        private static string StripHtml(string input) => Regex.Replace(input, "<.*?>", string.Empty);
+        private static string StripHtml(string? input) => Regex.Replace(input!, "<.*?>", string.Empty);
 
-        public string FindThreeCxPageIdByTitle(string spaceTitle, bool getUrl = false)
+        public string? FindThreeCxPageIdByTitle(string? spaceTitle, bool getUrl = false)
         {
-            spaceTitle = spaceTitle.Replace("&", string.Empty);
-            spaceTitle = spaceTitle.Replace("!", string.Empty);
+            spaceTitle = spaceTitle?.Replace("&", string.Empty);
+            spaceTitle = spaceTitle?.Replace("!", string.Empty);
 
-            spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
+            spaceTitle = spaceTitle?.Replace(", LLC", string.Empty);
 
-            if(spaceTitle.ToLower() == "think")
+            if(spaceTitle?.ToLower() == "think")
             {
                 return "115671322";
             }
@@ -91,7 +90,7 @@ namespace ThinkVoipTool
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
                 if(getUrl)
                 {
-                    return results.First().Links.tinyui;
+                    return results.First().Links?.tinyui;
                 }
 
                 return results.First().Id;
@@ -104,10 +103,10 @@ namespace ThinkVoipTool
             }
         }
 
-        public string FindThreeCxPageUrlByTitle(string spaceTitle)
+        public string? FindThreeCxPageUrlByTitle(string? spaceTitle)
         {
-            spaceTitle = spaceTitle.Replace("&", string.Empty);
-            spaceTitle = spaceTitle.Replace(", LLC", string.Empty);
+            spaceTitle = spaceTitle?.Replace("&", string.Empty);
+            spaceTitle = spaceTitle?.Replace(", LLC", string.Empty);
 
             _restClient = new RestClient(_baseUrl + $"content/search?cql=space.title ~ \"{spaceTitle}\" and label=\"3cxinfo\"");
             _restRequest = new RestRequest(Method.GET);
@@ -120,7 +119,7 @@ namespace ThinkVoipTool
                 var list = obj.GetValue("results");
                 Debug.Assert(list != null, nameof(list) + " != null");
                 var results = JsonConvert.DeserializeObject<List<Page>>(list.ToString());
-                return results.First().Links.tinyui;
+                return results.First().Links?.tinyui;
             }
             catch (Exception e)
             {
@@ -130,7 +129,7 @@ namespace ThinkVoipTool
             }
         }
 
-        public ThreeCxLoginInfo GetThreeCxLoginInfo(string pageId)
+        public ThreeCxLoginInfo GetThreeCxLoginInfo(string? pageId)
         {
             _restClient = new RestClient(_scaffoldingUrl + "scaffolding/1.0/api/form/" + pageId);
             _restRequest = new RestRequest(Method.GET);
@@ -157,7 +156,7 @@ namespace ThinkVoipTool
             }
         }
 
-        public ResponseStatus UpdateThreeCxPassword(string pageId, string newPassword)
+        public ResponseStatus UpdateThreeCxPassword(string? pageId, string? newPassword)
         {
             var macroList = new List<ThreeCxPageMacros>();
             _restClient = new RestClient(_scaffoldingUrl + "scaffolding/1.0/api/form/" + pageId);
@@ -174,7 +173,7 @@ namespace ThinkVoipTool
             return response.ResponseStatus;
         }
 
-        public IEnumerable<ThreeCxPageMacrosBase> GetThreeCxDocumentPageTables(string pageId)
+        public IEnumerable<ThreeCxPageMacrosBase> GetThreeCxDocumentPageTables(string? pageId)
         {
             _restClient = new RestClient(_scaffoldingUrl + "scaffolding/1.0/api/form/" + pageId);
             _restRequest = new RestRequest(Method.GET);
@@ -192,7 +191,7 @@ namespace ThinkVoipTool
             }
         }
 
-        public void UpdateConfluenceWithChanges(List<ThreeCxPageMacrosBase> updatesList, string pageId)
+        public void UpdateConfluenceWithChanges(List<ThreeCxPageMacrosBase> updatesList, string? pageId)
         {
             var serializedInfo = JsonConvert.SerializeObject(updatesList);
             _restClient = new RestClient(_scaffoldingUrl + "scaffolding/1.0/api/form/" + pageId);
@@ -215,38 +214,39 @@ namespace ThinkVoipTool
     public class Page
     {
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         [JsonProperty("_links")]
-        public Links Links { get; set; }
+        public Links? Links { get; set; }
     }
+
 
     public class Links
     {
-        public string webui { get; set; }
-        public string tinyui { get; set; }
-        public string self { get; set; }
-        public string @base { get; set; }
-        public string context { get; set; }
+        public string? webui { get; set; }
+        public string? tinyui { get; set; }
+        public string? self { get; set; }
+        public string? @base { get; set; }
+        public string? context { get; set; }
     }
 
     public class ThreeCxLoginInfo
     {
-        public string HostName { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+        public string? HostName { get; set; }
+        public string? Username { get; set; }
+        public string? Password { get; set; }
     }
 
     public class ThreeCxPageMacros
     {
         [JsonProperty("macro")]
-        public string Macro { get; set; }
+        public string? Macro { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [JsonProperty("value")]
-        public dynamic Value { get; set; }
+        public dynamic? Value { get; set; }
     }
 
     public abstract class ThreeCxPageMacrosBase
@@ -258,10 +258,10 @@ namespace ThinkVoipTool
         public bool ShouldSync;
 
         [JsonProperty("macro")]
-        public string Macro { get; set; }
+        public string? Macro { get; set; }
 
         [JsonProperty("name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public abstract void Sync(ThreeCxServer server);
     }
@@ -269,7 +269,7 @@ namespace ThinkVoipTool
     public class LabelMaker2000 : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -279,7 +279,7 @@ namespace ThinkVoipTool
     public class ThreeCxInstalledOn : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public dynamic Value { get; set; }
+        public dynamic? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -289,7 +289,7 @@ namespace ThinkVoipTool
     public class ThreeCxLocationOnWan : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public dynamic Value { get; set; }
+        public dynamic? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -299,23 +299,23 @@ namespace ThinkVoipTool
     public class ThreeCxAzureVmPublicIp : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
-        public override void Sync(ThreeCxServer server) => Value = server.SystemStatus.Ip;
+        public override void Sync(ThreeCxServer server) => Value = server.SystemStatus?.Ip;
     }
 
     public class ThreeCxManagementAdminUrl : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
-        public override void Sync(ThreeCxServer server) => Value = server.SystemStatus.Fqdn;
+        public override void Sync(ThreeCxServer server) => Value = server.SystemStatus?.Fqdn;
     }
 
     public class ThreeCxManagementAdminUserName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -325,7 +325,7 @@ namespace ThinkVoipTool
     public class ThreeCxManagementAdminPassWord : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -335,7 +335,7 @@ namespace ThinkVoipTool
     public class ThreeCxManagementSharedAdminTableRow : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JObject Value { get; set; }
+        public JObject? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -345,27 +345,27 @@ namespace ThinkVoipTool
     public class ThreeCxLicenseKey : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
-        public override void Sync(ThreeCxServer server) => Value = server.ThreeCxLicense.Key;
+        public override void Sync(ThreeCxServer server) => Value = server.ThreeCxLicense?.Key;
     }
 
     public class ThreeCxConcurrentCalls : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
-        public override void Sync(ThreeCxServer server) => Value = server.ThreeCxLicense.MaxSimCalls.ToString();
+        public override void Sync(ThreeCxServer server) => Value = server.ThreeCxLicense?.MaxSimCalls.ToString();
     }
 
     public class ThreeCxExpirationDate : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
-            var time = DateTime.Parse(server.SystemStatus.MaintenanceExpiresAt.ToString(CultureInfo.InvariantCulture));
+            var time = DateTime.Parse(server.SystemStatus?.MaintenanceExpiresAt?.ToString(CultureInfo.InvariantCulture)!);
             Value = time.ToString("yyyy-MM-dd HH:mm:ss");
         }
     }
@@ -373,7 +373,7 @@ namespace ThinkVoipTool
     public class ThreeCxAzureVmAdminUserName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -383,7 +383,7 @@ namespace ThinkVoipTool
     public class ThreeCxAzureVmAdminPassWord : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -393,7 +393,7 @@ namespace ThinkVoipTool
     public class ThreeCxAzureVmAdditionalNotes : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -403,7 +403,7 @@ namespace ThinkVoipTool
     public class VoipGatewayYes : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -413,7 +413,7 @@ namespace ThinkVoipTool
     public class VoipGatewayNo : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -423,7 +423,7 @@ namespace ThinkVoipTool
     public class VoipGatewayPriProviderName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -433,7 +433,7 @@ namespace ThinkVoipTool
     public class VoipProviderRouterConfig : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -443,7 +443,7 @@ namespace ThinkVoipTool
     public class VoipGatewayType : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -453,7 +453,7 @@ namespace ThinkVoipTool
     public class VoipGatewayDevice : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -463,7 +463,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkSkySwitch : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -473,7 +473,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkNexVortex : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -483,7 +483,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkOther : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -493,7 +493,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkYes : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -503,7 +503,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkNo : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -513,7 +513,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkProviderNexVortex : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -523,7 +523,7 @@ namespace ThinkVoipTool
     public class VoipProviderSipTrunkProvider : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -533,7 +533,7 @@ namespace ThinkVoipTool
     public class VoipProviderOther : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -543,7 +543,7 @@ namespace ThinkVoipTool
     public class TextOtherSipProvider : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -553,7 +553,7 @@ namespace ThinkVoipTool
     public class TextNumberOfConcurrentCalls : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -563,7 +563,7 @@ namespace ThinkVoipTool
     public class ListInternational : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -573,7 +573,7 @@ namespace ThinkVoipTool
     public class ListDid : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -583,7 +583,7 @@ namespace ThinkVoipTool
     public class TextProviderIpHost : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -593,7 +593,7 @@ namespace ThinkVoipTool
     public class TextProviderInboundPort : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -603,7 +603,7 @@ namespace ThinkVoipTool
     public class TextProviderOutboundPort : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -613,7 +613,7 @@ namespace ThinkVoipTool
     public class VoipProviderSkySwitchSipTrunkPurpose : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -623,7 +623,7 @@ namespace ThinkVoipTool
     public class VoipProviderSkySwitchCustomerDomainName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -633,7 +633,7 @@ namespace ThinkVoipTool
     public class VoipProviderSkySwitchSwitchTrunkName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -643,7 +643,7 @@ namespace ThinkVoipTool
     public class VoipProviderSkySwitchSwitchUserName : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -653,7 +653,7 @@ namespace ThinkVoipTool
     public class VoipProviderSkySwitchSwitchPassWord : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -663,11 +663,11 @@ namespace ThinkVoipTool
     public class SipTrunkProviderPrimaryNumber : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
-            var primaryNUmber = server.SipTrunks[0].ExternalNumber;
+            var primaryNUmber = server.SipTrunks?[0].ExternalNumber;
             Value = primaryNUmber;
         }
     }
@@ -675,11 +675,11 @@ namespace ThinkVoipTool
     public class SipTrunkProviderAuthenticationId : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
-            var aobject = server.SipTrunkSettings.GetValue("ActiveObject");
+            var aobject = server.SipTrunkSettings?.GetValue("ActiveObject");
             Debug.Assert(aobject != null, nameof(aobject) + " != null");
             var auth = aobject.Value<JToken>("AuthId");
             var authId = auth.Value<string>("_value");
@@ -690,11 +690,11 @@ namespace ThinkVoipTool
     public class SipTrunkProviderAuthenticationPassWord : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
-            var apobject = server.SipTrunkSettings.GetValue("ActiveObject");
+            var apobject = server.SipTrunkSettings?.GetValue("ActiveObject");
             Debug.Assert(apobject != null, nameof(apobject) + " != null");
             var authPass = apobject.Value<JToken>("AuthPassword");
             var authPassValue = authPass.Value<string>("_value");
@@ -705,31 +705,34 @@ namespace ThinkVoipTool
     public class ThreeCxServerUpdateDay : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
-            Value = new JArray(server.UpdateDay);
+            if(server.UpdateDay != null)
+            {
+                Value = new JArray(server.UpdateDay);
+            }
         }
     }
 
     public class ThreeCxDidList : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JObject Value { get; set; }
+        public JObject? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
             Value = new JObject();
             var i = 0;
-            foreach (var did in server.InboundRulesList)
+            foreach (var did in server.InboundRulesList!)
             {
                 var tmpArray = new JArray();
                 var number = new ThreeCxPageMacros
                 {
                     Macro = "text-data",
                     Name = "Text-DIDNumber",
-                    Value = did.Did.Replace("*", string.Empty)
+                    Value = did.Did?.Replace("*", string.Empty)
                 };
                 var assigned = new ThreeCxPageMacros
                 {
@@ -748,16 +751,16 @@ namespace ThinkVoipTool
     public class VoipPhonesTable : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JObject Value { get; set; }
+        public JObject? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
             Value = new JObject();
             var i = 0;
             var foundPhones = new Dictionary<string, Phone>();
-            foreach (var phone in server.Phones)
+            foreach (var phone in server.Phones!)
             {
-                if(foundPhones.ContainsKey(phone.Model))
+                if(foundPhones.ContainsKey(phone.Model!))
                 {
                     continue;
                 }
@@ -788,7 +791,7 @@ namespace ThinkVoipTool
     public class TextVoicemailPin : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -798,7 +801,7 @@ namespace ThinkVoipTool
     public class TextVoicemailPToEmailEnabled : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -808,7 +811,7 @@ namespace ThinkVoipTool
     public class EfaxThroughThinkYes : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -818,7 +821,7 @@ namespace ThinkVoipTool
     public class EfaxThroughThinkNo : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JArray Value { get; set; }
+        public JArray? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -828,7 +831,7 @@ namespace ThinkVoipTool
     public class EfaxTable : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JObject Value { get; set; }
+        public JObject? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -838,7 +841,7 @@ namespace ThinkVoipTool
     public class ThreeCxCallFlow : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -848,7 +851,7 @@ namespace ThinkVoipTool
     public class UserExtensionSetup : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public JObject Value { get; set; }
+        public JObject? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
@@ -858,7 +861,7 @@ namespace ThinkVoipTool
     public class AdditionalNotes : ThreeCxPageMacrosBase
     {
         [JsonProperty("value")]
-        public string Value { get; set; }
+        public string? Value { get; set; }
 
         public override void Sync(ThreeCxServer server)
         {
