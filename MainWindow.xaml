@@ -292,7 +292,8 @@
                   MinWidth="600" MinHeight="525" IsSynchronizedWithCurrentItem="False"
                   AlternationCount="2" ItemContainerStyle="{DynamicResource AlternatingWithTriggers}"
                   ScrollViewer.CanContentScroll="True" UseLayoutRounding="True"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  DataContext="Extension">
 
             <ListView.ContextMenu>
                 <ContextMenu>
@@ -350,7 +351,8 @@
                   MinWidth="600" MinHeight="600" IsSynchronizedWithCurrentItem="False"
                   AlternationCount="2" ItemContainerStyle="{DynamicResource AlternatingWithTriggers}"
                   ScrollViewer.CanContentScroll="True" UseLayoutRounding="True"
-                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  DataContext="Phone">
 
             <ListView.ContextMenu>
                 <ContextMenu>

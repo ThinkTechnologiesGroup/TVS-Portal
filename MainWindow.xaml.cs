@@ -82,15 +82,8 @@ namespace ThinkVoipTool
             _isBilling = BillingButton.IsChecked;
         }
 
-        public MainWindow(bool isAuthenticated)
-        {
-            IsAuthenticated = isAuthenticated;
-            InitializeComponent();
-            ShowMenu();
-            _isBilling = BillingButton.IsChecked;
-        }
 
-        private bool ShowTtg => Settings.Default.showTtgClients;
+        private static bool ShowTtg => Settings.Default.showTtgClients;
         private static string SavedUser => AdAuthClient.TryGetUser();
         private static string SavedPass => AdAuthClient.TryGetPassword();
 
@@ -305,10 +298,7 @@ namespace ThinkVoipTool
         }
 
 
-        private void OnBillingMonthButtonCLick(object sender, RoutedEventArgs e)
-        {
-            //var clickedMonth = sender as Button;
-        }
+        private static void OnBillingMonthButtonCLick(object sender, RoutedEventArgs e) => throw new NotImplementedException();
 
         private void GenerateBillingHeaders()
         {
@@ -432,14 +422,14 @@ namespace ThinkVoipTool
                 }
 
 
-                VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(_extensionList).Count.ToString();
-                ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(_extensionList).Count.ToString();
+                VoicemailOnlyExtensionsCount.Text = GetVoicemailOnlyExtensions(_extensionList).Count().ToString();
+                ForwardingOnlyExtensionsCount.Text = GetForwardingOnlyExtensions(_extensionList).Count().ToString();
 
                 BilledUserExtensionsCount.Text = GetBilledUserExtensions(_extensionList)?.Count.ToString();
             }
         }
 
-        private List<Extension>? GetBilledUserExtensions(List<Extension>? extensions)
+        private static List<Extension>? GetBilledUserExtensions(List<Extension>? extensions)
         {
             var forwarding = extensions!.Where(a => a.FirstName!.ToLower().Contains("forward only")).ToList();
             var voicemail = extensions!.Where(a => a.FirstName!.ToLower().Contains("voicemail only")).ToList();
@@ -458,15 +448,11 @@ namespace ThinkVoipTool
             return billedExtensions;
         }
 
-        private List<Extension> GetForwardingOnlyExtensions(List<Extension>? extensions)
-        {
-            return extensions!.Where(a => a.FirstName!.ToLower().Contains("forward only")).ToList();
-        }
+        private static IEnumerable<Extension> GetForwardingOnlyExtensions(IEnumerable<Extension>? extensions) =>
+            extensions!.Where(a => a.FirstName!.ToLower().Contains("forward only")).ToList();
 
-        private List<Extension> GetVoicemailOnlyExtensions(List<Extension>? extensions)
-        {
-            return extensions!.Where(a => a.FirstName!.ToLower().Contains("voicemail only")).ToList();
-        }
+        private static IEnumerable<Extension> GetVoicemailOnlyExtensions(IEnumerable<Extension>? extensions) =>
+            extensions!.Where(a => a.FirstName!.ToLower().Contains("voicemail only")).ToList();
 
         private void UpdateExtensionDisplayGridNames()
         {
@@ -750,11 +736,13 @@ namespace ThinkVoipTool
                 _companyId = companyId;
             }
 
-            if(ThreeCxClient != null)
+            if(ThreeCxClient == null)
             {
-                var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
-                window.ShowDialog();
+                return;
             }
+
+            var window = new ExtensionTypeSelectionWindow(ThreeCxClient, this);
+            window.ShowDialog();
         }
 
 
@@ -768,10 +756,6 @@ namespace ThinkVoipTool
             await UpdateView();
             switch (_lastView)
             {
-                case Views.None:
-                    await DisplayExtensionInfo();
-
-                    break;
                 case Views.Valid:
                     await DisplayValidExtensions();
 
@@ -798,7 +782,12 @@ namespace ThinkVoipTool
                     break;
                 case Views.BilledToClient:
                     DisplayBilledUserExtensions();
-
+                    break;
+                case Views.None:
+                    await DisplayExtensionInfo();
+                    break;
+                default:
+                    await DisplayExtensionInfo();
                     break;
             }
         }
@@ -1054,18 +1043,21 @@ namespace ThinkVoipTool
             var children = MainWindowGrid.Children;
             foreach (UIElement? child in children)
             {
-                if(child is Image {Name: "ThinkyMainImage"})
+                switch (child)
                 {
-                    child.Opacity = 1;
-                    child.Visibility = Visibility.Visible;
-                }
-
-                if(child is VirtualizingStackPanel childStack)
-                {
-                    if(child.IsVisible)
+                    case Image {Name: "ThinkyMainImage"}:
+                        child.Opacity = 1;
+                        child.Visibility = Visibility.Visible;
+                        break;
+                    case VirtualizingStackPanel childStack:
                     {
-                        childStack.Children.Clear();
-                        child.Visibility = Visibility.Collapsed;
+                        if(child.IsVisible)
+                        {
+                            childStack.Children.Clear();
+                            child.Visibility = Visibility.Collapsed;
+                        }
+
+                        break;
                     }
                 }
             }

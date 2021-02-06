@@ -10,6 +10,7 @@ namespace ThinkVoipTool.Billing
 {
     internal class Billing
     {
+        private const string Url = "https://telco-api.skyswitch.com/accounts/c6cb9e70-42b9-11ea-b482-e365812db6e4/pbx/domains";
         private readonly List<Month> _lastSixMonths;
         private readonly List<SkySwitchDomains> _skySwitchDomains;
 
@@ -41,10 +42,8 @@ namespace ThinkVoipTool.Billing
                 return _skySwitchDomains;
             }
 
-            //var token = new SkySwitchTelcoToken();
             var authToken = "Bearer " + MainWindow.SkySwitchTelcoToken.AccessToken;
-            var url = "https://telco-api.skyswitch.com/accounts/c6cb9e70-42b9-11ea-b482-e365812db6e4/pbx/domains";
-            var client = new RestClient(url);
+            var client = new RestClient(Url);
             var request = new RestRequest(Method.GET);
             request.AddHeader("Authorization", authToken);
             var response = await client.ExecuteAsync(request);
