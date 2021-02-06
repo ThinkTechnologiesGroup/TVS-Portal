@@ -10,6 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
+#pragma warning disable 8620
+
 // ReSharper disable InconsistentNaming
 
 namespace ThinkVoipTool
@@ -24,13 +26,13 @@ namespace ThinkVoipTool
         private readonly ThreeCxClient threeCxClient;
         private readonly bool update;
         private HashSet<string> availableExtensionNumbers = new HashSet<string>();
-        private AvailableExtensionNumbers availableExtensionsObj;
-        private string currentExtension;
-        private string emailAddress;
-        private string extNumber;
-        private string firstName;
-        private string lastName;
-        private string mobileNumber;
+        private AvailableExtensionNumbers? availableExtensionsObj;
+        private string? currentExtension;
+        private string? emailAddress;
+        private string? extNumber;
+        private string? firstName;
+        private string? lastName;
+        private string? mobileNumber;
 
         public ExtensionTypeSelectionWindow(ThreeCxClient? threeCxClient, MainWindow mainWindow, bool update = false)
         {
@@ -84,15 +86,15 @@ namespace ThinkVoipTool
                 {
                     if(MainWindow.ToBeUpdated != null)
                     {
-                        foreach (Extension ext in MainWindow.ToBeUpdated)
+                        foreach (Extension? ext in MainWindow.ToBeUpdated)
                         {
-                            currentExtension = ext.Number;
-                            emailAddress = ext.Email;
-                            firstName = ext.FirstName;
-                            firstName = cultureInfo.TextInfo.ToTitleCase(firstName.ToLower());
-                            lastName = ext.LastName;
-                            lastName = cultureInfo.TextInfo.ToTitleCase(lastName.ToLower());
-                            mobileNumber = ext.MobileNumber;
+                            currentExtension = ext?.Number;
+                            emailAddress = ext?.Email;
+                            firstName = ext?.FirstName;
+                            firstName = cultureInfo.TextInfo.ToTitleCase(firstName?.ToLower()!);
+                            lastName = ext?.LastName;
+                            lastName = cultureInfo.TextInfo.ToTitleCase(lastName?.ToLower()!);
+                            mobileNumber = ext?.MobileNumber;
 
                             var extensionId = await threeCxClient.GetExtensionId(currentExtension);
                             var phonesList = await threeCxClient.GetListOfPhonesForExtension(currentExtension, extensionId);
@@ -216,7 +218,10 @@ namespace ThinkVoipTool
 
         private async void AddExtenstion_Click(object sender, RoutedEventArgs e)
         {
-            await AddExtension();
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                await AddExtension();
+            }
         }
 
         private async Task AddExtension()
@@ -267,10 +272,6 @@ namespace ThinkVoipTool
             Close();
         }
 
-        private void Window_Closed(object sender, EventArgs e)
-        {
-        }
-
 
         private async void FirstName_KeyDown(object sender, KeyEventArgs e)
         {
@@ -284,7 +285,10 @@ namespace ThinkVoipTool
         {
             if(e.Key == Key.Enter)
             {
-                await AddExtension();
+                using (new OverrideCursor(Cursors.Wait))
+                {
+                    await AddExtension();
+                }
             }
         }
 
@@ -292,24 +296,22 @@ namespace ThinkVoipTool
         {
             if(e.Key == Key.Enter)
             {
-                await AddExtension();
+                using (new OverrideCursor(Cursors.Wait))
+                {
+                    await AddExtension();
+                }
             }
         }
 
         private void SetExtensionBack_Click(object sender, RoutedEventArgs e)
         {
-            //this.MobileNumber.Visibility = Visibility.Hidden;
             MobileNumberEntry.Visibility = Visibility.Hidden;
             AddExtensionButton.Visibility = Visibility.Hidden;
             SetExtensionBack.Visibility = Visibility.Hidden;
-            //this.ExtNumber.Visibility = Visibility.Hidden;
             ExtNumberEntry.Visibility = Visibility.Hidden;
             AvailableExtensionsDropDownList.Visibility = Visibility.Hidden;
-            //this.FirstName.Visibility = Visibility.Hidden;
             FirstNameEntry.Visibility = Visibility.Hidden;
-            //this.LastName.Visibility = Visibility.Hidden;
             LastNameEntry.Visibility = Visibility.Hidden;
-            //this.Email.Visibility = Visibility.Hidden;
             EmailEntry.Visibility = Visibility.Hidden;
             AddExtensionButton.Visibility = Visibility.Hidden;
             ExtensionDropDownTitle.Text = "Choose Extension Type";
@@ -320,10 +322,13 @@ namespace ThinkVoipTool
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            availableExtensionsObj =
-                new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
-            availableExtensionNumbers = availableExtensionsObj.PossibleExtensions;
-            AvailableExtensionsDropDownList.ItemsSource = availableExtensionNumbers;
+            using (new OverrideCursor(Cursors.Wait))
+            {
+                availableExtensionsObj =
+                    new AvailableExtensionNumbers(await threeCxClient.GetExtensionsList(), await threeCxClient.GetSystemExtensions());
+                availableExtensionNumbers = availableExtensionsObj.PossibleExtensions;
+                AvailableExtensionsDropDownList.ItemsSource = availableExtensionNumbers;
+            }
         }
 
         private enum ExtensionTypes
@@ -340,10 +345,10 @@ namespace ThinkVoipTool
         private readonly HashSet<string> extensionsToFiler = new HashSet<string>();
         public readonly HashSet<string> PossibleExtensions = new HashSet<string>();
 
-        public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension> systemExtensions)
+        public AvailableExtensionNumbers(IEnumerable<Extension> extensions, IEnumerable<Extension>? systemExtensions)
         {
             var userExtensions = extensions.Select(a => a.Number).ToList();
-            var systemExtensionsList = systemExtensions.Select(a => a.Number).ToList();
+            var systemExtensionsList = systemExtensions!.Select(a => a.Number).ToList();
             var first = userExtensions.FirstOrDefault();
 
             if(first != null)
@@ -370,7 +375,6 @@ namespace ThinkVoipTool
             usedExtensions.UnionWith(userExtensions);
             usedExtensions.UnionWith(systemExtensionsList);
 
-            //wtf man.
             var range = Enumerable.Range(int.Parse(startingExtensionNumber), int.Parse(finalExtensionNumber));
             foreach (var i in range)
             {

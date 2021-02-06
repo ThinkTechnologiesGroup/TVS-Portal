@@ -12,10 +12,10 @@ namespace ThinkVoipTool.Skyswitch
         private DateTime _createdAt;
         private DateTime _deletedAt;
 
-        private string _id;
-        private string _name;
+        private string? _id;
+        private string? _name;
         private int _organizational;
-        private string _parentId;
+        private string? _parentId;
         private DateTime _updatedAt;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ThinkVoipTool
 {
@@ -22,25 +23,32 @@ namespace ThinkVoipTool
             if(PhonesDropDownList.SelectedItem is Phone selectedPhone)
             {
                 var phoneType = selectedPhone.Model;
-                await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber!);
+                using (new OverrideCursor(Cursors.Wait))
+                {
+                    await SavePhone(phoneType, MacAddressTextBlock.Text.CleanUpMacAddress(), extensionNumber!);
+                }
             }
 
             Close();
         }
 
-        private async Task SavePhone(string phoneType, string macAddress, string extensionNUmber)
+        private async Task SavePhone(string? phoneType, string macAddress, string extensionNUmber)
         {
-            var result = await MainWindow.ThreeCxClient!.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
-
-            var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
-
-            if(result == "OK")
+            using (new OverrideCursor(Cursors.Wait))
             {
-                MessageBox.Show($"Ext: {extensionNUmber} \n Pin: {pin}", "Success! :) ");
-            }
-            else
-            {
-                MessageBox.Show("Failed :( ");
+                var result = await MainWindow.ThreeCxClient!.CreatePhoneOnServer(phoneType, macAddress, extensionNUmber);
+
+                var pin = await MainWindow.ThreeCxClient.GetExtensionPinNumber(extensionNUmber);
+
+
+                if(result == "OK")
+                {
+                    MessageBox.Show($"Ext: {extensionNUmber} \n Pin: {pin}", "Success! :) ");
+                }
+                else
+                {
+                    MessageBox.Show("Failed :( ");
+                }
             }
         }
     }

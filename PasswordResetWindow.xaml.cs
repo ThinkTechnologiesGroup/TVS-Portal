@@ -8,9 +8,9 @@ namespace ThinkVoipTool
     /// </summary>
     public partial class PasswordResetWindow
     {
-        private ThreeCxLoginInfo _loginInfo;
-        private string _pageId;
-        private ThreeCxClient _threeCxClient;
+        private ThreeCxLoginInfo? _loginInfo;
+        private string? _pageId;
+        private ThreeCxClient? _threeCxClient;
 
         public PasswordResetWindow()
         {
@@ -28,7 +28,7 @@ namespace ThinkVoipTool
         {
             var password1 = FirstPassword.Password;
             var password2 = SecondPassword.Password;
-            _loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(_pageId.Replace(", PA", ""));
+            _loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(_pageId?.Replace(", PA", ""));
             var originalPassword = _loginInfo.Password;
 
             if(password1 != password2)
@@ -46,7 +46,7 @@ namespace ThinkVoipTool
 
             //update 3cx password
 
-            var passwordUpdateResult = await _threeCxClient.ResetPassword(password1);
+            var passwordUpdateResult = await _threeCxClient?.ResetPassword(password1)!;
 
             //check for failing on 3cx and then revert the confluence change back to stored original if needed 
 
@@ -78,12 +78,12 @@ namespace ThinkVoipTool
             Close();
         }
 
-        public async void PasswordResetInit(int companyId)
+        private async void PasswordResetInit(int companyId)
         {
             var cwClient = new ConnectWiseConnection(MainWindow.CwApiUser, MainWindow.CwApiKey);
 
             var company = await cwClient.GetCompany(companyId);
-            _pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name.Replace(", PA", ""));
+            _pageId = Docs.ConfClient.FindThreeCxPageIdByTitle(company.name?.Replace(", PA", ""));
             _loginInfo = Docs.ConfClient.GetThreeCxLoginInfo(_pageId);
             _threeCxClient = new ThreeCxClient(_loginInfo.HostName, _loginInfo.Username, _loginInfo.Password);
         }

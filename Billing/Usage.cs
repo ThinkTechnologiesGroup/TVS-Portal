@@ -9,7 +9,7 @@ namespace ThinkVoipTool.Billing
     {
         private readonly RestClient _client;
         private readonly RestRequest _request;
-        private BillingResponse _monthly;
+        private BillingResponse? _monthly;
 
 
         public Usage(Month month, string? clientUrl)
@@ -35,24 +35,24 @@ namespace ThinkVoipTool.Billing
             _monthly = JsonConvert.DeserializeObject<BillingResponse>(response.Content);
         }
 
-        public async Task<string> MonthlyMinutes()
+        public async Task<string?> MonthlyMinutes()
         {
             if(_monthly == null)
             {
                 await Monthly();
             }
 
-            return _monthly.MinutesUsed;
+            return _monthly?.MinutesUsed;
         }
 
-        public async Task<string> MonthlyCalls()
+        public async Task<string?> MonthlyCalls()
         {
             if(_monthly == null)
             {
                 await Monthly();
             }
 
-            return _monthly.TotalCalls;
+            return _monthly?.TotalCalls;
         }
     }
 }

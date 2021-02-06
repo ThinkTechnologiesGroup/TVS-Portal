@@ -33,14 +33,13 @@ namespace ThinkVoipTool
             var attributeList = new[] {@"SAMAccountName", "memberOf", "cn"};
             try
             {
-                var response = (SearchResponse) conn.SendRequest(new SearchRequest(dName, ldapFilter, SearchScope.Subtree, attributeList));
-                if(response != null)
+                var response = ((SearchResponse) conn.SendRequest(new SearchRequest(dName, ldapFilter, SearchScope.Subtree, attributeList)))!;
                 {
                     var memberships = response.Entries[0].Attributes["memberOf"];
                     var groupsList = new HashSet<string>();
-                    foreach (byte[] group in memberships)
+                    foreach (byte[]? group in memberships)
                     {
-                        var textGroup = Encoding.UTF8.GetString(group);
+                        var textGroup = Encoding.UTF8.GetString(group!);
                         groupsList.Add(textGroup);
                     }
 

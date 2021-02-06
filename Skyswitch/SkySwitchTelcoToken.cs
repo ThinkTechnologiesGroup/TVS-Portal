@@ -43,7 +43,7 @@ namespace ThinkVoipTool.Skyswitch
         [JsonProperty("token_type")]
         private string? _tokenType;
 
-        public SkySwitchTelcoToken()
+        private SkySwitchTelcoToken()
         {
             RestRequest.AddParameter("grant_type", "password");
             RestRequest.AddParameter("username", UserName);
@@ -73,6 +73,8 @@ namespace ThinkVoipTool.Skyswitch
             }
             set => _accessToken = value;
         }
+
+        public static SkySwitchTelcoToken CreateInstance() => new SkySwitchTelcoToken();
 
 
         private bool IsExpired() => _expirationTime > DateTime.Now;
