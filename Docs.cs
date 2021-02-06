@@ -217,14 +217,8 @@ namespace ThinkVoipTool
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public string Id { get; set; }
 
-
         [JsonProperty("_links")]
         public Links Links { get; set; }
-
-        //public string type { get; set; }
-        //public string status { get; set; }
-        //public string Title { get; set; }
-        //public List<ThreeCxPageMacros> PageTables { get; set; }
     }
 
     public class Links
