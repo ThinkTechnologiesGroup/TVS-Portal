@@ -356,6 +356,7 @@ namespace ThinkVoipTool
                 catch
                 {
                     ExtensionsHeader.SetValue(TextBlock.TextProperty, "Failed to Open Client");
+                    ExtensionsHeader.Opacity = 1;
                     ExtensionsHeader.Visibility = Visibility.Visible;
                 }
             }
