@@ -1515,12 +1515,7 @@ namespace ThinkVoipTool
             _restRequest.AddHeader("Connection", "keep-alive");
             _restRequest.AddParameter("application/json", update!, "application/json", ParameterType.RequestBody);
             var response = await _restClient.ExecuteAsync(_restRequest).ConfigureAwait(false);
-            if(response.StatusCode != HttpStatusCode.OK)
-            {
-                return "Failed";
-            }
-
-            return response.StatusCode.ToString();
+            return response.StatusCode != HttpStatusCode.OK ? "Failed" : response.StatusCode.ToString();
         }
 
         private async Task<bool> ExtensionExists(string? extensionNumber)
@@ -1542,7 +1537,7 @@ namespace ThinkVoipTool
         }
     }
 
-    public class ExtensionPropertyModel
+    internal static class ExtensionPropertyModel
     {
         public static string SerializePhoneProperty(string? objectId, string? propertyPath) =>
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"Param\":\"{{}}\"}}";
@@ -1557,7 +1552,7 @@ namespace ThinkVoipTool
             $"{{\"Path\":{{\"ObjectId\":\"{objectId}\",\"PropertyPath\":[{{\"Name\":\"{propertyPath}\"}}]}},\"PropertyValue\":{value.ToString().ToLower()}}}";
     }
 
-    public class ExtensionExtendedPropertyModel
+    internal static class ExtensionExtendedPropertyModel
     {
         public static string SerializeExtProperty(string? objectId, string? propertyPath, string? idInCollection, string? name,
             string? propertyValue) =>

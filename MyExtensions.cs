@@ -13,7 +13,7 @@ namespace ThinkVoipTool
         public static int CountThis(this string countThis) => Regex.Matches(countThis, @"a|e|i|o|u").Count;
 
 
-        public static long FibOfRecursvive(long n)
+        public static long FibOfRecursive(long n)
         {
             if(n <= 1)
             {
@@ -25,7 +25,7 @@ namespace ThinkVoipTool
                 return History[n];
             }
 
-            History.Add(n, FibOfRecursvive(n - 1) + FibOfRecursvive(n - 2));
+            History.Add(n, FibOfRecursive(n - 1) + FibOfRecursive(n - 2));
 
             return History[n];
         }
